@@ -1,0 +1,88 @@
+cache:
+  paths:
+    - node_modules/
+
+variables:
+  APP_NAME: progapview
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+
+stages:
+  - npm
+  - docker
+  - homo
+  - prod
+
+npm:
+  image: node:16.13.0
+  stage: npm
+  script:
+    - npm install
+    - CI=false npm run build
+    - echo $(TZ=":America/Sao_Paulo" date +"%Y-%m-%d_%H-%M-%S") > build/build.txt
+  artifacts:
+    paths:
+      - build/
+
+docker:
+  image: docker:19.03
+  stage: docker
+  services:
+    - docker:dind
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker build -t $APP_NAME .
+    - docker tag $APP_NAME $CI_REGISTRY/ssp/$APP_NAME:${CI_COMMIT_SHA:0:8}
+    - docker push $CI_REGISTRY/ssp/$APP_NAME
+
+homo-only-master:
+  image: dtzar/helm-kubectl
+  environment:
+    name: homologacao
+  stage: homo
+  only:
+    - master
+    - main
+  script:
+    - export KUBE_CONFIG="$KUBE_CONFIG_HOMO"
+    - deploy
+
+homo-except-master:
+  image: dtzar/helm-kubectl
+  environment:
+    name: homologacao
+  stage: homo
+  except:
+    - master
+    - main
+  when: manual
+  script:
+    - export KUBE_CONFIG="$KUBE_CONFIG_HOMO"
+    - deploy
+
+prod:
+  image: dtzar/helm-kubectl
+  stage: prod
+  environment:
+    name: producao
+  when: manual
+  only:
+    - master
+    - main
+  script:
+    - export KUBE_CONFIG="$KUBE_CONFIG_PROD"
+    - deploy
+
+#---------------------------------------------------------------------------
+
+.functions: &functions |
+
+  function deploy() {
+    mkdir ~/.kube && echo "$KUBE_CONFIG" > ~/.kube/config
+    cat ./.kube/deployment.yaml | sed "s/{{COMMIT_ID}}/${CI_COMMIT_SHA:0:8}/g" | sed "s/{{FORCE_DEPLOY}}/$(date +%s)/g" | kubectl apply -f -
+    kubectl apply -f ./.kube/service.yaml
+    kubectl apply -f ./.kube/ingress.yaml
+  }
+
+before_script:
+  - *functions

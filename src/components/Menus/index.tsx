@@ -1,0 +1,106 @@
+import {
+  DesktopOutlined,
+  FolderOutlined,
+  PoundOutlined,
+  FileTextOutlined,
+  ReadOutlined,
+  GiftOutlined,
+  PaperClipOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import { perfisSistema } from '../../configs/sistemaConfig';
+
+export const menus = [
+  {
+    label: 'Dashboard',
+    key: '1',
+    icon: <DesktopOutlined />,
+    link: '/dashboard',
+    perfis: [perfisSistema.ALL],
+    children: [],
+  },
+  {
+    label: 'Recursos',
+    key: '1',
+    icon: <FolderOutlined />,
+    perfis: [perfisSistema.ALL],
+    children: [
+      {
+        label: 'FDD',
+        key: '2',
+        icon: <PaperClipOutlined />,
+        link: '/fdd',
+        perfis: [perfisSistema.ALL],
+      },
+      {
+        label: 'Convênio',
+        key: '3',
+        icon: <PaperClipOutlined />,
+        link: '/covenants',
+        perfis: [perfisSistema.ALL],
+      },
+      {
+        label: 'Fundo Fundo',
+        key: '4',
+        icon: <PaperClipOutlined />,
+        link: '/bottomToBottom',
+        perfis: [perfisSistema.ALL],
+      },
+      {
+        label: 'Emenda Estadual',
+        key: '5',
+        icon: <PaperClipOutlined />,
+        link: '/stateAmendment',
+        perfis: [perfisSistema.ALL],
+      },
+      {
+        label: 'Tesouro Estadual',
+        key: '6',
+        icon: <PaperClipOutlined />,
+        link: '/stateTreasury',
+        perfis: [perfisSistema.ALL],
+      },
+    ],
+  },
+  {
+    label: 'Autor',
+    key: '7',
+    icon: <UserOutlined />,
+    link: '/author',
+    perfis: [perfisSistema.ALL],
+    children: [],
+  },
+
+  {
+    label: 'Eixos',
+    key: '8',
+    icon: <PoundOutlined />,
+    link: '/axles',
+    perfis: [perfisSistema.ALL],
+    children: [],
+  },
+  {
+    label: 'Objetos',
+    key: '9',
+    icon: <GiftOutlined />,
+    link: '/objects',
+    perfis: [perfisSistema.ALL],
+    children: [],
+  },
+  {
+    label: 'Modelos',
+    key: '10',
+    icon: <FileTextOutlined />,
+    link: '/model',
+    perfis: [perfisSistema.ALL],
+    children: [],
+  },
+  {
+    label: 'Naturezas',
+    key: '11',
+    icon: <ReadOutlined />,
+    link: '/nature',
+    perfis: [perfisSistema.ALL],
+    children: [],
+  },
+];
