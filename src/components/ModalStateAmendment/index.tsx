@@ -1,6 +1,5 @@
 import { Modal, Form, Input, Col, message, Select, Row, Button } from 'antd';
 import { useEffect, useState } from 'react';
-import CurrencyFormat from 'react-currency-format';
 import { getAuthor } from '../../hooks/uthorService';
 import ModalAuthor from '../ModalAuthor';
 import {
@@ -227,7 +226,7 @@ const ModalStateAmendment = ({
                   label="Valor do repasse"
                   hasFeedback
                 >
-                  <CurrencyFormat
+                  {/*<CurrencyFormat
                     className="input-mask-date"
                     prefix="R$ "
                     thousandSeparator="."
@@ -249,7 +248,7 @@ const ModalStateAmendment = ({
                     decimalScale={2} // Definindo 2 casas decimais
                     allowNegative={false} // Desativar caso não queira permitir valores negativos
                     fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
-                  />
+              />*/}
                 </Form.Item>
               </Col>
               <Col offset={1} span={22}>

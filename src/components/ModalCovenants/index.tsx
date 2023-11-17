@@ -11,7 +11,6 @@ import {
   Popconfirm,
 } from 'antd';
 import { useEffect, useState } from 'react';
-import CurrencyFormat from 'react-currency-format';
 import {
   getOneCovenants,
   postCovenants,
@@ -453,7 +452,7 @@ const ModalCovenants = ({
                   label="Valor do repasse"
                   hasFeedback
                 >
-                  <CurrencyFormat
+                  {/* <CurrencyFormat
                     className="input-mask-date"
                     prefix="R$ "
                     thousandSeparator="."
@@ -568,7 +567,7 @@ const ModalCovenants = ({
                     onValueChange={values => {
                       setSelectedContValue(values.formattedValue);
                     }}
-                  />
+                  /> */}
                 </Form.Item>
               </Col>
               <Button

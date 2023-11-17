@@ -12,7 +12,6 @@ import {
   Space,
 } from 'antd';
 import { useEffect, useState } from 'react';
-import CurrencyFormat from 'react-currency-format';
 
 import {
   getOneResourceobjects,
@@ -591,7 +590,7 @@ const ModalObjectResource = ({
 
             <Col span={6}>
               <Form.Item name={['unitaryValue']} label="Valor unitario">
-                <CurrencyFormat
+                {/*<CurrencyFormat
                   className="input-mask-date"
                   prefix="R$ "
                   thousandSeparator="."
@@ -638,7 +637,7 @@ const ModalObjectResource = ({
                   decimalScale={2}
                   allowNegative={false}
                   fixedDecimalScale
-                />
+                />*/}
               </Form.Item>
             </Col>
 

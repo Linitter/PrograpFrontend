@@ -1,7 +1,6 @@
 import { Modal, Form, Input, Col, message, Row } from 'antd';
 import { useEffect } from 'react';
 import { getGoals, postGoals, updateGoals } from '../../hooks/goalService';
-import CurrencyFormat from 'react-currency-format';
 const { TextArea } = Input;
 
 type Props = {
@@ -120,7 +119,7 @@ const ModalGoal = ({
             </Col>
             <Col offset={1} span={10}>
               <Form.Item name={['predictedValue']} label="Valor previsto">
-                <CurrencyFormat
+                {/*<CurrencyFormat
                   className="input-mask-date"
                   prefix="R$ "
                   thousandSeparator="."
@@ -141,7 +140,7 @@ const ModalGoal = ({
                   decimalScale={2} // Definindo 2 casas decimais
                   allowNegative={false} // Desativar caso não queira permitir valores negativos
                   fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
-                />
+      />*/}
               </Form.Item>
             </Col>
 

@@ -5,7 +5,6 @@ import {
   postBottomToBottom,
   updateBottomToBottom,
 } from '../../hooks/bottomToBottom';
-import CurrencyFormat from 'react-currency-format';
 import { getAxles } from '../../hooks/axleService';
 import { PlusOutlined } from '@ant-design/icons';
 import ModalAxle from '../ModalAxle';
@@ -197,7 +196,7 @@ const ModalBottomToBottom = ({
               </Col>
               <Col span={12}>
                 <Form.Item name={['amount']} label="Valor total" hasFeedback>
-                  <CurrencyFormat
+                  {/*<CurrencyFormat
                     className="input-mask-date"
                     prefix="R$ "
                     thousandSeparator="."
@@ -205,7 +204,7 @@ const ModalBottomToBottom = ({
                     decimalScale={2} // Definindo 2 casas decimais
                     allowNegative={false} // Desativar caso não queira permitir valores negativos
                     fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
-                  />
+                  />*/}
                 </Form.Item>
               </Col>
             </>
