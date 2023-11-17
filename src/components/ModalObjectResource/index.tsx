@@ -19,16 +19,17 @@ import {
   postObjectResource,
   updateObjectResource,
 } from '../../hooks/objectResourceService';
+import {
+  deleteDestinationObjects,
+  getDestinationObjects,
+} from '../../hooks/destinationObjects';
+
 import { getObject } from '../../hooks/object';
 import ReactInputMask from 'react-input-mask';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import ModalObject from '../ModalObject';
 import { apiDestination } from '../../hooks/deliveryObject';
 import { ColumnsType } from 'antd/es/table';
-import {
-  deleteDestinationObjects,
-  getDestinationObjects,
-} from '../../hooks/destinationObjects';
 
 type Props = {
   id: string;
@@ -43,6 +44,7 @@ type Props = {
 };
 
 interface DataType {
+  id: any;
   key: React.Key;
   unitId: string;
   expectedQuantity: string;
@@ -118,6 +120,7 @@ const ModalObjectResource = ({
     if (id) {
       await getOneResourceobjects(id).then(response => {
         if (response !== false) {
+          console.log('res', response.data);
           form.setFieldsValue({
             id: response.data?.id,
             objects: response.data.objects?.id, // id do obejto
@@ -181,12 +184,45 @@ const ModalObjectResource = ({
 
   // exclusão de destinação/objetos
   const ClickDelete = async (record: any) => {
-    await deleteDestinationObjects(record);
-    const newdestinationObject = [...destinationObjects];
-    newdestinationObject.splice(record, -1);
-    setdestinationObjects(newdestinationObject);
-    loadingGrantorForm();
+    console.log('rec id', record.id);
+
+    if (record.id !== null && record.id !== undefined) {
+      console.log('defined');
+
+      const newDestinationObjects = [...destinationObjects];
+      const index = newDestinationObjects.findIndex(
+        obj => obj.id === record.id,
+      );
+
+      if (index !== -1) {
+        await deleteDestinationObjects(record.id);
+        newDestinationObjects.splice(index, 1);
+        setdestinationObjects(newDestinationObjects);
+      } else {
+        console.log('Objeto não encontrado na lista');
+      }
+    } else {
+      console.log('destinationObjects', destinationObjects);
+
+      const findObjectIndex = destinationObjects.findIndex(
+        (obj: any) =>
+          obj.expectedQuantity === record.expectedQuantity &&
+          obj.unitId === record.unitId &&
+          obj.resourceObjects === record.resourceObjects &&
+          obj.id === undefined,
+      );
+
+      if (findObjectIndex !== -1) {
+        const newDestinationObjects = [...destinationObjects];
+        newDestinationObjects.splice(findObjectIndex, 1);
+        setdestinationObjects(newDestinationObjects);
+        console.log('Objeto correspondente encontrado e removido da lista');
+      } else {
+        console.log('Nenhum objeto correspondente encontrado na lista');
+      }
+    }
   };
+
   //carregando objetos
   async function loadingObjects() {
     const response = await getObject('objects');
@@ -302,6 +338,7 @@ const ModalObjectResource = ({
     loadingObjects();
   };
   const hideModal = (refresh: boolean) => {
+    loadingGrantorForm();
     setShowModal(false);
     if (refresh) setObjects([]);
   };
@@ -315,6 +352,8 @@ const ModalObjectResource = ({
     setdestinationObjects((prevList: any) => [...prevList, destination]);
     setSelectedUnits('');
     setSelectExpectedQuant('');
+    form.setFieldsValue({ expectedQuantity: '' });
+    form.setFieldsValue({ unitId: '' });
   };
 
   //consulta de nome pelo id
@@ -356,7 +395,7 @@ const ModalObjectResource = ({
           <Space size="middle">
             <Popconfirm
               title="Tem certeza de que deseja excluir?"
-              onConfirm={() => ClickDelete(record.id)}
+              onConfirm={() => ClickDelete(record)}
             >
               <DeleteOutlined
                 className="icon-delete-phones"
