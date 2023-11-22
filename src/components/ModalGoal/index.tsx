@@ -1,6 +1,7 @@
 import { Modal, Form, Input, Col, message, Row } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getGoals, postGoals, updateGoals } from '../../hooks/goalService';
+import CurrencyInput from '../InputDinheiro';
 const { TextArea } = Input;
 
 type Props = {
@@ -19,6 +20,10 @@ const ModalGoal = ({
   updateGoalList,
 }: Props) => {
   const [form] = Form.useForm();
+
+  const [predictedValue, setPredictedValue] = useState<string>('');
+  const [balance, setBalance] = useState<string>('');
+
   //Setando id do fundo a fundo no formulario para criação das metas
   form.setFieldValue('bottomToBottom', idBottomToBottom);
 
@@ -41,7 +46,13 @@ const ModalGoal = ({
   //Listagem, se tiver id set no formulário
   useEffect(() => {
     loadingGoals();
+    resetDados();
   }, [id]);
+
+  const resetDados = () => {
+    setPredictedValue('');
+    setBalance('');
+  };
 
   async function loadingGoals() {
     if (id) {
@@ -54,6 +65,8 @@ const ModalGoal = ({
             predictedValue: response.data.predictedValue, //valor  previsto
             balance: response.data.balance, // saldo
           });
+          setPredictedValue(response.data.predictedValue);
+          setBalance(response.data.balance);
         } else {
           message.error('Ocorreu um erro inesperado ao obter as metas.');
         }
@@ -97,6 +110,20 @@ const ModalGoal = ({
     updateGoalList(editingGoal);
   };
 
+  const handleSetPredicatedValue = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setPredictedValue(valorSemSimbolo);
+    form.setFieldsValue({ predictedValue: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+  };
+
+  const handleSetBalance = (value: string) => {
+    if (value) {
+      const valorSemSimbolo = value.replace(/R\$\s?/, '');
+      setBalance(valorSemSimbolo);
+      form.setFieldsValue({ balance: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+    }
+  };
+
   return (
     <>
       <Modal
@@ -119,28 +146,20 @@ const ModalGoal = ({
             </Col>
             <Col offset={1} span={10}>
               <Form.Item name={['predictedValue']} label="Valor previsto">
-                {/*<CurrencyFormat
-                  className="input-mask-date"
-                  prefix="R$ "
-                  thousandSeparator="."
-                  decimalSeparator="," //
-                  decimalScale={2} // Definindo 2 casas decimais
-                  allowNegative={false} // Desativar caso não queira permitir valores negativos
-                  fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
+                <CurrencyInput
+                  props={undefined}
+                  handleMoeda={handleSetPredicatedValue}
+                  value={predictedValue}
                 />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item name={['balance']} label="Saldo">
-                <CurrencyFormat
-                  className="input-mask-date"
-                  prefix="R$ "
-                  thousandSeparator="."
-                  decimalSeparator="," //
-                  decimalScale={2} // Definindo 2 casas decimais
-                  allowNegative={false} // Desativar caso não queira permitir valores negativos
-                  fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
-      />*/}
+                <CurrencyInput
+                  props={undefined}
+                  handleMoeda={handleSetBalance}
+                  value={balance}
+                />
               </Form.Item>
             </Col>
 

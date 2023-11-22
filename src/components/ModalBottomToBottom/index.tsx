@@ -5,9 +5,11 @@ import {
   postBottomToBottom,
   updateBottomToBottom,
 } from '../../hooks/bottomToBottom';
+
 import { getAxles } from '../../hooks/axleService';
 import { PlusOutlined } from '@ant-design/icons';
 import ModalAxle from '../ModalAxle';
+import CurrencyInput from '../InputDinheiro';
 require('./index.css');
 
 type AxlesResponse = {
@@ -31,6 +33,8 @@ const ModalBottomToBottom = ({
   //axles =  eixo
   const [axles, setAxles] = useState<AxlesResponse[]>([]);
   const [selectAxlesId, setSelectedAxlesId] = useState('');
+  const [amount, setAmount] = useState<string>('');
+
   const [showModal, setShowModal] = useState(false);
 
   const [form] = Form.useForm();
@@ -53,7 +57,12 @@ const ModalBottomToBottom = ({
   //Listagem, se tiver id set no formulário
   useEffect(() => {
     loadingBottonToBotton();
+    resetDados();
   }, [id]);
+
+  const resetDados = () => {
+    setAmount('');
+  };
 
   async function loadingBottonToBotton() {
     if (id) {
@@ -66,6 +75,7 @@ const ModalBottomToBottom = ({
             year: response.data.year, // ano
             amount: response.data.amount, //Valor total
           });
+          setAmount(response.data.amount);
         } else {
           message.error('Ocorreu um erro inesperado ao obter fundo a fundo.');
         }
@@ -81,7 +91,7 @@ const ModalBottomToBottom = ({
       editingbottomToBottom.amount === undefined ||
       editingbottomToBottom.amount === null
     ) {
-      editingbottomToBottom.amount = 'R$ 0.000,00';
+      editingbottomToBottom.amount = ' 0.000,00';
     }
 
     await updateBottomToBottom(editingbottomToBottom, id);
@@ -98,7 +108,7 @@ const ModalBottomToBottom = ({
       editingbottomToBottom.amount === undefined ||
       editingbottomToBottom.amount === null
     ) {
-      editingbottomToBottom.amount = 'R$ 0.000,00';
+      editingbottomToBottom.amount = ' 0.000,00';
     }
 
     await postBottomToBottom(editingbottomToBottom);
@@ -130,6 +140,16 @@ const ModalBottomToBottom = ({
     setShowModal(false);
     if (refresh) setAxles([]);
   };
+
+  const handleSetAmount = (value: string) => {
+    if (value) {
+      const valorSemSimbolo = value.replace(/R\$\s?/, '');
+      setAmount(valorSemSimbolo);
+
+      form.setFieldsValue({ amount: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+    }
+  };
+
   return (
     <>
       <ModalAxle
@@ -196,6 +216,12 @@ const ModalBottomToBottom = ({
               </Col>
               <Col span={12}>
                 <Form.Item name={['amount']} label="Valor total" hasFeedback>
+                  <CurrencyInput
+                    props={undefined}
+                    handleMoeda={handleSetAmount}
+                    value={amount}
+                  />
+
                   {/*<CurrencyFormat
                     className="input-mask-date"
                     prefix="R$ "

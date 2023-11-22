@@ -8,6 +8,7 @@ import {
   updateStateAmendment,
 } from '../../hooks/stateAmendmentService';
 import { PlusOutlined } from '@ant-design/icons';
+import CurrencyInput from '../InputDinheiro';
 
 const { TextArea } = Input;
 
@@ -33,6 +34,9 @@ const ModalStateAmendment = ({
   const [selectAuthorId, setSelectedAuthorId] = useState('');
   const [showModal, setShowModal] = useState(false);
 
+  const [transferAmount, setTransferAmount] = useState<string>('');
+  const [balance, setBalance] = useState<string>('');
+
   const [form] = Form.useForm();
 
   const handleOk = (e: any) => {
@@ -54,7 +58,13 @@ const ModalStateAmendment = ({
   //Listagem, se tiver id set no formulário
   useEffect(() => {
     loadingStateAmendment();
+    resetDados();
   }, [id]);
+
+  const resetDados = () => {
+    setTransferAmount('');
+    setBalance('');
+  };
 
   async function loadingStateAmendment() {
     if (id) {
@@ -70,6 +80,9 @@ const ModalStateAmendment = ({
             description: response.data.description, // descrição
             balance: response.data.balance, // saldo
           });
+
+          setTransferAmount(response.data.transferAmount);
+          setBalance(response.data.balance);
         } else {
           message.error('Ocorreu um erro inesperado ao obter fundo a fundo.');
         }
@@ -135,6 +148,18 @@ const ModalStateAmendment = ({
   function handleSelectAuthor(value: any) {
     setSelectedAuthorId(value);
   }
+
+  const handleSetTransferAmount = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setTransferAmount(valorSemSimbolo);
+    form.setFieldsValue({ transferAmount: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+  };
+
+  const handleSetBalance = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setBalance(valorSemSimbolo);
+    form.setFieldsValue({ balance: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+  };
 
   useEffect(() => {
     setShowModal(false);
@@ -226,29 +251,21 @@ const ModalStateAmendment = ({
                   label="Valor do repasse"
                   hasFeedback
                 >
-                  {/*<CurrencyFormat
-                    className="input-mask-date"
-                    prefix="R$ "
-                    thousandSeparator="."
-                    decimalSeparator="," //
-                    decimalScale={2} // Definindo 2 casas decimais
-                    allowNegative={false} // Desativar caso não queira permitir valores negativos
-                    fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
+                  <CurrencyInput
+                    props={undefined}
+                    handleMoeda={handleSetTransferAmount}
+                    value={transferAmount}
                   />
                 </Form.Item>
               </Col>
 
               <Col span={8}>
                 <Form.Item name={['balance']} label="Saldo" hasFeedback>
-                  <CurrencyFormat
-                    className="input-mask-date"
-                    prefix="R$ "
-                    thousandSeparator="."
-                    decimalSeparator="," //
-                    decimalScale={2} // Definindo 2 casas decimais
-                    allowNegative={false} // Desativar caso não queira permitir valores negativos
-                    fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
-              />*/}
+                  <CurrencyInput
+                    props={undefined}
+                    handleMoeda={handleSetBalance}
+                    value={balance}
+                  />
                 </Form.Item>
               </Col>
               <Col offset={1} span={22}>

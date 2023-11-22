@@ -29,6 +29,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import ModalObject from '../ModalObject';
 import { apiDestination } from '../../hooks/deliveryObject';
 import { ColumnsType } from 'antd/es/table';
+import CurrencyInput from '../InputDinheiro';
 
 type Props = {
   id: string;
@@ -88,6 +89,11 @@ const ModalObjectResource = ({
   const token = localStorage.getItem('token_sso');
   const urlWithToken = `unidadesPC?token=${token}`;
   const [form] = Form.useForm();
+
+  const [unitaryValue, setUnitaryValue] = useState<string>('');
+  const [estimatedTotalValue, setEstimatedTotalValue] = useState<string>('');
+  const [executedValue, setExecutedValue] = useState<string>('');
+
   //Setando id de destinação no formulario para criação de objetos
   form.setFieldValue('goal', idGoal); // Id da meta
   form.setFieldValue('covenants', idCovenants); // Id do convenio
@@ -113,7 +119,14 @@ const ModalObjectResource = ({
 
   useEffect(() => {
     loadingObjectsResource();
+    resetDados();
   }, [id]);
+
+  const resetDados = () => {
+    setUnitaryValue('');
+    setEstimatedTotalValue('');
+    setExecutedValue('');
+  };
 
   async function loadingObjectsResource() {
     if (id) {
@@ -141,6 +154,11 @@ const ModalObjectResource = ({
             forecastDate: response.data.forecastDate, // data de previsão
             destinationObjects: response.data.destinationObjects, //id da destinação/obejtos
           });
+
+          setUnitaryValue(response.data.unitaryValue);
+          setEstimatedTotalValue(response.data.estimatedTotalValue);
+          setExecutedValue(response.data.executedValue);
+
           setdestinationObjects(response.data.destinationObjects || []);
         } else {
           message.error(
@@ -255,9 +273,9 @@ const ModalObjectResource = ({
         editingObjectsResource[field] = defaultValue;
       }
     };
-    setDefaultCurrencyValue('unitaryValue', 'R$ 0.000,00');
-    setDefaultCurrencyValue('estimatedTotalValue', 'R$ 0.000,00');
-    setDefaultCurrencyValue('executedValue', 'R$ 0.000,00');
+    setDefaultCurrencyValue('unitaryValue', '0.000,00');
+    setDefaultCurrencyValue('estimatedTotalValue', '0.000,00');
+    setDefaultCurrencyValue('executedValue', '0.000,00');
 
     const fieldValues = determineFields();
     editingObjectsResource.goal = fieldValues.goal;
@@ -296,9 +314,9 @@ const ModalObjectResource = ({
         editingObjectsResource[field] = defaultValue;
       }
     };
-    setDefaultCurrencyValue('unitaryValue', 'R$ 0.000,00');
-    setDefaultCurrencyValue('executedValue', 'R$ 0.000,00');
-    setDefaultCurrencyValue('estimatedTotalValue', 'R$ 0.000,00');
+    setDefaultCurrencyValue('unitaryValue', '0.000,00');
+    setDefaultCurrencyValue('executedValue', '0.000,00');
+    setDefaultCurrencyValue('estimatedTotalValue', '0.000,00');
 
     const fieldValues = determineFields();
     editingObjectsResource.goal = fieldValues.goal;
@@ -309,27 +327,38 @@ const ModalObjectResource = ({
     await atualizarObjetoRecurso(editingObjectsResource);
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
-  };
-
   // Função para calcular e atualizar o valor total com base na quantidade e valor unitário
   const handleAmountAndUnitaryValueChange = (
     amount: any,
     unitaryValue: any,
   ) => {
     const numericAmount = parseFloat(amount);
-    const numericUnitaryValue = parseFloat(unitaryValue);
 
-    const estimatedTotalValue = numericAmount * numericUnitaryValue || 0;
-    const formattedEstimatedTotalValue = formatCurrency(estimatedTotalValue);
+    if (typeof unitaryValue === 'string') {
+      const valorSemPontos = unitaryValue.replace(/\./g, ''); // Remove os pontos
 
-    form.setFieldsValue({ estimatedTotalValue: formattedEstimatedTotalValue });
+      console.log('a1', valorSemPontos);
+      const numericUnitaryValue = parseFloat(valorSemPontos);
+
+      console.log('numericUnitaryValue', numericUnitaryValue);
+
+      const estimatedTotalValue = numericAmount * numericUnitaryValue || 0;
+
+      console.log('estimatedTotalValue', estimatedTotalValue);
+
+      const formattedEstimatedTotalValue = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        maximumFractionDigits: 2,
+      }).format(estimatedTotalValue);
+
+      const valorSemSimbolo = formattedEstimatedTotalValue.replace(
+        /R\$\s?/,
+        '',
+      );
+
+      form.setFieldsValue({ estimatedTotalValue: valorSemSimbolo });
+    }
   };
 
   const updateObjectList = (newObjects: any) => {
@@ -365,6 +394,28 @@ const ModalObjectResource = ({
     } else {
       return '*******';
     }
+  };
+
+  const handleSetUnitaryValue = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+
+    const amount = form.getFieldValue('amount');
+
+    handleAmountAndUnitaryValueChange(amount, valorSemSimbolo);
+    setUnitaryValue(valorSemSimbolo);
+    form.setFieldsValue({ unitaryValue: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário  };
+  };
+
+  const handleSetEstimatedTotalValue = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setEstimatedTotalValue(valorSemSimbolo);
+    form.setFieldsValue({ estimatedTotalValue: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário  };
+  };
+
+  const handleSetExecutedValue = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setExecutedValue(valorSemSimbolo);
+    form.setFieldsValue({ executedValue: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário  };
   };
 
   //tabela de concedentes e valores
@@ -477,7 +528,16 @@ const ModalObjectResource = ({
         <Form layout="vertical" form={form}>
           <Row gutter={24}>
             <Col offset={1} span={6}>
-              <Form.Item name={['objects']} label="Objeto">
+              <Form.Item
+                name={['objects']}
+                label="Objeto"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Por favor, insira um objeto.',
+                  },
+                ]}
+              >
                 <Select
                   showSearch
                   placeholder="Selecione o objeto"
@@ -579,6 +639,7 @@ const ModalObjectResource = ({
             <Col span={5}>
               <Form.Item name={['amount']} label="Quantidade">
                 <Input
+                  type="number"
                   onChange={(e: any) => {
                     const amount = parseFloat(e.target.value);
                     const unitaryValue = form.getFieldValue('unitaryValue');
@@ -590,19 +651,10 @@ const ModalObjectResource = ({
 
             <Col span={6}>
               <Form.Item name={['unitaryValue']} label="Valor unitario">
-                {/*<CurrencyFormat
-                  className="input-mask-date"
-                  prefix="R$ "
-                  thousandSeparator="."
-                  decimalSeparator=","
-                  decimalScale={2} // Definindo 2 casas decimais
-                  allowNegative={false} // Desativar caso não queira permitir valores negativos
-                  fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
-                  onValueChange={(values: any) => {
-                    const unitaryValue = values.floatValue || 0;
-                    const amount = form.getFieldValue('amount');
-                    handleAmountAndUnitaryValueChange(amount, unitaryValue);
-                  }}
+                <CurrencyInput
+                  props={undefined}
+                  handleMoeda={handleSetUnitaryValue}
+                  value={unitaryValue}
                 />
               </Form.Item>
             </Col>
@@ -611,14 +663,10 @@ const ModalObjectResource = ({
                 name={['estimatedTotalValue']}
                 label="Valor total estimado"
               >
-                <CurrencyFormat
-                  className="input-mask-date"
-                  prefix="R$ "
-                  thousandSeparator="."
-                  decimalSeparator=","
-                  decimalScale={2} // Definindo 2 casas decimais
-                  allowNegative={false} // Desativar caso não queira permitir valores negativos
-                  fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
+                <CurrencyInput
+                  props={undefined}
+                  handleMoeda={handleSetEstimatedTotalValue}
+                  value={estimatedTotalValue}
                 />
               </Form.Item>
             </Col>
@@ -629,15 +677,11 @@ const ModalObjectResource = ({
                 label="Valor executado"
                 hasFeedback
               >
-                <CurrencyFormat
-                  className="input-mask-date"
-                  prefix="R$ "
-                  thousandSeparator="."
-                  decimalSeparator=","
-                  decimalScale={2}
-                  allowNegative={false}
-                  fixedDecimalScale
-                />*/}
+                <CurrencyInput
+                  props={undefined}
+                  handleMoeda={handleSetExecutedValue}
+                  value={executedValue}
+                />
               </Form.Item>
             </Col>
 

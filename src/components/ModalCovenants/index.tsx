@@ -24,6 +24,7 @@ import {
 } from '../../hooks/covenantAuthor';
 import { getAuthor } from '../../hooks/uthorService';
 import ModalAuthor from '../ModalAuthor';
+import CurrencyInput from '../InputDinheiro';
 
 const { TextArea } = Input;
 
@@ -70,9 +71,15 @@ const ModalCovenants = ({
   }>({});
   const [currentcovenantAuthor, setCurrentAuthor] = useState<DataType[]>([]);
   // Estado para controlar os valores de repasse e contrapartida
-  const [repasse, setRepasse] = useState(0);
-  const [contrapartida, setContrapartida] = useState(0);
+
   const [showModal, setShowModal] = useState(false);
+
+  const [globalValue, setGlobalValue] = useState<string>('');
+  const [balance, setBalance] = useState<string>('');
+  const [counterpartValue, setCounterpartValue] = useState<string>('');
+  const [transferAmount, setTransferAmount] = useState<string>('');
+
+  const [contributionValue, setContributionValue] = useState<string>('');
 
   const [form] = Form.useForm();
   // criação de convêncios
@@ -95,7 +102,16 @@ const ModalCovenants = ({
   //Listagem, se tiver id set no formulário
   useEffect(() => {
     loadingCovenants();
+    resetDados();
   }, [id]);
+
+  const resetDados = () => {
+    setGlobalValue('');
+    setBalance('');
+    setCounterpartValue('');
+    setTransferAmount('');
+    setContributionValue('');
+  };
 
   async function loadingCovenants() {
     if (id) {
@@ -115,6 +131,12 @@ const ModalCovenants = ({
             balance: response.data.balance, // Saldo
             covenantAuthor: response.data.covenantAuthor, //conveio/autor
           });
+
+          setGlobalValue(response.data.globalValue);
+          setBalance(response.data.balance);
+          setCounterpartValue(response.data.counterpartValue);
+          setTransferAmount(response.data.transferAmount);
+
           setcovenantAuthor(response.data.covenantAuthor || []);
           setCurrentAuthor(response.data.covenantAuthor || []);
         } else {
@@ -226,7 +248,7 @@ const ModalCovenants = ({
   //incluindo dados no convencio/autor pelo convênio
   const handleCreateCovenantsAuthor = () => {
     if (savedgrauthorsId && selectedAuthor) {
-      const contributionValue = selectedContValue || 'R$ 0.000,00';
+      const contributionValue = selectedContValue || '0.000,00';
       const covenantAuthorData = {
         covenants: savedgrauthorsId,
         // convenio
@@ -261,10 +283,10 @@ const ModalCovenants = ({
         editingCovenants[field] = defaultValue;
       }
     };
-    setDefaultCurrencyValue('transferAmount', 'R$ 0.000,00');
-    setDefaultCurrencyValue('counterpartValue', 'R$ 0.000,00');
-    setDefaultCurrencyValue('globalValue', 'R$ 0.000,00');
-    setDefaultCurrencyValue('balance', 'R$ 0.000,00');
+    setDefaultCurrencyValue('transferAmount', '0.000,00');
+    setDefaultCurrencyValue('counterpartValue', '0.000,00');
+    setDefaultCurrencyValue('globalValue', '0.000,00');
+    setDefaultCurrencyValue('balance', '0.000,00');
 
     // Agora, atualize os detalhes do convênio
     await atualizarConvenio(editingCovenants);
@@ -288,10 +310,10 @@ const ModalCovenants = ({
         editingCovenants[field] = defaultValue;
       }
     };
-    setDefaultCurrencyValue('transferAmount', 'R$ 0.000,00');
-    setDefaultCurrencyValue('counterpartValue', 'R$ 0.000,00');
-    setDefaultCurrencyValue('globalValue', 'R$ 0.000,00');
-    setDefaultCurrencyValue('balance', 'R$ 0.000,00');
+    setDefaultCurrencyValue('transferAmount', '0.000,00');
+    setDefaultCurrencyValue('counterpartValue', '0.000,00');
+    setDefaultCurrencyValue('globalValue', '0.000,00');
+    setDefaultCurrencyValue('balance', '0.000,00');
 
     await salvarConvenio(editingCovenants);
   };
@@ -316,10 +338,9 @@ const ModalCovenants = ({
   }
 
   // Função para calcular a soma e atualizar o estado do valor global
-  const calcularValorGlobal = () => {
-    const repasseValue = form.getFieldValue('transferAmount') || 'R$ 0,00';
-    const contrapartidaValue =
-      form.getFieldValue('counterpartValue') || 'R$ 0,00';
+  const calcularValorGlobal = (transferAmount: any, counterpartValue: any) => {
+    const repasseValue = transferAmount || '0,00';
+    const contrapartidaValue = counterpartValue || '0,00';
 
     const repasseNumber = parseFloat(
       repasseValue.replace('R$ ', '').replace('.', '').replace(',', '.'),
@@ -329,22 +350,20 @@ const ModalCovenants = ({
     );
 
     const valorGlobal = (repasseNumber + contrapartidaNumber).toFixed(2);
+    const number = parseFloat(valorGlobal);
+
+    const formattedValue = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      maximumFractionDigits: 2,
+    }).format(number);
+
+    const valorSemSimbolo = formattedValue.replace(/R\$\s?/, '');
+
     form.setFieldsValue({
-      globalValue: 'R$ ' + valorGlobal.replace('.', ','),
+      globalValue: valorSemSimbolo,
     });
   };
-  // Função para lidar com a mudança no campo de repasse
-  const handleRepasseChange = (value: any) => {
-    setRepasse(value);
-    calcularValorGlobal();
-  };
-
-  // Função para lidar com a mudança no campo de contrapartida
-  const handleContrapartidaChange = (value: any) => {
-    setContrapartida(value);
-    calcularValorGlobal();
-  };
-
   useEffect(() => {
     setShowModal(false);
   }, []);
@@ -367,8 +386,40 @@ const ModalCovenants = ({
     setSelectedAuthor(null);
     setcovenantAuthor([]);
     setSavedgrauthorsId({});
-    setRepasse(0);
-    setContrapartida(0);
+  };
+
+  const handleSetGlobalValue = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setGlobalValue(valorSemSimbolo);
+    form.setFieldsValue({ globalValue: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+  };
+
+  const handleSetBalance = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setBalance(valorSemSimbolo);
+    form.setFieldsValue({ balance: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+  };
+
+  const handleSetTransferAmount = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setTransferAmount(valorSemSimbolo);
+    calcularValorGlobal(valorSemSimbolo, counterpartValue);
+
+    form.setFieldsValue({ transferAmount: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+  };
+
+  const handleSetCounterpartValue = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setCounterpartValue(valorSemSimbolo);
+    calcularValorGlobal(transferAmount, valorSemSimbolo);
+    form.setFieldsValue({ counterpartValue: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+  };
+
+  const handleSetContributionValue = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setContributionValue(valorSemSimbolo);
+    setSelectedContValue(valorSemSimbolo);
+    form.setFieldsValue({ contributionValue: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
   };
 
   return (
@@ -452,15 +503,10 @@ const ModalCovenants = ({
                   label="Valor do repasse"
                   hasFeedback
                 >
-                  {/* <CurrencyFormat
-                    className="input-mask-date"
-                    prefix="R$ "
-                    thousandSeparator="."
-                    decimalSeparator="," //
-                    decimalScale={2} // Definindo 2 casas decimais
-                    allowNegative={false} // Desativar caso não queira permitir valores negativos
-                    fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
-                    onChange={(e: any) => handleRepasseChange(e.target.value)}
+                  <CurrencyInput
+                    props={undefined}
+                    handleMoeda={handleSetTransferAmount}
+                    value={transferAmount}
                   />
                 </Form.Item>
               </Col>
@@ -470,44 +516,29 @@ const ModalCovenants = ({
                   label="Valor contrapartida"
                   hasFeedback
                 >
-                  <CurrencyFormat
-                    className="input-mask-date"
-                    prefix="R$ "
-                    thousandSeparator="."
-                    decimalSeparator="," //
-                    decimalScale={2} // Definindo 2 casas decimais
-                    allowNegative={false} // Desativar caso não queira permitir valores negativos
-                    fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
-                    onChange={(e: any) =>
-                      handleContrapartidaChange(e.target.value)
-                    }
+                  <CurrencyInput
+                    props={undefined}
+                    handleMoeda={handleSetCounterpartValue}
+                    value={counterpartValue}
                   />
                 </Form.Item>
               </Col>
               <Col span={6}>
                 <Form.Item name={['globalValue']} label="Valor global">
-                  <CurrencyFormat
-                    className="input-mask-date"
-                    prefix="R$ "
-                    thousandSeparator="."
-                    decimalSeparator="," //
-                    decimalScale={2} // Definindo 2 casas decimais
-                    allowNegative={false} // Desativar caso não queira permitir valores negativos
-                    fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
+                  <CurrencyInput
+                    props={undefined}
+                    handleMoeda={handleSetGlobalValue}
+                    value={globalValue}
                   />
                 </Form.Item>
               </Col>
 
               <Col span={6}>
                 <Form.Item name={['balance']} label="Saldo" hasFeedback>
-                  <CurrencyFormat
-                    className="input-mask-date"
-                    prefix="R$ "
-                    thousandSeparator="."
-                    decimalSeparator="," //
-                    decimalScale={2} // Definindo 2 casas decimais
-                    allowNegative={false} // Desativar caso não queira permitir valores negativos
-                    fixedDecimalScale // Garante que o número de casas decimais seja fixo em 2
+                  <CurrencyInput
+                    props={undefined}
+                    handleMoeda={handleSetBalance}
+                    value={balance}
                   />
                 </Form.Item>
               </Col>
@@ -555,6 +586,12 @@ const ModalCovenants = ({
                   label="Valor"
                   hasFeedback
                 >
+                  <CurrencyInput
+                    props={undefined}
+                    handleMoeda={handleSetContributionValue}
+                    value={contributionValue}
+                  />
+                  {/*}
                   <CurrencyFormat
                     className="input-mask-date"
                     prefix="R$ "
@@ -567,7 +604,7 @@ const ModalCovenants = ({
                     onValueChange={values => {
                       setSelectedContValue(values.formattedValue);
                     }}
-                  /> */}
+                  />*/}
                 </Form.Item>
               </Col>
               <Button

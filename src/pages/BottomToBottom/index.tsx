@@ -141,7 +141,8 @@ export default function BottomToBottom() {
       },
       {
         title: 'Saldo',
-        dataIndex: 'id', // Use 'id' como dataIndex para acessar o valor correto em 'results'
+        //dataIndex: 'id', // Use 'id' como dataIndex para acessar o valor correto em 'results'
+        dataIndex: 'balance', // fiz alteração para balance'
         key: 'balance',
         width: '12%',
       },
