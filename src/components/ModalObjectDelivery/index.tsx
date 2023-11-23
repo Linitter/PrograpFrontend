@@ -185,7 +185,7 @@ const ModalObjectDelivery = ({
 
             <Col span={6}>
               <Form.Item name={['amount']} label="Quantidade">
-                <Input />
+                <Input type="number" />
               </Form.Item>
             </Col>
 

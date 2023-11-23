@@ -11,10 +11,10 @@
   bottom: 665px;
   right: 190px;
   display: inline-block;
-  padding: 12px 95px 1px 13px; 
+  padding: 12px 95px 1px 13px;
   border: 2px solid #cebe8a;
-  box-shadow: 2px 2px 4px rgb(0, 21, 42); 
-} 
+  box-shadow: 2px 2px 4px rgb(0, 21, 42);
+}
 /* Estilize o tooltip */
 .custom-bar  .apexcharts-tooltip {
   color: #030303 !important; /* Cor do texto (importante para substituir as configurações padrão) */
@@ -34,7 +34,7 @@
 }
 .invest-cust{
   color: #bd9e5a;
-  text-shadow: 2px 2px 4px rgba(158, 154, 154, 0.5); 
+  text-shadow: 2px 2px 4px rgba(158, 154, 154, 0.5);
   font-weight: bold; /* Define a espessura da fonte como "bold" para tornar os números mais grossos */
 
 }
@@ -44,9 +44,9 @@
   left: 308px; /* Defina a posição horizontal desejada */
   bottom: 483px;
   display: inline-block;
-  padding: 20px 50px 15px 10px; 
+  padding: 20px 50px 15px 10px;
   border: 2px solid #cebe8a;
-  box-shadow: 2px 2px 4px rgb(0, 21, 42); 
+  box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-width: 500px;
   max-height: 220px;
  }
@@ -70,7 +70,7 @@
  }
 .repas-ano{
   color: #bd9e5a;
-  text-shadow: 2px 2px 4px rgba(158, 154, 154, 0.5); 
+  text-shadow: 2px 2px 4px rgba(158, 154, 154, 0.5);
   font-weight: bold; /* Define a espessura da fonte como "bold" para tornar os números mais grossos */
   text-align: left;
   position: relative;
@@ -78,7 +78,7 @@
 }
 .total-value{
   color: #bd9e5a;
-  text-shadow: 2px 2px 4px rgba(158, 154, 154, 0.5); 
+  text-shadow: 2px 2px 4px rgba(158, 154, 154, 0.5);
   font-weight: bold; /* Define a espessura da fonte como "bold" para tornar os números mais grossos */
   position: relative;
   top: 5px;
@@ -91,10 +91,10 @@
   right: 690px;
   display: inline-block;
   border: 2px solid #cebe8a;
-  box-shadow: 2px 1px 5px rgb(0, 21, 42); 
+  box-shadow: 2px 1px 5px rgb(0, 21, 42);
   max-width: 40%; /* Ajuste a largura desejada */
   max-height: 10%;
-} 
+}
 /* Estilize o tooltip */
 .custom-bar-vertical  .apexcharts-tooltip {
   color: #070707 !important; /* Cor do texto (importante para substituir as configurações padrão) */
@@ -113,7 +113,7 @@
   left: 820px;
   bottom: 910px;
   position: relative;
-  padding: 35px 8px 278px 8px; 
+  padding: 35px 8px 278px 8px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-height: 427px; /* Defina a altura máxima desejada */
@@ -132,9 +132,9 @@
   left: 623px;
   bottom: 900px;
   position: relative;
-  padding: 40px 8px 42px 8px; 
+  padding: 40px 8px 42px 8px;
   border: 2px solid #cebe8a;
-  box-shadow: 2px 2px 4px rgb(0, 21, 42); 
+  box-shadow: 2px 2px 4px rgb(0, 21, 42);
   overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
   max-height: 252px; /* Defina a altura máxima desejada */
   width: 63.2%;
@@ -236,10 +236,10 @@ h4{
 /* tabela, alteração de cor */
 /* cor da linha dos titulos */
 .custom-table-row {
-  background-color: rgba(214, 90, 90, 0.25); 
+  background-color: rgba(214, 90, 90, 0.25);
 }
 .custom-table-dashboard thead tr {
-  background-color: #bd9e5a;  
+  background-color: #bd9e5a;
   color: black;
 
 }
@@ -275,7 +275,7 @@ h4{
   }
   .checkbox-type{
     padding: 5px 28px 1px 10px;
-    
+
   }
   .checkbox-year{
     padding: 5px 85px 0px 8px;
@@ -310,10 +310,10 @@ h4{
     position: relative;
     bottom: 610px;
     right: 145px;
-    padding: 5px 140px 10px 5px; 
+    padding: 5px 140px 10px 5px;
     display: inline-block;
     border: 2px solid #cebe8a;
-    box-shadow: 2px 2px 4px rgb(0, 21, 42); 
+    box-shadow: 2px 2px 4px rgb(0, 21, 42);
     max-width: 350px;
     max-height: 165px;
   }
@@ -331,13 +331,13 @@ h4{
     left: 205px; /* Defina a posição horizontal desejada */
     bottom: 460px;
     display: inline-block;
-    padding: 5px 0px 1px 10px; 
+    padding: 5px 0px 1px 10px;
     border: 2px solid #cebe8a;
-    box-shadow: 2px 2px 4px rgb(0, 21, 42); 
+    box-shadow: 2px 2px 4px rgb(0, 21, 42);
     max-width: 350px;
     max-height: 280px;
    }
-   
+
   .pie-chart{
     display: inline-block;
     position: relative;
@@ -349,7 +349,7 @@ h4{
     display: inline-block;
     position: relative;
     top: 70px;
-  
+
    }
      .custom-bar-vertical{
     position: relative;
@@ -357,17 +357,17 @@ h4{
     right: 495px; /* Defina a posição horizontal desejada */
     display: inline-block;
     border: 2px solid #cebe8a;
-    box-shadow: 2px 2px 5px rgb(0, 21, 42); 
+    box-shadow: 2px 2px 5px rgb(0, 21, 42);
     max-width: 250px; /* Ajuste a largura desejada */
-    
-  
-  } 
+
+
+  }
   .table-object{
     display: inline-block;
     left: 570px;
     bottom: 802px;
     position: relative;
-    padding: 12px 2px 170px 2px; 
+    padding: 12px 2px 170px 2px;
     border: 2px solid #cebe8a;
     box-shadow: 2px 2px 4px rgb(0, 21, 42);
     max-height: 342px; /* Defina a altura máxima desejada */
@@ -380,9 +380,9 @@ h4{
     left: 470px;
     bottom: 790px;
     position: relative;
-    padding: 17px 25px 17px 30px; 
+    padding: 17px 25px 17px 30px;
     border: 2px solid #cebe8a;
-    box-shadow: 2px 2px 4px rgb(0, 21, 42); 
+    box-shadow: 2px 2px 4px rgb(0, 21, 42);
     max-height: 247px; /* Defina a altura máxima desejada */
     overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
     width: 63.2%;

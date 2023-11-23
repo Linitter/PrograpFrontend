@@ -302,6 +302,7 @@ const ModalObjectResource = ({
     const updatedCovenant = await updateObjectResource(e, id);
     updateResourceObjectsList(updatedCovenant);
   };
+
   const submitUpdate = async () => {
     const editingObjectsResource = form.getFieldsValue(true);
 
@@ -337,14 +338,9 @@ const ModalObjectResource = ({
     if (typeof unitaryValue === 'string') {
       const valorSemPontos = unitaryValue.replace(/\./g, ''); // Remove os pontos
 
-      console.log('a1', valorSemPontos);
       const numericUnitaryValue = parseFloat(valorSemPontos);
 
-      console.log('numericUnitaryValue', numericUnitaryValue);
-
       const estimatedTotalValue = numericAmount * numericUnitaryValue || 0;
-
-      console.log('estimatedTotalValue', estimatedTotalValue);
 
       const formattedEstimatedTotalValue = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
@@ -753,6 +749,7 @@ const ModalObjectResource = ({
                 <Col span={6}>
                   <Form.Item name={['expectedQuantity']} label="Qtde prevista">
                     <Input
+                      type="number"
                       onChange={e => {
                         setSelectExpectedQuant(e.target.value);
                       }}
