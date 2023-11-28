@@ -6,10 +6,11 @@ import { Checkbox } from 'antd';
 import './index.css';
 import Table, { ColumnsType } from 'antd/es/table';
 import { getObjectResource } from '../../../hooks/objectResourceService';
-import { getGoals } from '../../../hooks/goalService';
-import { getBottomToBottom } from '../../../hooks/bottomToBottom';
-import { CheckboxChangeEvent } from 'antd/es/checkbox';
 
+import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { getCovenants } from '../../../hooks/covenantsService';
+import { getAuthor } from '../../../hooks/uthorService';
+import { getCovenantAuthor } from '../../../hooks/covenantAuthor';
 interface DataType {
   key: React.Key;
   id: string;
@@ -25,8 +26,23 @@ interface DataType {
   description: string;
   balance: string;
   covenantAuthor: any[];
+  author: ExpandedDataTypeAuthor[];
+  contributionValue: any;
+  resourceObjects: ExpandedDataTypeObject[];
 }
 [];
+
+interface DataTypeConvenantsAuthor {
+  contributionValue: any;
+}
+
+// expensão da tabela de autor
+interface ExpandedDataTypeAuthor {
+  key: React.Key;
+  id: string;
+  name: string;
+  description: string;
+}
 
 // expensão da tabela de objetos/recursos
 interface ExpandedDataTypeObject {
@@ -38,9 +54,11 @@ interface ExpandedDataTypeObject {
   deliveryDate: string;
 }
 
-export default function GraficoConvents() {
-  const [convents, setConvents] = useState<DataType[]>([]); //fundo a fundo
+export default function GraficoConvenants() {
+  const [convenants, setConvenants] = useState<DataType[]>([]); //fundo a fundo
   const [objectResource, setObjectResource] = useState<any[]>([]); // obejtos/recusos
+  const [author, setAuthor] = useState<any[]>([]); // obejtos/recusos
+  const [convenantsAuthor, setCoventsAuthor] = useState<any[]>([]); // obejtos/recusos
 
   const [barChartData, setBarChartData] = useState<number[]>([0, 0]); // Initialize with zeros
   const [selectedAxes, setSelectedAxes] = useState<string[]>([]);
@@ -151,7 +169,66 @@ export default function GraficoConvents() {
     '#763568',
     '#00BCD4',
   ];
+  // Contar a quantidade de cada tipo de eixo e calcular a soma dos valores
+  const axleInfo: Record<string, { count: number; totalAmount: number }> = {};
+  convenants.forEach(item => {
+    const axleData = item.covenantAuthor;
+    if (typeof axleData === 'object' && axleData !== null) {
+      const axleName = (axleData as { name?: string }).name;
+      if (axleName) {
+        if (axleInfo[axleName]) {
+          axleInfo[axleName].count++;
+          axleInfo[axleName].totalAmount += parseFloat(
+            item.contributionValue.replace(/[^\d,]/g, '').replace(',', '.'),
+          );
+        } else {
+          axleInfo[axleName] = {
+            count: 1,
+            totalAmount: parseFloat(
+              item.contributionValue.replace(/[^\d,]/g, '').replace(',', '.'),
+            ),
+          };
+        }
+      }
+    }
+  });
 
+  // Criar rótulos personalizados para a legenda
+  const legendLabels = Object.keys(axleInfo).map(authorName => {
+    const { totalAmount } = axleInfo[authorName];
+    return `${authorName} - R$ ${totalAmount.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    })}`;
+  });
+  //grafico de pizzs
+  const donutChartOptions: ApexOptions = {
+    chart: {
+      type: 'donut',
+    },
+    legend: {
+      position: 'right',
+    },
+    labels: legendLabels,
+    colors: randomColors.slice(0, legendLabels.length),
+    series: Object.values(axleInfo).map(info => info.count), // Usar a contagem como valores das séries
+  };
+
+  //calculando a soma dos valores  de todos os eixos
+  const sumOfValues = convenantsAuthor.map(item => {
+    // Remova todos os caracteres não numéricos
+    const numericAmount = item.contributionValue.replace(/[^\d,]/g, '');
+
+    // Substitua a vírgula por ponto (para parse correto como número)
+    const cleanedAmount = numericAmount.replace(',', '.');
+
+    // Converta para um número de ponto flutuante
+    return parseFloat(cleanedAmount);
+  });
+  // Calcula o valor total
+  const totalAmount = sumOfValues.reduce((total, amount) => total + amount, 0);
+
+  // grafico vertical
   //Defina os status que você deseja acompanhar
   const statusToTrack = ['Entregue', 'Concluído', 'Em execução'];
 
@@ -253,6 +330,122 @@ export default function GraficoConvents() {
     colors: ['#00152A', '#af8e44', '#077776'],
   };
 
+  // TABELA de eixos com os itens somatoria
+  const columnsAxle: ColumnsType<DataType> = [
+    {
+      title: 'Eixo',
+      dataIndex: 'axle',
+      key: 'axle',
+      width: '42%',
+      render: axle => (axle ? `${axle.name} - ${axle.description}` : '*******'),
+    },
+    {
+      title: 'Itens',
+      dataIndex: 'axle', // Use 'axle' como índice, pois é como estamos mapeando as somas
+      key: 'amoutotalAmountnt',
+      width: '12%',
+      render: axle => {
+        const axleName =
+          axle && typeof axle === 'object'
+            ? (axle as { name: string }).name
+            : '';
+        const totalAmount = amountInfo[axleName] || 0; // Use o objeto resourceObjectsInfo para obter a soma
+        return totalAmount;
+      },
+    },
+    {
+      title: 'Valor total estimado',
+      dataIndex: 'axle', // Use 'axle' como índice, pois é como estamos mapeando as somas
+      key: 'estimatedTotalValue',
+      width: '20%', // Ajuste a largura conforme necessário
+      render: axle => {
+        const axleName =
+          axle && typeof axle === 'object'
+            ? (axle as { name: string }).name
+            : '';
+        const totalEstimatedValue = estimatedTotalValueInfo[axleName] || 0;
+
+        // Formate o valor para o formato monetário (Real)
+        const formattedValue = totalEstimatedValue.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        });
+
+        return formattedValue;
+      },
+    },
+
+    {
+      title: 'Valor Executado',
+      dataIndex: 'axle',
+      key: 'executedValue',
+      width: '20%', // Ajuste a largura conforme necessário
+      render: axle => {
+        const axleName =
+          axle && typeof axle === 'object'
+            ? (axle as { name: string }).name
+            : '';
+        const executedValue = executedValueInfo[axleName] || 0;
+
+        // Formate o valor para o formato monetário (Real)
+        const formattedValue = executedValue.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        });
+
+        return formattedValue;
+      },
+    },
+  ];
+
+  // Função para calcular a soma de 'amount' referente aos obejtos por eixo
+  const amountInfo: Record<string, number> = {}; // quantidade
+  const estimatedTotalValueInfo: Record<string, number> = {}; // total estimado
+  const executedValueInfo: Record<string, number> = {}; //valor executado
+
+  convenants.forEach(convenants => {
+    convenants.resourceObjects.forEach((objectResourceItem: any) => {
+      const amount = parseFloat(objectResourceItem.amount);
+      const estimatedTotalValue = parseFloat(
+        objectResourceItem.estimatedTotalValue
+          .replace(/[^\d,]/g, '')
+          .replace(',', '.'),
+      );
+      const executedValue = parseFloat(
+        objectResourceItem.executedValue
+          .replace(/[^\d,]/g, '')
+          .replace(',', '.'),
+      );
+      if (!isNaN(amount)) {
+        const axleName = '';
+        if (
+          typeof convenants.author === 'object' &&
+          convenants.author !== null
+        ) {
+          const axleData = author;
+          const axleName = (axleData as { name?: string }).name;
+        }
+        // Use o nome do "eixo" ou outra chave de identificação para agrupar as somas
+        if (axleName) {
+          if (amountInfo[axleName]) {
+            amountInfo[axleName] += amount;
+          } else {
+            amountInfo[axleName] = amount;
+          }
+          if (estimatedTotalValueInfo[axleName]) {
+            estimatedTotalValueInfo[axleName] += estimatedTotalValue;
+          } else {
+            estimatedTotalValueInfo[axleName] = estimatedTotalValue;
+          }
+          if (executedValueInfo[axleName]) {
+            executedValueInfo[axleName] += executedValue;
+          } else {
+            executedValueInfo[axleName] = executedValue;
+          }
+        }
+      }
+    });
+  });
   // tabela de eixo
   const columns: ColumnsType<DataType> = [
     {
@@ -269,6 +462,54 @@ export default function GraficoConvents() {
       width: '20%',
     },
   ];
+  // LISTAGEM DE EIXOS
+  // TABELA DE METAS
+  const expandedRowRender = (record: any) => {
+    //adicionar uma chave única para cada DESTINAÇÃO usando o índice
+    const goalWithKeys = author.map((author, index) => ({
+      ...author,
+      key: `author_${index}`,
+    }));
+    // filtra as metas vinculados com um fundo a fundo
+    const filteredGoal = goalWithKeys.filter(
+      author => author.c?.id === record.id,
+    );
+    // tabela do fundo a fundo
+    const columns: TableColumnsType<ExpandedDataTypeAuthor> = [
+      {
+        title: 'Meta',
+        dataIndex: 'description',
+        key: 'description',
+        width: '50%',
+      },
+      {
+        title: 'Valor previsto',
+        dataIndex: 'predictedValue',
+        key: 'predictedValue',
+        width: '30%',
+        render: (value: any) => value || '*********',
+      },
+      {
+        title: 'Saldo',
+        dataIndex: 'balance',
+        key: 'balance',
+        width: '50%',
+        render: (value: any) => value || '*********',
+      },
+    ];
+
+    return (
+      <Table
+        columns={columns}
+        dataSource={filteredGoal}
+        pagination={false}
+        expandable={{
+          expandedRowRender: expandedRowRenderObject,
+        }}
+        rowClassName={() => 'custom-table-destiny'} // Defina o nome da classe para o estilo personalizado
+      />
+    );
+  };
 
   const expandedRowRenderObject = (record: any) => {
     const objectWithKeys = objectResource.map((objectResource, index) => ({
@@ -344,22 +585,31 @@ export default function GraficoConvents() {
 
   // funções de listagem
   useEffect(() => {
-    loadingbottomToBottomForm();
-    loadingGoalForm();
+    loadingConvenantsForm();
+    loadingAuthorForm();
+    loadingCoventsAuthorForm();
     loadingObjectResourceForm();
   }, []);
 
-  async function loadingbottomToBottomForm() {
-    const response = await getBottomToBottom('bottomToBottom');
+  async function loadingConvenantsForm() {
+    const response = await getCovenants('covenants');
     if (response !== false) {
-      setConvents(response.data);
+      setConvenants(response.data);
     }
   }
 
-  async function loadingGoalForm() {
-    const response = await getGoals('goals');
+  async function loadingAuthorForm() {
+    const response = await getAuthor('author');
     if (response !== false) {
-      //      setGoal(response.data);
+      setAuthor(response.data);
+    }
+  }
+
+  async function loadingCoventsAuthorForm() {
+    const response = await getCovenantAuthor('covenantAuthor');
+    if (response !== false) {
+      setCoventsAuthor(response.data);
+      console.log('cA', response.data);
     }
   }
 
@@ -412,13 +662,13 @@ export default function GraficoConvents() {
 
   //Parte doss filtros do checkbox
   useEffect(() => {
-    const filteredTableData = convents
+    const filteredTableData = convenants
       .filter(filterBySelectedYearsAndAxes)
       .map(item => mapGoalsAndFilterResourceObjects(item))
-      .filter(item => item.goal.length > 0);
+      .filter(item => item.author > 0);
     setFilteredData(filteredTableData);
   }, [
-    convents,
+    convenants,
     selectedAxes,
     selectedYears,
     selectedStatus,
@@ -577,13 +827,35 @@ export default function GraficoConvents() {
         </div>
       </div>
 
+      <div className="custom-donut">
+        {/* grafico de pizza */}
+        <h3>Valor do eixo</h3>
+        <div className="pass-value">
+          <h4>Valor Total</h4>
+          {/* Exibe o valor total com a formatação "R$ 54.654,00" */}
+          <p className="total-value">
+            {totalAmount.toLocaleString('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            })}
+          </p>
+        </div>
+        <ReactApexChart
+          className="pie-chart"
+          options={donutChartOptions}
+          series={donutChartOptions.series}
+          type="donut"
+          id="donutChart" // Adicione um ID ao gráfico
+        />
+      </div>
+
       <div className="custom-bar">
         {/* grafico em barra horizontal */}
-        <h3>Tipo de despesa</h3>
+        <h3>Tipo de emenda</h3>
         <div className="total-expense-amount">
-          <h4>Investimento</h4>
+          <h4>Bancada</h4>
           <p className="invest-cust">{barChartData[0].toFixed(2)}%</p>
-          <h4>Custeio</h4>
+          <h4>Individual</h4>
           <p className="invest-cust">{barChartData[1].toFixed(2)}%</p>
         </div>
         <ReactApexChart
@@ -611,10 +883,22 @@ export default function GraficoConvents() {
           rowKey="key"
           dataSource={filteredData}
           expandable={{
+            expandedRowRender,
             defaultExpandedRowKeys: ['0'],
           }}
           rowClassName={() => 'custom-table-row'} // Defina o nome da classe para o estilo personalizado
           className="custom-table-dashboard"
+          pagination={false}
+        />
+      </div>
+      <div className="table-axle">
+        {/* tabelas de eixos com somatoria */}
+        <Table
+          columns={columnsAxle}
+          rowKey="name"
+          dataSource={convenants} // Use os dados atualizados da tabela
+          className="custom-table-dashboard"
+          rowClassName={() => 'custom-table-row'} // Defina o nome da classe para o estilo personalizado
           pagination={false}
         />
       </div>
