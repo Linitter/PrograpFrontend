@@ -5,26 +5,25 @@
   display: none !important;
 }
 
-
-.custom-bar {
+.custom-bar-convenants {
   position: relative;
-  bottom: 665px;
+  bottom: 610px;
   right: 190px;
   display: inline-block;
-  padding: 12px 95px 1px 13px;
+  padding: 12px 100px 1px 13px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
 }
 /* Estilize o tooltip */
-.custom-bar  .apexcharts-tooltip {
+.custom-bar-convenants  .apexcharts-tooltip {
   color: #030303 !important; /* Cor do texto (importante para substituir as configurações padrão) */
 }
 
-.total-expense-amount{
-  left: 74px;
+.total-expense-amount-convenants{
+  left: 65px;
   display: inline-block;
   position: relative;
-  top: 26px;
+  top: 0px;
   }
 .bar-chart{
   display: inline-block;
@@ -32,7 +31,7 @@
   bottom: 15px;
   float: left;
 }
-.invest-cust{
+.invest-cust-convenants{
   color: #bd9e5a;
   text-shadow: 2px 2px 4px rgba(158, 154, 154, 0.5);
   font-weight: bold; /* Define a espessura da fonte como "bold" para tornar os números mais grossos */
@@ -85,7 +84,7 @@
 }
 
 /* GRAFICO EM BARRA VERTICAL */
-.custom-bar-vertical{
+.custom-bar-convenants-vertical{
   position: relative;
   bottom: 90px;
   right: 690px;
@@ -96,7 +95,7 @@
   max-height: 10%;
 }
 /* Estilize o tooltip */
-.custom-bar-vertical  .apexcharts-tooltip {
+.custom-bar-convenants-vertical  .apexcharts-tooltip {
   color: #070707 !important; /* Cor do texto (importante para substituir as configurações padrão) */
 }
 
@@ -108,7 +107,7 @@
 
 /* estilização da tabela de eixos */
 
-.table-object{
+.table-object-convenants{
   display: inline-block;
   left: 820px;
   bottom: 910px;
@@ -121,7 +120,7 @@
   overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
 }
 /* Estilize o scrollbar apenas dentro da table ad eobjetos*/
-.table-object::-webkit-scrollbar {
+.table-object-convenants::-webkit-scrollbar {
   width: 7px; /* Largura desejada para o scrollbar do .checkbox-year */
   background-color:  rgba(0, 0, 0, 0.25); /* Cor da alça da barra de rolagem */
 
@@ -262,8 +261,8 @@ h4{
   .checkbox-axle h3,
   .checkbox-status h3,
   .checkbox-date h3,
-  .custom-bar h3,
-  .custom-bar-vertical h3 {
+  .custom-bar-convenants h3,
+  .custom-bar-convenants-vertical h3 {
     font-size: 12px; /* Tamanho de fonte menor para telas menores */
     margin-bottom: 5px; /* Espaçamento menor entre os elementos */
   }
@@ -306,7 +305,7 @@ h4{
 }
 
 @media screen and (max-width: 1370px) {
-  .custom-bar {
+  .custom-bar-convenants {
     position: relative;
     bottom: 610px;
     right: 145px;
@@ -320,7 +319,7 @@ h4{
   .bar-chart{
     bottom: 80px
   }
-  .total-expense-amount{
+  .total-expense-amount-convenants{
     left: 240px;
     display: inline-block;
     position: relative;
@@ -351,7 +350,7 @@ h4{
     top: 70px;
 
    }
-     .custom-bar-vertical{
+     .custom-bar-convenants-vertical{
     position: relative;
     bottom: 105px;
     right: 495px; /* Defina a posição horizontal desejada */
@@ -362,7 +361,7 @@ h4{
 
 
   }
-  .table-object{
+  .table-object-convenants{
     display: inline-block;
     left: 570px;
     bottom: 802px;

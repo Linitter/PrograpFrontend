@@ -18,6 +18,7 @@ interface DataType {
   source: string;
   year: string;
   amendmentNumber: string;
+  amendment: string;
   agreementNumber: string;
   processNumber: string;
   transferAmount: string;
@@ -87,7 +88,7 @@ export default function GraficoConvenants() {
         },
       },
     },
-    colors: ['#00152A', '#af8e44'],
+    colors: ['#00152A', '#af8e44', '#373D3F'],
 
     dataLabels: {
       enabled: true,
@@ -105,7 +106,7 @@ export default function GraficoConvenants() {
     },
 
     xaxis: {
-      categories: ['Investimento', 'Custeio'],
+      categories: ['Bancada', 'Individual', 'Especial'],
     },
     yaxis: {
       max: 100, // Define o valor máximo do eixo y como 100
@@ -132,30 +133,47 @@ export default function GraficoConvenants() {
   };
 
   useEffect(() => {
-    if (objectResource.length > 0) {
+    if (convenants.length > 0) {
       // Filtrar os objetos que têm o campo goal definido
-      const fundoAFundoObjects = objectResource.filter(
-        obj => obj.goal !== undefined && obj.goal !== null,
+      const convenantsObjects = convenants.filter(
+        convenants =>
+          convenants.resourceObjects !== undefined &&
+          convenants.resourceObjects !== null,
       );
       // Filtrar os objetos relacionados ao fundo a fundo
-      const investimentoCount = fundoAFundoObjects.filter(
-        obj => obj.natureExpense === 'Investimento',
+      const bancadaCount = convenantsObjects.filter(
+        convenants => convenants.amendment === 'Bancada',
       ).length;
 
-      const custeioCount = fundoAFundoObjects.filter(
-        obj => obj.natureExpense === 'Custeio',
+      const individualCount = convenantsObjects.filter(
+        convenants => convenants.amendment === 'Individual',
       ).length;
 
-      const total = investimentoCount + custeioCount;
-      const investimentoPercentage = parseFloat(
-        ((investimentoCount / total) * 100).toFixed(2),
-      );
-      const custeioPercentage = parseFloat(
-        ((custeioCount / total) * 100).toFixed(2),
-      );
-      setBarChartData([investimentoPercentage, custeioPercentage]);
+      const especialCount = convenantsObjects.filter(
+        convenants => convenants.amendment === 'Especial',
+      ).length;
+
+      const total = bancadaCount + individualCount + especialCount;
+      console.log('total', total);
+      if (total !== 0) {
+        const bancadaPercentage = parseFloat(
+          ((bancadaCount / total) * 100).toFixed(2),
+        );
+        const individualPercentage = parseFloat(
+          ((individualCount / total) * 100).toFixed(2),
+        );
+
+        const especialPercentage = parseFloat(
+          ((especialCount / total) * 100).toFixed(2),
+        );
+        setBarChartData([
+          bancadaPercentage,
+          individualPercentage,
+          especialPercentage,
+        ]);
+      }
     }
-  }, [objectResource]);
+  }, [convenants]);
 
   // grafico de pizza
   // criando cores aleatórias para o grafico
@@ -449,17 +467,17 @@ export default function GraficoConvenants() {
   // tabela de eixo
   const columns: ColumnsType<DataType> = [
     {
-      title: 'Eixo',
-      dataIndex: 'axle',
-      key: 'axle',
-      width: '85%',
-      render: axle => (axle ? `${axle.name} - ${axle.description}` : '*******'),
+      title: 'Autor',
+      dataIndex: 'name',
+      key: 'name',
+      width: '75%',
     },
     {
-      title: 'Ano',
-      dataIndex: 'year',
-      key: 'year',
-      width: '20%',
+      title: 'valor',
+      dataIndex: 'id',
+      key: 'id',
+      width: '25%',
+      render: (id: string) => somarValorTotal(id) || '', // Renderiza o valor total do autor
     },
   ];
   // LISTAGEM DE EIXOS
@@ -474,6 +492,8 @@ export default function GraficoConvenants() {
     const filteredGoal = goalWithKeys.filter(
       author => author.c?.id === record.id,
     );
+    console.log('con', convenants);
+
     // tabela do fundo a fundo
     const columns: TableColumnsType<ExpandedDataTypeAuthor> = [
       {
@@ -609,7 +629,6 @@ export default function GraficoConvenants() {
     const response = await getCovenantAuthor('covenantAuthor');
     if (response !== false) {
       setCoventsAuthor(response.data);
-      console.log('cA', response.data);
     }
   }
 
@@ -662,64 +681,50 @@ export default function GraficoConvenants() {
 
   //Parte doss filtros do checkbox
   useEffect(() => {
-    const filteredTableData = convenants
-      .filter(filterBySelectedYearsAndAxes)
-      .map(item => mapGoalsAndFilterResourceObjects(item))
-      .filter(item => item.author > 0);
-    setFilteredData(filteredTableData);
-  }, [
-    convenants,
-    selectedAxes,
-    selectedYears,
-    selectedStatus,
-    selectedNatureExpense,
-  ]);
+    author.forEach((item: any) => {
+      somarValorTotal(item);
+    });
+  }, [author]);
 
-  function filterBySelectedYearsAndAxes(item: any) {
-    const isYearSelected =
-      selectedYears.length === 0 ||
-      selectedYears.includes(item.year?.toString());
-    const isAxisSelected =
-      selectedAxes.length === 0 || selectedAxes.includes(item.axle?.name);
+  const somarValorTotal = (authorId: any) => {
+    let soma = 0; // Initialize soma as a number
 
-    const hasSelectedStatus =
-      selectedStatus.length === 0 ||
-      item.goal.some((goalItem: any) => {
-        const resourceObjects = goalItem.resourceObjects;
-        return resourceObjects.some((objectResourceItem: any) =>
-          selectedStatus.includes(objectResourceItem.status),
-        );
-      });
-
-    // Adicione a verificação para a propriedade natureExpense
-    const hasSelectedNatureExpense =
-      selectedNatureExpense.length === 0 ||
-      item.goal.some((goalItem: any) => {
-        const resourceObjects = goalItem.resourceObjects;
-        return resourceObjects.some((objectResourceItem: any) =>
-          selectedNatureExpense.includes(objectResourceItem.natureExpense),
-        );
-      });
-
-    return (
-      isAxisSelected &&
-      isYearSelected &&
-      hasSelectedStatus &&
-      hasSelectedNatureExpense
+    const findAuthors = convenantsAuthor.filter(
+      (item: any) => item.authors.id === authorId,
     );
-  }
-  function mapGoalsAndFilterResourceObjects(item: any) {
-    const filteredGoals = item.goal?.map((goalItem: any) => {
-      const filteredResourceObjects = goalItem?.resourceObjects.filter(
+
+    findAuthors.forEach((item: any) => {
+      // Check if 'contributionValue' exists and is not null/undefined
+      const contributionValueAsNumber = parseFloat(item.contributionValue);
+      if (!isNaN(contributionValueAsNumber)) {
+        soma += contributionValueAsNumber;
+      }
+    });
+
+    const formattedSum = soma.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+    });
+
+    return formattedSum;
+  };
+
+  {
+    /*function mapGoalsAndFilterResourceObjects(item: any) {
+    console.log('i', item);
+    const filteredGoals = item.map((item: any) => {
+      const filteredResourceObjects = item?.resourceObjects.filter(
         (objectResourceItem: any) =>
           (selectedStatus.length === 0 ||
             selectedStatus.includes(objectResourceItem.status)) &&
           (selectedNatureExpense.length === 0 ||
             selectedNatureExpense.includes(objectResourceItem.natureExpense)),
       );
+      console.log('a', filteredResourceObjects);
 
       return {
-        ...goalItem,
+        ...item,
         resourceObjects: filteredResourceObjects,
       };
     });
@@ -729,6 +734,7 @@ export default function GraficoConvenants() {
       goal: filteredGoals,
       key: item.id,
     };
+  }*/
   }
   return (
     <>
@@ -849,14 +855,24 @@ export default function GraficoConvenants() {
         />
       </div>
 
-      <div className="custom-bar">
+      <div className="custom-bar-convenants">
         {/* grafico em barra horizontal */}
         <h3>Tipo de emenda</h3>
-        <div className="total-expense-amount">
+        <div className="total-expense-amount-convenants">
           <h4>Bancada</h4>
-          <p className="invest-cust">{barChartData[0].toFixed(2)}%</p>
+          <p className="invest-cust-convenants">
+            {barChartData[0].toFixed(2)}%
+          </p>
           <h4>Individual</h4>
-          <p className="invest-cust">{barChartData[1].toFixed(2)}%</p>
+          <p className="invest-cust-convenants">
+            {barChartData[1].toFixed(2)}%
+          </p>
+          <h4>Especial</h4>
+          <p className="invest-cust-convenants">
+            {barChartData[2] !== undefined
+              ? `${barChartData[2].toFixed(2)}%`
+              : 'N/A'}
+          </p>
         </div>
         <ReactApexChart
           className="bar-chart"
@@ -866,7 +882,7 @@ export default function GraficoConvenants() {
           height={140}
         />
       </div>
-      <div className="custom-bar-vertical">
+      <div className="custom-bar-convenants-vertical">
         <h3 className="h3Etapa">Etapa</h3>
         {/* grafico em bar vertical */}
         <ReactApexChart
@@ -876,12 +892,12 @@ export default function GraficoConvenants() {
           height={210}
         />
       </div>
-      <div className="table-object">
+      <div className="table-object-convenants">
         {/* tabela com expanção - eixos -> metas -> objetos */}
         <Table
           columns={columns}
           rowKey="key"
-          dataSource={filteredData}
+          dataSource={author}
           expandable={{
             expandedRowRender,
             defaultExpandedRowKeys: ['0'],
