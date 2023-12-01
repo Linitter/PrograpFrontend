@@ -8,10 +8,10 @@
 
 .custom-bar {
   position: relative;
-  bottom: 665px;
-  right: 190px;
+  bottom: 655px;
+  right: 191px;
   display: inline-block;
-  padding: 12px 95px 1px 13px;
+  padding: 12px 46px 1px 13px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
 }
@@ -21,10 +21,10 @@
 }
 
 .total-expense-amount{
-  left: 74px;
+  left: 40px;
   display: inline-block;
   position: relative;
-  top: 26px;
+  top: 10px;
   }
 .bar-chart{
   display: inline-block;
@@ -41,10 +41,10 @@
 /* MARGEM DO GRAFICO grafico de pizza, juntamente com os dados */
 .custom-donut {
   position: relative;
-  left: 308px; /* Defina a posição horizontal desejada */
+  left: 257px; /* Defina a posição horizontal desejada */
   bottom: 483px;
   display: inline-block;
-  padding: 20px 50px 15px 10px;
+  padding: 20px 0px 15px 10px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-width: 500px;
@@ -88,7 +88,7 @@
 .custom-bar-vertical{
   position: relative;
   bottom: 90px;
-  right: 690px;
+  right: 638px;
   display: inline-block;
   border: 2px solid #cebe8a;
   box-shadow: 2px 1px 5px rgb(0, 21, 42);
@@ -110,14 +110,14 @@
 
 .table-object{
   display: inline-block;
-  left: 820px;
-  bottom: 910px;
+  left: 740px;
+  bottom: 915px;
   position: relative;
   padding: 35px 8px 278px 8px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-height: 427px; /* Defina a altura máxima desejada */
-  width: 51.3%;
+  width: 50%;
   overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
 }
 /* Estilize o scrollbar apenas dentro da table ad eobjetos*/
@@ -129,15 +129,15 @@
 /* tabela de eixo */
 .table-axle{
   display: inline-block;
-  left: 623px;
-  bottom: 900px;
+  left: 580px;
+  bottom: 894px;
   position: relative;
-  padding: 40px 8px 42px 8px;
+  padding: 30px 8px 30px 8px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
   max-height: 252px; /* Defina a altura máxima desejada */
-  width: 63.2%;
+  width: 61%;
 }
 /* Estilize o scrollbar apenas dentro do componente .checkbox-year */
 .table-axle::-webkit-scrollbar {

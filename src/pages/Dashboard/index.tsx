@@ -11,12 +11,13 @@ export default function Dashboard() {
           <GraficoBottomToBottom />
         </div>
       </Tabs.TabPane>
-      <Tabs.TabPane key="2" tab="Classificações">
+      <Tabs.TabPane key="2" tab="Convênio">
         <div>
           <GraficoConvents />
         </div>
       </Tabs.TabPane>
-      <Tabs.TabPane key="3" tab="Camadas"></Tabs.TabPane>
+      {/*       <Tabs.TabPane key="3" tab="Camadas"></Tabs.TabPane>
+       */}
     </Tabs>
   );
 }
