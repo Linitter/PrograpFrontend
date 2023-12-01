@@ -156,7 +156,6 @@ export default function GraficoConvenants() {
       ).length;
 
       const total = bancadaCount + individualCount + especialCount;
-      console.log('total', total);
       if (total !== 0) {
         const bancadaPercentage = parseFloat(
           ((bancadaCount / total) * 100).toFixed(2),
@@ -318,8 +317,8 @@ export default function GraficoConvenants() {
 
   // Calcule a contagem de cada status
   objectResource.forEach(obj => {
-    if (obj.goal) {
-      // Verifique se o objeto possui um ID de goal
+    if (obj.covenants) {
+      // Verifique se o objeto possui um ID de convenants
       const status = obj.status;
 
       if (statusToTrack.includes(status)) {
@@ -409,70 +408,38 @@ export default function GraficoConvenants() {
   };
 
   // TABELA de eixos com os itens somatoria
-  const columnsAxle: ColumnsType<DataType> = [
+  const columnsConvenants: ColumnsType<DataType> = [
     {
-      title: 'Eixo',
-      dataIndex: 'axle',
-      key: 'axle',
-      width: '42%',
-      render: axle => (axle ? `${axle.name} - ${axle.description}` : '*******'),
+      title: 'N° Convênio',
+      dataIndex: 'agreementNumber',
+      key: 'agreementNumber',
+      width: '20%',
     },
     {
-      title: 'Itens',
-      dataIndex: 'axle', // Use 'axle' como índice, pois é como estamos mapeando as somas
-      key: 'amoutotalAmountnt',
-      width: '12%',
-      render: axle => {
-        const axleName =
-          axle && typeof axle === 'object'
-            ? (axle as { name: string }).name
-            : '';
-        const totalAmount = amountInfo[axleName] || 0; // Use o objeto resourceObjectsInfo para obter a soma
-        return totalAmount;
-      },
+      title: 'Valor do repasse',
+      dataIndex: 'transferAmount',
+      key: 'transferAmount',
+      width: '20%',
     },
     {
-      title: 'Valor total estimado',
-      dataIndex: 'axle', // Use 'axle' como índice, pois é como estamos mapeando as somas
-      key: 'estimatedTotalValue',
-      width: '20%', // Ajuste a largura conforme necessário
-      render: axle => {
-        const axleName =
-          axle && typeof axle === 'object'
-            ? (axle as { name: string }).name
-            : '';
-        const totalEstimatedValue = estimatedTotalValueInfo[axleName] || 0;
-
-        // Formate o valor para o formato monetário (Real)
-        const formattedValue = totalEstimatedValue.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-        });
-
-        return formattedValue;
-      },
+      title: 'Valor contrapartida',
+      dataIndex: 'counterpartValue',
+      key: 'counterpartValue',
+      width: '20%',
     },
 
     {
-      title: 'Valor Executado',
-      dataIndex: 'axle',
-      key: 'executedValue',
-      width: '20%', // Ajuste a largura conforme necessário
-      render: axle => {
-        const axleName =
-          axle && typeof axle === 'object'
-            ? (axle as { name: string }).name
-            : '';
-        const executedValue = executedValueInfo[axleName] || 0;
+      title: 'Valor global',
+      dataIndex: 'globalValue',
+      key: 'globalValue',
+      width: '20%',
+    },
 
-        // Formate o valor para o formato monetário (Real)
-        const formattedValue = executedValue.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-        });
-
-        return formattedValue;
-      },
+    {
+      title: 'Saldo',
+      dataIndex: 'balance',
+      key: 'balance',
+      width: '20%',
     },
   ];
 
@@ -744,6 +711,8 @@ export default function GraficoConvenants() {
     natureExpense: string,
   ) => {
     const selected = e.target.checked;
+    console.log('natureExpense', natureExpense);
+    console.log('selected', selected);
     if (selected) {
       setSelectedNatureExpense([...selectedNatureExpense, natureExpense]);
     } else {
@@ -794,18 +763,24 @@ export default function GraficoConvenants() {
           <h3>Tipo</h3>
           <Checkbox
             className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Investimento')}
-            checked={selectedNatureExpense.includes('Investimento')}
+            onChange={e => handleNatureExpenseChange(e, 'Bancada')}
+            checked={selectedNatureExpense.includes('Bancada')}
           >
-            Investimento
+            Bancada
           </Checkbox>
-          <br />
           <Checkbox
             className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Custeio')}
-            checked={selectedNatureExpense.includes('Custeio')}
+            onChange={e => handleNatureExpenseChange(e, 'Individual')}
+            checked={selectedNatureExpense.includes('Individual')}
           >
-            Custeio
+            Individual
+          </Checkbox>
+          <Checkbox
+            className="checkboxBottom"
+            onChange={e => handleNatureExpenseChange(e, 'Especial')}
+            checked={selectedNatureExpense.includes('Especial')}
+          >
+            Especial
           </Checkbox>
         </div>
 
@@ -957,10 +932,10 @@ export default function GraficoConvenants() {
           pagination={false}
         />
       </div>
-      <div className="table-axle">
+      <div className="table-convenants">
         {/* tabelas de eixos com somatoria */}
         <Table
-          columns={columnsAxle}
+          columns={columnsConvenants}
           rowKey="name"
           dataSource={convenants} // Use os dados atualizados da tabela
           className="custom-table-dashboard"

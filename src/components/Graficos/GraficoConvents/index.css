@@ -126,7 +126,7 @@
 
 }
 /* tabela de eixo */
-.table-axle{
+.table-convenants{
   display: inline-block;
   left: 623px;
   bottom: 900px;
@@ -139,7 +139,7 @@
   width: 63.2%;
 }
 /* Estilize o scrollbar apenas dentro do componente .checkbox-year */
-.table-axle::-webkit-scrollbar {
+.table-convenants::-webkit-scrollbar {
   width: 7px; /* Largura desejada para o scrollbar do .checkbox-year */
   background-color:  rgba(0, 0, 0, 0.25); /* Cor da alça da barra de rolagem */
 
@@ -374,7 +374,7 @@ h4{
     overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
     width: 55%;
   }
-  .table-axle{
+  .table-convenants{
     display: inline-block;
     left: 470px;
     bottom: 790px;
