@@ -262,6 +262,9 @@ const ModalCovenants = ({
       setCurrentAuthor((prevList: any) => [...prevList, covenantAuthorData]);
       setSelectedAuthor(null);
       setSelectedContValue('');
+
+      form.setFieldsValue({ contributionValue: '' });
+      form.setFieldsValue({ author: '' });
     }
   };
 

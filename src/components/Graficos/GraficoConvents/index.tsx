@@ -35,6 +35,8 @@ interface DataType {
 
 interface DataTypeConvenantsAuthor {
   contributionValue: any;
+  authors: ExpandedDataTypeAuthor[];
+  convenats: DataType[];
 }
 
 // expensão da tabela de autor
@@ -187,39 +189,97 @@ export default function GraficoConvenants() {
     '#763568',
     '#00BCD4',
   ];
-  // Contar a quantidade de cada tipo de eixo e calcular a soma dos valores
-  const axleInfo: Record<string, { count: number; totalAmount: number }> = {};
-  convenants.forEach(item => {
-    const axleData = item.covenantAuthor;
-    if (typeof axleData === 'object' && axleData !== null) {
-      const axleName = (axleData as { name?: string }).name;
-      if (axleName) {
-        if (axleInfo[axleName]) {
-          axleInfo[axleName].count++;
-          axleInfo[axleName].totalAmount += parseFloat(
-            item.contributionValue.replace(/[^\d,]/g, '').replace(',', '.'),
-          );
-        } else {
-          axleInfo[axleName] = {
-            count: 1,
-            totalAmount: parseFloat(
-              item.contributionValue.replace(/[^\d,]/g, '').replace(',', '.'),
-            ),
-          };
-        }
-      }
-    }
-  });
 
-  // Criar rótulos personalizados para a legenda
-  const legendLabels = Object.keys(axleInfo).map(authorName => {
-    const { totalAmount } = axleInfo[authorName];
-    return `${authorName} - R$ ${totalAmount.toLocaleString('pt-BR', {
+  const somarValorTotal = (authorId: any) => {
+    let soma = 0;
+
+    const findAuthors = convenantsAuthor.filter(
+      (item: any) => item.authors.id === authorId,
+    );
+
+    findAuthors.forEach((item: any) => {
+      // Remova os pontos dos números antes de convertê-los
+      const contributionValueWithoutDots = item.contributionValue.replace(
+        /\./g,
+        '',
+      );
+      const contributionValueAsNumber = parseFloat(
+        contributionValueWithoutDots.replace(',', '.'),
+      );
+      if (!isNaN(contributionValueAsNumber)) {
+        soma += contributionValueAsNumber;
+      }
+    });
+
+    const formattedSum = soma.toLocaleString('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-    })}`;
+      minimumFractionDigits: 2,
+    });
+
+    return formattedSum;
+  };
+
+  // Contar a quantidade de cada tipo de eixo e calcular a soma dos valores
+  const authorInfo: Record<
+    string,
+    { count: number; contributionValue: number; nameAuthor: string }
+  > = {};
+
+  let totalContributionValue = 0;
+
+  author.forEach(author => {
+    let soma = 0; // Initialize soma as a number
+
+    const findAuthors = convenantsAuthor.filter(
+      (item: any) => item.authors.id === author.id && item.deleted_at === null,
+    );
+
+    findAuthors.forEach((item: any) => {
+      const contributionValueWithoutDots = item.contributionValue.replace(
+        /\./g,
+        '',
+      );
+
+      const contributionValueAsNumber = parseFloat(
+        contributionValueWithoutDots.replace(',', '.'),
+      );
+
+      if (!isNaN(contributionValueAsNumber)) {
+        soma += contributionValueAsNumber;
+        totalContributionValue += contributionValueAsNumber; // Incrementar o total
+      }
+    });
+
+    authorInfo[author.id] = {
+      count: findAuthors.length,
+      contributionValue: soma,
+      nameAuthor: author.name,
+    };
   });
-  //grafico de pizzs
+  const sortedAuthors = Object.values(authorInfo).sort(
+    (a, b) => b.contributionValue - a.contributionValue,
+  );
+
+  // Selecionar os 5 primeiros autores após a ordenação
+  const top5Authors = sortedAuthors.slice(0, 5);
+
+  // Criar rótulos personalizados para a legenda com os top 5 autores
+  const legendLabels = top5Authors.map(author => {
+    const { contributionValue, nameAuthor } = author;
+    const percentage = (contributionValue / totalContributionValue) * 100;
+    return `${nameAuthor} - R$ ${contributionValue.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    })} (${percentage.toFixed(2)}%)`;
+  });
+
+  // Criar valores percentuais para o gráfico de pizza com os top 5 autores
+  const seriesValues = top5Authors.map(
+    author => (author.contributionValue / totalContributionValue) * 100,
+  );
+
+  // Configuração do gráfico de pizza com os top 5 autores
   const donutChartOptions: ApexOptions = {
     chart: {
       type: 'donut',
@@ -229,7 +289,7 @@ export default function GraficoConvenants() {
     },
     labels: legendLabels,
     colors: randomColors.slice(0, legendLabels.length),
-    series: Object.values(axleInfo).map(info => info.count), // Usar a contagem como valores das séries
+    series: seriesValues,
   };
 
   //calculando a soma dos valores  de todos os eixos
@@ -484,54 +544,67 @@ export default function GraficoConvenants() {
   // TABELA DE METAS
   const expandedRowRender = (record: any) => {
     //adicionar uma chave única para cada DESTINAÇÃO usando o índice
-    const goalWithKeys = author.map((author, index) => ({
-      ...author,
-      key: `author_${index}`,
-    }));
-    // filtra as metas vinculados com um fundo a fundo
-    const filteredGoal = goalWithKeys.filter(
-      author => author.c?.id === record.id,
+    const authorWithKeys = record.covenantAuthor.map(
+      (convenantsAuthor: any, index: any) => ({
+        ...convenantsAuthor,
+        key: `convenantsAuthor_${index}`,
+      }),
     );
-    console.log('con', convenants);
+    // filtra as metas vinculados com um fundo a fundo
+    const filteredConvenant = authorWithKeys.filter(
+      (convenantsAuthor: any) => convenantsAuthor?.authors?.id === record?.id,
+    );
 
     // tabela do fundo a fundo
-    const columns: TableColumnsType<ExpandedDataTypeAuthor> = [
+    const columns: TableColumnsType<any> = [
       {
-        title: 'Meta',
-        dataIndex: 'description',
-        key: 'description',
-        width: '50%',
+        title: 'N° Convênio',
+        dataIndex: 'covenants',
+        key: 'covenants',
+        width: '20%',
+        render: (value: any) => {
+          return value?.agreementNumber || 'N/A';
+        },
+      },
+      {
+        title: 'Emenda',
+        dataIndex: 'covenants',
+        key: 'covenants',
+        width: '30%',
+        render: (value: any) => {
+          return value?.amendment || 'N/A';
+        },
       },
       {
         title: 'Valor previsto',
-        dataIndex: 'predictedValue',
-        key: 'predictedValue',
+        dataIndex: 'contributionValue',
+        key: 'contributionValue',
         width: '30%',
         render: (value: any) => value || '*********',
       },
       {
-        title: 'Saldo',
-        dataIndex: 'balance',
-        key: 'balance',
-        width: '50%',
-        render: (value: any) => value || '*********',
+        title: 'Ano',
+        dataIndex: 'covenants',
+        key: 'covenants',
+        width: '25%',
+        render: (value: any) => {
+          return value?.year || 'N/A';
+        },
       },
     ];
 
     return (
       <Table
         columns={columns}
-        dataSource={filteredGoal}
+        dataSource={filteredConvenant}
         pagination={false}
-        expandable={{
-          expandedRowRender: expandedRowRenderObject,
-        }}
         rowClassName={() => 'custom-table-destiny'} // Defina o nome da classe para o estilo personalizado
       />
     );
   };
 
-  const expandedRowRenderObject = (record: any) => {
+  {
+    /* const expandedRowRenderObject = (record: any) => {
     const objectWithKeys = objectResource.map((objectResource, index) => ({
       ...objectResource,
       key: `objectResource_${index}`,
@@ -601,7 +674,8 @@ export default function GraficoConvenants() {
         pagination={false}
       />
     );
-  };
+  };*/
+  }
 
   // funções de listagem
   useEffect(() => {
@@ -685,30 +759,6 @@ export default function GraficoConvenants() {
       somarValorTotal(item);
     });
   }, [author]);
-
-  const somarValorTotal = (authorId: any) => {
-    let soma = 0; // Initialize soma as a number
-
-    const findAuthors = convenantsAuthor.filter(
-      (item: any) => item.authors.id === authorId,
-    );
-
-    findAuthors.forEach((item: any) => {
-      // Check if 'contributionValue' exists and is not null/undefined
-      const contributionValueAsNumber = parseFloat(item.contributionValue);
-      if (!isNaN(contributionValueAsNumber)) {
-        soma += contributionValueAsNumber;
-      }
-    });
-
-    const formattedSum = soma.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 2,
-    });
-
-    return formattedSum;
-  };
 
   {
     /*function mapGoalsAndFilterResourceObjects(item: any) {
@@ -833,9 +883,9 @@ export default function GraficoConvenants() {
         </div>
       </div>
 
-      <div className="custom-donut">
+      <div className="custom-donut-convenants">
         {/* grafico de pizza */}
-        <h3>Valor do eixo</h3>
+        <h3>Valor do autor</h3>
         <div className="pass-value">
           <h4>Valor Total</h4>
           {/* Exibe o valor total com a formatação "R$ 54.654,00" */}
@@ -896,11 +946,11 @@ export default function GraficoConvenants() {
         {/* tabela com expanção - eixos -> metas -> objetos */}
         <Table
           columns={columns}
-          rowKey="key"
+          rowKey={record => record.id} // Utilize a chave única (record.id) como a chave da linha
           dataSource={author}
           expandable={{
             expandedRowRender,
-            defaultExpandedRowKeys: ['0'],
+            defaultExpandedRowKeys: author.map(record => record.id), // Defina as chaves das linhas que devem ser expandidas por padrão
           }}
           rowClassName={() => 'custom-table-row'} // Defina o nome da classe para o estilo personalizado
           className="custom-table-dashboard"

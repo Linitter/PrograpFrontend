@@ -8,7 +8,7 @@
 .custom-bar-convenants {
   position: relative;
   bottom: 610px;
-  right: 190px;
+  right: 240px;
   display: inline-block;
   padding: 12px 100px 1px 13px;
   border: 2px solid #cebe8a;
@@ -38,9 +38,9 @@
 
 }
 /* MARGEM DO GRAFICO grafico de pizza, juntamente com os dados */
-.custom-donut {
+.custom-donut-convenants {
   position: relative;
-  left: 308px; /* Defina a posição horizontal desejada */
+  left: 258px; /* Defina a posição horizontal desejada */
   bottom: 483px;
   display: inline-block;
   padding: 20px 50px 15px 10px;
@@ -53,7 +53,7 @@
  .pie-chart{
   display: inline-block;
   position: relative;
-  bottom: 35px;
+  bottom: 40px;
   float: left;
   right: 25px;
   width: 98%;
@@ -109,14 +109,14 @@
 
 .table-object-convenants{
   display: inline-block;
-  left: 820px;
+  left: 775px;
   bottom: 910px;
   position: relative;
   padding: 35px 8px 278px 8px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-height: 427px; /* Defina a altura máxima desejada */
-  width: 51.3%;
+  width: 48%;
   overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
 }
 /* Estilize o scrollbar apenas dentro da table ad eobjetos*/
@@ -325,7 +325,7 @@ h4{
     position: relative;
     top: 12px;
     }
-  .custom-donut {
+  .custom-donut-convenants {
     position: relative;
     left: 205px; /* Defina a posição horizontal desejada */
     bottom: 460px;
