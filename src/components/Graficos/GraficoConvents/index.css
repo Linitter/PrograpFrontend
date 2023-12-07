@@ -8,11 +8,12 @@
 .custom-bar-convenants {
   position: relative;
   bottom: 610px;
-  right: 206px;
+  right: 215px;
   display: inline-block;
   padding: 12px 80px 1px 13px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
+  width: 500px;
 }
 /* Estilize o tooltip */
 .custom-bar-convenants  .apexcharts-tooltip {
@@ -40,14 +41,15 @@
 /* MARGEM DO GRAFICO grafico de pizza, juntamente com os dados */
 .custom-donut-convenants {
   position: relative;
-  left: 257px; /* Defina a posição horizontal desejada */
+  left: 285px; /* Defina a posição horizontal desejada */
   bottom: 483px;
   display: inline-block;
-  padding: 20px 0px 15px 10px;
+  padding: 20px 50px 15px 10px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-width: 500px;
   max-height: 220px;
+
  }
  /* grafico */
  .pie-chart{
@@ -87,7 +89,7 @@
 .custom-bar-convenants-vertical{
   position: relative;
   bottom: 90px;
-  right: 669px;
+  right: 715px;
   display: inline-block;
   border: 2px solid #cebe8a;
   box-shadow: 2px 1px 5px rgb(0, 21, 42);
@@ -109,7 +111,7 @@
 
 .table-object-convenants{
   display: inline-block;
-  left: 750px;
+  left: 820px;
   bottom: 915px;
   position: relative;
   padding: 35px 8px 278px 8px;
@@ -128,7 +130,7 @@
 /* tabela de eixo */
 .table-convenants{
   display: inline-block;
-  left: 580px;
+  left: 620px;
   bottom: 898px;
   position: relative;
   padding: 40px 8px 42px 8px;

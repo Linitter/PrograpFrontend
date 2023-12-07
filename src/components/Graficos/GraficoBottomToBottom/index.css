@@ -9,11 +9,12 @@
 .custom-bar {
   position: relative;
   bottom: 655px;
-  right: 191px;
+  right: 190px;
   display: inline-block;
   padding: 12px 46px 1px 13px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
+  width: 480px;
 }
 /* Estilize o tooltip */
 .custom-bar  .apexcharts-tooltip {
@@ -41,7 +42,7 @@
 /* MARGEM DO GRAFICO grafico de pizza, juntamente com os dados */
 .custom-donut {
   position: relative;
-  left: 257px; /* Defina a posição horizontal desejada */
+  left: 290px; /* Defina a posição horizontal desejada */
   bottom: 483px;
   display: inline-block;
   padding: 20px 0px 15px 10px;
@@ -49,6 +50,7 @@
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-width: 500px;
   max-height: 220px;
+  width: 480px;
  }
  /* grafico */
  .pie-chart{
@@ -88,7 +90,7 @@
 .custom-bar-vertical{
   position: relative;
   bottom: 90px;
-  right: 638px;
+  right: 670px;
   display: inline-block;
   border: 2px solid #cebe8a;
   box-shadow: 2px 1px 5px rgb(0, 21, 42);
@@ -110,7 +112,7 @@
 
 .table-object{
   display: inline-block;
-  left: 740px;
+  left: 800px;
   bottom: 915px;
   position: relative;
   padding: 35px 8px 278px 8px;
@@ -129,7 +131,7 @@
 /* tabela de eixo */
 .table-axle{
   display: inline-block;
-  left: 580px;
+  left: 620px;
   bottom: 894px;
   position: relative;
   padding: 30px 8px 30px 8px;
