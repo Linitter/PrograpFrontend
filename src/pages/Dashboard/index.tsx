@@ -1,6 +1,7 @@
 import { Tabs } from 'antd';
 import GraficoBottomToBottom from '../../components/Graficos/GraficoBottomToBottom';
 import GraficoConvents from '../../components/Graficos/GraficoConvents';
+import GraficoFDD from '../../components/Graficos/GraficoFDD';
 
 export default function Dashboard() {
   return (
@@ -14,6 +15,11 @@ export default function Dashboard() {
       <Tabs.TabPane key="2" tab="Convênio">
         <div>
           <GraficoConvents />
+        </div>
+      </Tabs.TabPane>
+      <Tabs.TabPane key="3" tab="FDD">
+        <div>
+          <GraficoFDD />
         </div>
       </Tabs.TabPane>
       {/*       <Tabs.TabPane key="3" tab="Camadas"></Tabs.TabPane>

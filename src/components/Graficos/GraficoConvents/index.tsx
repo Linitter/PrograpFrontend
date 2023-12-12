@@ -72,6 +72,8 @@ export default function GraficoConvenants() {
     [],
   );
 
+  let totalCount = 0; //para a % da table vertical
+
   //primeiro grafico em barra
   const barChartOptions: ApexOptions = {
     chart: {
@@ -90,7 +92,7 @@ export default function GraficoConvenants() {
         },
       },
     },
-    colors: ['#00152A', '#af8e44', '#373D3F'],
+    colors: ['#00152A', '#af8e44'],
 
     dataLabels: {
       enabled: true,
@@ -108,7 +110,7 @@ export default function GraficoConvenants() {
     },
 
     xaxis: {
-      categories: ['Bancada', 'Individual', 'Especial'],
+      categories: ['Investimento', 'Custeio'],
     },
     yaxis: {
       max: 100, // Define o valor máximo do eixo y como 100
@@ -135,46 +137,30 @@ export default function GraficoConvenants() {
   };
 
   useEffect(() => {
-    if (convenants.length > 0) {
+    if (objectResource.length > 0) {
       // Filtrar os objetos que têm o campo goal definido
-      const convenantsObjects = convenants.filter(
-        convenants =>
-          convenants.resourceObjects !== undefined &&
-          convenants.resourceObjects !== null,
+      const convenantsObjects = objectResource.filter(
+        obj => obj.covenants !== undefined && obj.covenants !== null,
       );
       // Filtrar os objetos relacionados ao fundo a fundo
-      const bancadaCount = convenantsObjects.filter(
-        convenants => convenants.amendment === 'Bancada',
+      const investimentoCount = convenantsObjects.filter(
+        obj => obj.natureExpense === 'Investimento',
       ).length;
 
-      const individualCount = convenantsObjects.filter(
-        convenants => convenants.amendment === 'Individual',
+      const custeioCount = convenantsObjects.filter(
+        obj => obj.natureExpense === 'Custeio',
       ).length;
 
-      const especialCount = convenantsObjects.filter(
-        convenants => convenants.amendment === 'Especial',
-      ).length;
-
-      const total = bancadaCount + individualCount + especialCount;
-      if (total !== 0) {
-        const bancadaPercentage = parseFloat(
-          ((bancadaCount / total) * 100).toFixed(2),
-        );
-        const individualPercentage = parseFloat(
-          ((individualCount / total) * 100).toFixed(2),
-        );
-
-        const especialPercentage = parseFloat(
-          ((especialCount / total) * 100).toFixed(2),
-        );
-        setBarChartData([
-          bancadaPercentage,
-          individualPercentage,
-          especialPercentage,
-        ]);
-      }
+      const total = investimentoCount + custeioCount;
+      const investimentoPercentage = parseFloat(
+        ((investimentoCount / total) * 100).toFixed(2),
+      );
+      const custeioPercentage = parseFloat(
+        ((custeioCount / total) * 100).toFixed(2),
+      );
+      setBarChartData([investimentoPercentage, custeioPercentage]);
     }
-  }, [convenants]);
+  }, [objectResource]);
 
   // grafico de pizza
   // criando cores aleatórias para o grafico
@@ -323,14 +309,14 @@ export default function GraficoConvenants() {
 
       if (statusToTrack.includes(status)) {
         statusCounts[status]++;
+        totalCount++;
       }
     }
   });
-
   // Crie as séries para o gráfico
   const seriesData = statusToTrack.map(status => ({
     name: status,
-    data: [statusCounts[status]],
+    data: [(statusCounts[status] / totalCount) * 100],
   }));
 
   const options: ApexOptions = {
@@ -349,7 +335,10 @@ export default function GraficoConvenants() {
     dataLabels: {
       enabled: true,
       formatter: function (val) {
-        return val + '%';
+        if (typeof val === 'number') {
+          return val.toFixed(1) + '%';
+        }
+        return val.toString(); // Certifica-se de retornar uma string
       },
       offsetY: -20,
       style: {
@@ -879,25 +868,14 @@ export default function GraficoConvenants() {
           id="donutChart" // Adicione um ID ao gráfico
         />
       </div>
-
       <div className="custom-bar-convenants">
         {/* grafico em barra horizontal */}
-        <h3>Tipo de emenda</h3>
-        <div className="total-expense-amount-convenants">
-          <h4>Bancada</h4>
-          <p className="invest-cust-convenants">
-            {barChartData[0].toFixed(2)}%
-          </p>
-          <h4>Individual</h4>
-          <p className="invest-cust-convenants">
-            {barChartData[1].toFixed(2)}%
-          </p>
-          <h4>Especial</h4>
-          <p className="invest-cust-convenants">
-            {barChartData[2] !== undefined
-              ? `${barChartData[2].toFixed(2)}%`
-              : 'N/A'}
-          </p>
+        <h3>Tipo de despesa</h3>
+        <div className="total-expense-amount">
+          <h4>Investimento</h4>
+          <p className="invest-cust">{barChartData[0].toFixed(2)}%</p>
+          <h4>Custeio</h4>
+          <p className="invest-cust">{barChartData[1].toFixed(2)}%</p>
         </div>
         <ReactApexChart
           className="bar-chart"

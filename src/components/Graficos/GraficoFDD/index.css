@@ -5,10 +5,9 @@
   display: none !important;
 }
 
-
-.custom-bar-convenants {
+.custom-bar-fdd {
   position: relative;
-  bottom: 658px !important;
+  bottom: 655px;
   right: 215px;
   display: inline-block;
   padding: 12px 46px 1px 13px;
@@ -17,9 +16,10 @@
   width: 500px;
 }
 /* Estilize o tooltip */
-.custom-bar-convenants  .apexcharts-tooltip {
+.custom-bar-fdd  .apexcharts-tooltip {
   color: #030303 !important; /* Cor do texto (importante para substituir as configurações padrão) */
 }
+
 
 .total-expense-amount-convenants{
   left: 65px;
@@ -40,12 +40,12 @@
 
 }
 /* MARGEM DO GRAFICO grafico de pizza, juntamente com os dados */
-.custom-donut-convenants {
+.custom-donut-fdd {
   position: relative;
   left: 285px; /* Defina a posição horizontal desejada */
   bottom: 483px;
   display: inline-block;
-  padding: 20px 50px 15px 10px;
+  padding: 20px 180px 15px 10px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-width: 500px;
@@ -87,7 +87,7 @@
 }
 
 /* GRAFICO EM BARRA VERTICAL */
-.custom-bar-convenants-vertical{
+.custom-bar-fdd-vertical{
   position: relative;
   bottom: 90px;
   right: 715px;
@@ -98,7 +98,7 @@
   max-height: 10%;
 }
 /* Estilize o tooltip */
-.custom-bar-convenants-vertical  .apexcharts-tooltip {
+.custom-bar-fdd-vertical  .apexcharts-tooltip {
   color: #070707 !important; /* Cor do texto (importante para substituir as configurações padrão) */
 }
 
@@ -265,7 +265,7 @@ h4{
   .checkbox-status h3,
   .checkbox-date h3,
   .custom-bar-convenants h3,
-  .custom-bar-convenants-vertical h3 {
+  .custom-bar-fdd-vertical h3 {
     font-size: 12px; /* Tamanho de fonte menor para telas menores */
     margin-bottom: 5px; /* Espaçamento menor entre os elementos */
   }
@@ -353,7 +353,7 @@ h4{
     top: 70px;
 
    }
-     .custom-bar-convenants-vertical{
+     .custom-bar-fdd-vertical{
     position: relative;
     bottom: 105px;
     right: 495px; /* Defina a posição horizontal desejada */
