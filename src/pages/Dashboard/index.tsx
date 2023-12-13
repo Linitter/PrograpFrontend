@@ -3,6 +3,7 @@ import GraficoBottomToBottom from '../../components/Graficos/GraficoBottomToBott
 import GraficoConvents from '../../components/Graficos/GraficoConvents';
 import GraficoFDD from '../../components/Graficos/GraficoFDD';
 import GraficoEmenda from '../../components/Graficos/GraficoEmendaEstadual';
+import GraficoTesouro from '../../components/Graficos/GraficoTesouroEstadual';
 
 export default function Dashboard() {
   return (
@@ -26,6 +27,11 @@ export default function Dashboard() {
       <Tabs.TabPane key="4" tab="Emenda Estadual">
         <div>
           <GraficoEmenda />
+        </div>
+      </Tabs.TabPane>
+      <Tabs.TabPane key="5" tab="Tesouro Estadual">
+        <div>
+          <GraficoTesouro />
         </div>
       </Tabs.TabPane>
       {/*       <Tabs.TabPane key="3" tab="Camadas"></Tabs.TabPane>
