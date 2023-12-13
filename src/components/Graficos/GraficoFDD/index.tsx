@@ -851,7 +851,7 @@ export default function GraficoFDD() {
 
       <div className="custom-donut-fdd">
         {/* grafico de pizza */}
-        <h3>Valor FDD</h3>
+        <h3>Valor global FDD</h3>
         <div className="pass-value">
           <h4>Valor Total</h4>
           {/* Exibe o valor total com a formatação "R$ 54.654,00" */}

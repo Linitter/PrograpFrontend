@@ -11,6 +11,8 @@ import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { getCovenants } from '../../../hooks/covenantsService';
 import { getAuthor } from '../../../hooks/uthorService';
 import { getCovenantAuthor } from '../../../hooks/covenantAuthor';
+import { getFdd } from '../../../hooks/fdd';
+import { getStateAmendment } from '../../../hooks/stateAmendmentService';
 interface DataType {
   key: React.Key;
   id: string;
@@ -39,6 +41,15 @@ interface DataTypeConvenantsAuthor {
   convenats: DataType[];
 }
 
+interface ExpandedDataTypeObject {
+  key: React.Key;
+  id: string;
+  objectsId: string;
+  status: string;
+  executedValue: string;
+  deliveryDate: string;
+}
+
 // expensão da tabela de autor
 interface ExpandedDataTypeAuthor {
   key: React.Key;
@@ -57,9 +68,10 @@ interface ExpandedDataTypeObject {
   deliveryDate: string;
 }
 
-export default function GraficoConvenants() {
+export default function GraficoEmenda() {
   const [convenants, setConvenants] = useState<DataType[]>([]); //fundo a fundo
   const [objectResource, setObjectResource] = useState<any[]>([]); // obejtos/recusos
+  const [emenda, setEmenda] = useState<any[]>([]); // obejtos/recusos
   const [author, setAuthor] = useState<any[]>([]); // obejtos/recusos
   const [convenantsAuthor, setCoventsAuthor] = useState<any[]>([]); // obejtos/recusos
 
@@ -71,7 +83,6 @@ export default function GraficoConvenants() {
   const [selectedNatureExpense, setSelectedNatureExpense] = useState<string[]>(
     [],
   );
-
   let totalCount = 0; //para a % da table vertical
 
   //primeiro grafico em barra
@@ -140,7 +151,7 @@ export default function GraficoConvenants() {
     if (objectResource.length > 0) {
       // Filtrar os objetos que têm o campo goal definido
       const convenantsObjects = objectResource.filter(
-        obj => obj.covenants !== undefined && obj.covenants !== null,
+        obj => obj.stateAmendment !== undefined && obj.stateAmendment !== null,
       );
       // Filtrar os objetos relacionados ao fundo a fundo
       const investimentoCount = convenantsObjects.filter(
@@ -161,7 +172,6 @@ export default function GraficoConvenants() {
       setBarChartData([investimentoPercentage, custeioPercentage]);
     }
   }, [objectResource]);
-
   // grafico de pizza
   // criando cores aleatórias para o grafico
   const randomColors = [
@@ -205,58 +215,63 @@ export default function GraficoConvenants() {
     return formattedSum;
   };
 
-  const convenantsInfo: Record<
+  // Contar a quantidade de cada tipo de eixo e calcular a soma dos valores
+  const emendaInfo: Record<
     string,
     {
-      globalValue: number;
-      globalValueTotal: number;
+      transferAmount: number;
+      transferAmountTotal: number;
       count: number;
     }
   > = {};
 
-  let totalGlobalValue = 0;
+  let totalBalance = 0;
   let count = 0;
 
-  const findConvenants = convenants.filter(
-    (item: any) => item.globalValue && item.deleted_at === null,
+  const findEmenda = emenda.filter(
+    (item: any) => item.transferAmount && item.deleted_at === null,
   );
 
-  findConvenants.forEach((item: any) => {
-    const globalValue = item.globalValue.replace(/\./g, '').replace(',', '.');
-    const globalValueAsNumber = parseFloat(globalValue);
-    if (!isNaN(globalValueAsNumber)) {
-      totalGlobalValue += globalValueAsNumber; // Increment the total
+  findEmenda.forEach((item: any) => {
+    const transferAmount = item.transferAmount
+      .replace(/\./g, '')
+      .replace(',', '.');
+    const transferAmountAsNumber = parseFloat(transferAmount);
+    if (!isNaN(transferAmountAsNumber)) {
+      totalBalance += transferAmountAsNumber; // Increment the total
       count++;
-      convenantsInfo[item.agreementNumber] = {
+      emendaInfo[item.amendmentNumber] = {
         count: 0,
-        globalValueTotal: totalGlobalValue,
-        globalValue: globalValueAsNumber, // Store the numeric value
+        transferAmountTotal: totalBalance,
+        transferAmount: transferAmountAsNumber, // Store the numeric value
       };
     }
   });
+  const totalAmount = totalBalance;
 
-  const totalAmount = totalGlobalValue;
-
-  const donutChartData = Object.values(convenantsInfo).map((info: any) => {
-    const value = (info.globalValue / totalAmount) * 100;
+  const donutChartData = Object.values(emendaInfo).map((info: any) => {
+    const value = (info.transferAmount / totalAmount) * 100;
     return {
-      name: `${info.globalValue}`, // Nome ou rótulo do valor
+      name: `${info.transferAmount}`, // Nome ou rótulo do valor
       data: parseFloat(value.toFixed(1)), // Convertendo para número de uma casa decimal
     };
   });
   const formattedChartData: ApexNonAxisChartSeries = donutChartData.map(
     item => item.data,
   );
-  // Criar rótulos personalizados para a legenda com os top 5 autores
-  const legendLabels = Object.keys(convenantsInfo).map(agreementNumberFdd => {
-    const { globalValue } = convenantsInfo[agreementNumberFdd];
-    return `${agreementNumberFdd} - ${globalValue.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    })}`;
-  });
 
-  // Configuração do gráfico de pizza com os top 5 autores
+  // Criar rótulos personalizados para a legenda com os top 5 autores
+  const legendLabels = Object.keys(emendaInfo).map(amendmentNumberNumberFdd => {
+    const { transferAmount } = emendaInfo[amendmentNumberNumberFdd];
+    return `${amendmentNumberNumberFdd} - ${transferAmount.toLocaleString(
+      'pt-BR',
+      {
+        style: 'currency',
+        currency: 'BRL',
+      },
+    )}`;
+  });
+  //grafico de pizzs
   const donutChartOptions: ApexOptions = {
     chart: {
       type: 'donut',
@@ -287,7 +302,9 @@ export default function GraficoConvenants() {
 
   // Calcule a contagem de cada status
   objectResource.forEach(obj => {
-    if (obj.covenants) {
+    if (obj.stateAmendment) {
+      console.log('a', obj);
+      console.log('a', obj.stateAmendment);
       // Verifique se o objeto possui um ID de convenants
       const status = obj.status;
 
@@ -381,31 +398,31 @@ export default function GraficoConvenants() {
   };
 
   // TABELA de eixos com os itens somatoria
-  const columnsConvenants: ColumnsType<DataType> = [
+  const columnsFdd: ColumnsType<DataType> = [
     {
-      title: 'N° Convênio',
-      dataIndex: 'agreementNumber',
-      key: 'agreementNumber',
+      title: 'N° Emenda',
+      dataIndex: 'amendmentNumber',
+      key: 'amendmentNumber',
       width: '20%',
+    },
+    {
+      title: 'Autor',
+      dataIndex: 'authors',
+      key: 'authors',
+      width: '15%',
+      render: authors => (authors ? authors?.name : ''),
     },
     {
       title: 'Valor do repasse',
       dataIndex: 'transferAmount',
       key: 'transferAmount',
-      width: '20%',
+      width: '15%',
     },
     {
-      title: 'Valor contrapartida',
-      dataIndex: 'counterpartValue',
-      key: 'counterpartValue',
-      width: '20%',
-    },
-
-    {
-      title: 'Valor global',
-      dataIndex: 'globalValue',
-      key: 'globalValue',
-      width: '20%',
+      title: 'Descrição',
+      dataIndex: 'description',
+      key: 'description',
+      width: '30%',
     },
 
     {
@@ -467,9 +484,9 @@ export default function GraficoConvenants() {
   // tabela de eixo
   const columns: ColumnsType<DataType> = [
     {
-      title: 'N° Convênio',
-      dataIndex: 'agreementNumber',
-      key: 'agreementNumber',
+      title: 'N° Emenda',
+      dataIndex: 'amendmentNumber',
+      key: 'amendmentNumber',
       width: '85%',
     },
     {
@@ -489,7 +506,7 @@ export default function GraficoConvenants() {
     // Filtra os objetos vinculados a uma meta
     const filterObjectResource = objectWithKeys.filter(object => {
       return (
-        object.covenants?.id === record.id && // Apenas objetos vinculados à meta selecionada
+        object.stateAmendment?.id === record.id && // Apenas objetos vinculados à meta selecionada
         (selectedStatus.length === 0 ||
           selectedStatus.includes(object.status)) &&
         (selectedNatureExpense.length === 0 ||
@@ -551,6 +568,7 @@ export default function GraficoConvenants() {
       />
     );
   };
+
   {
     /* const expandedRowRenderObject = (record: any) => {
     const objectWithKeys = objectResource.map((objectResource, index) => ({
@@ -641,9 +659,9 @@ export default function GraficoConvenants() {
   }
 
   async function loadingAuthorForm() {
-    const response = await getAuthor('author');
+    const response = await getStateAmendment('stateAmendment');
     if (response !== false) {
-      setAuthor(response.data);
+      setEmenda(response.data);
     }
   }
 
@@ -839,9 +857,9 @@ export default function GraficoConvenants() {
         </div>
       </div>
 
-      <div className="custom-donut-convenants">
+      <div className="custom-donut-fdd">
         {/* grafico de pizza */}
-        <h3>Valor global convênio</h3>
+        <h3>Valor repasse emenda</h3>
         <div className="pass-value">
           <h4>Valor Total</h4>
           {/* Exibe o valor total com a formatação "R$ 54.654,00" */}
@@ -860,7 +878,8 @@ export default function GraficoConvenants() {
           id="donutChart" // Adicione um ID ao gráfico
         />
       </div>
-      <div className="custom-bar-convenants">
+
+      <div className="custom-bar-fdd">
         {/* grafico em barra horizontal */}
         <h3>Tipo de despesa</h3>
         <div className="total-expense-amount">
@@ -877,7 +896,8 @@ export default function GraficoConvenants() {
           height={140}
         />
       </div>
-      <div className="custom-bar-convenants-vertical">
+
+      <div className="custom-bar-fdd-vertical">
         <h3 className="h3Etapa">Etapa</h3>
         {/* grafico em bar vertical */}
         <ReactApexChart
@@ -892,10 +912,10 @@ export default function GraficoConvenants() {
         <Table
           columns={columns}
           rowKey={record => record.id} // Utilize a chave única (record.id) como a chave da linha
-          dataSource={convenants}
+          dataSource={emenda}
           expandable={{
             expandedRowRender,
-            defaultExpandedRowKeys: convenants.map((record: any) => record.id), // Defina as chaves das linhas que devem ser expandidas por padrão
+            defaultExpandedRowKeys: emenda.map((record: any) => record.id), // Defina as chaves das linhas que devem ser expandidas por padrão
           }}
           rowClassName={() => 'custom-table-row'} // Defina o nome da classe para o estilo personalizado
           className="custom-table-dashboard"
@@ -905,9 +925,9 @@ export default function GraficoConvenants() {
       <div className="table-convenants">
         {/* tabelas de eixos com somatoria */}
         <Table
-          columns={columnsConvenants}
+          columns={columnsFdd}
           rowKey="name"
-          dataSource={convenants} // Use os dados atualizados da tabela
+          dataSource={emenda} // Use os dados atualizados da tabela
           className="custom-table-dashboard"
           rowClassName={() => 'custom-table-row'} // Defina o nome da classe para o estilo personalizado
           pagination={false}

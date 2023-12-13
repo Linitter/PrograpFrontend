@@ -1,0 +1,392 @@
+
+/* MARGEM DO GRAFICO DE BARRA DEITADO */
+/* menu do grafico em barra */
+.apexcharts-menu-icon {
+  display: none !important;
+}
+
+.custom-bar-fdd {
+  position: relative;
+  bottom: 655px;
+  right: 215px;
+  display: inline-block;
+  padding: 12px 46px 1px 13px;
+  border: 2px solid #cebe8a;
+  box-shadow: 2px 2px 4px rgb(0, 21, 42);
+  width: 500px;
+}
+/* Estilize o tooltip */
+.custom-bar-fdd  .apexcharts-tooltip {
+  color: #030303 !important; /* Cor do texto (importante para substituir as configurações padrão) */
+}
+
+
+.total-expense-amount-convenants{
+  left: 65px;
+  display: inline-block;
+  position: relative;
+  top: 0px;
+  }
+.bar-chart{
+  display: inline-block;
+  position: relative;
+  bottom: 15px;
+  float: left;
+}
+.invest-cust-convenants{
+  color: #bd9e5a;
+  text-shadow: 2px 2px 4px rgba(158, 154, 154, 0.5);
+  font-weight: bold; /* Define a espessura da fonte como "bold" para tornar os números mais grossos */
+
+}
+/* MARGEM DO GRAFICO grafico de pizza, juntamente com os dados */
+.custom-donut-fdd {
+  position: relative;
+  left: 285px; /* Defina a posição horizontal desejada */
+  bottom: 483px;
+  display: inline-block;
+  padding: 20px 180px 15px 10px;
+  border: 2px solid #cebe8a;
+  box-shadow: 2px 2px 4px rgb(0, 21, 42);
+  max-width: 500px;
+  max-height: 220px;
+ }
+
+ /* grafico */
+ .pie-chart{
+  display: inline-block;
+  position: relative;
+  bottom: 40px;
+  float: left;
+  right: 25px;
+  width: 98%;
+ }
+
+
+ .pass-value{
+  left: 360px;
+  display: inline-block;
+  position: relative;
+  top: 23px;
+
+ }
+.repas-ano{
+  color: #bd9e5a;
+  text-shadow: 2px 2px 4px rgba(158, 154, 154, 0.5);
+  font-weight: bold; /* Define a espessura da fonte como "bold" para tornar os números mais grossos */
+  text-align: left;
+  position: relative;
+  top: 5px;
+}
+.total-value{
+  color: #bd9e5a;
+  text-shadow: 2px 2px 4px rgba(158, 154, 154, 0.5);
+  font-weight: bold; /* Define a espessura da fonte como "bold" para tornar os números mais grossos */
+  position: relative;
+  top: 5px;
+}
+
+/* GRAFICO EM BARRA VERTICAL */
+.custom-bar-fdd-vertical{
+  position: relative;
+  bottom: 90px;
+  right: 715px;
+  display: inline-block;
+  border: 2px solid #cebe8a;
+  box-shadow: 2px 1px 5px rgb(0, 21, 42);
+  max-width: 40%; /* Ajuste a largura desejada */
+  max-height: 10%;
+}
+/* Estilize o tooltip */
+.custom-bar-fdd-vertical  .apexcharts-tooltip {
+  color: #070707 !important; /* Cor do texto (importante para substituir as configurações padrão) */
+}
+
+.h3Etapa{
+  left: 13px;
+  top: 5px;
+  position: relative;
+}
+
+/* estilização da tabela de eixos */
+
+.table-object-convenants{
+  display: inline-block;
+  left: 820px;
+  bottom: 915px;
+  position: relative;
+  padding: 35px 8px 278px 8px;
+  border: 2px solid #cebe8a;
+  box-shadow: 2px 2px 4px rgb(0, 21, 42);
+  max-height: 432px; /* Defina a altura máxima desejada */
+  width: 48%;
+  overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
+}
+/* Estilize o scrollbar apenas dentro da table ad eobjetos*/
+.table-object-convenants::-webkit-scrollbar {
+  width: 7px; /* Largura desejada para o scrollbar do .checkbox-year */
+  background-color:  rgba(0, 0, 0, 0.25); /* Cor da alça da barra de rolagem */
+
+}
+/* tabela de eixo */
+.table-convenants{
+  display: inline-block;
+  left: 620px;
+  bottom: 898px;
+  position: relative;
+  padding: 40px 8px 42px 8px;
+  border: 2px solid #cebe8a;
+  box-shadow: 2px 2px 4px rgb(0, 21, 42);
+  overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
+  max-height: 252px; /* Defina a altura máxima desejada */
+  width: 60%;
+}
+/* Estilize o scrollbar apenas dentro do componente .checkbox-year */
+.table-convenants::-webkit-scrollbar {
+  width: 7px; /* Largura desejada para o scrollbar do .checkbox-year */
+  background-color:  rgba(0, 0, 0, 0.25); /* Cor da alça da barra de rolagem */
+
+}
+
+
+/* alteração de cor do TREE */
+.ant-tree .ant-tree-list-holder-inner {
+  background-color: #fcf6ea !important;
+}
+
+/* parte esquerda com os filtros */
+.filter-title {
+  padding: 1px 15px; /* Espaçamento interno (aumentei o padding para ajustar a margem) */
+  border-radius: 3px; /* Borda arredondada */
+  display: inline-block; /* Para que a borda envolva apenas o conteúdo do título */
+  text-align: left; /* Alinhamento do texto à esquerda */
+  background-color: #bd9e5a; /* Cor de fundo */
+  color: rgb(5, 0, 0); /* Cor do texto branca */
+  margin-bottom: 18px; /*Adicione margem na parte inferior do título */
+  margin-left: 75px; /* Adicione a margem esquerda desejada */
+  text-shadow: 2px 2px 4px rgba(3, 3, 3, 0.5); /* Adicione uma sombra */
+  font-weight: bold; /* Torna o texto mais grosso (negrito) */
+}
+
+.checkbox-type{
+  padding: 5px 77px 1px 18px; /* Espaçamento interno (aumentei o padding para ajustar a margem) */
+  /* border: 2px solid #ccc; */
+  display: inline-block;
+  margin-left: 10%;
+  background-color: #fcf6ea; /* Cor de fundo */
+
+}
+.checkbox-year{
+  padding: 5px 126px 10px 17px; /* Espaçamento interno (aumentei o padding para ajustar a margem) */
+  /* border: 2px solid #ccc;  */
+  margin-top:25px;
+  display: inline-block;
+  margin-left: 10%;
+  background-color: #fcf6ea; /* Cor de fundo */
+  }
+
+
+::-webkit-scrollbar-thumb {
+  background-color:  rgba(88, 85, 85, 0.25); /* Cor da alça da barra de rolagem */
+}
+
+.checkbox-axle{
+  padding: 5px 105px 2px 17px; /* Espaçamento interno (aumentei o padding para ajustar a margem) */
+  /* border: 2px solid #ccc; */
+  margin-top: 25px;
+  display: inline-block;
+  margin-left: 10%;
+  background-color: #fcf6ea; /* Cor de fundo */
+}
+
+.checkbox-status{
+  padding: 5px 68px 1px 18px; /* Espaçamento interno (aumentei o padding para ajustar a margem) */
+  /* border: 2px solid #ccc;  */
+  margin-top:25px;
+  display: inline-block;
+  margin-left: 10%;
+  background-color: #fcf6ea; /* Cor de fundo */
+}
+
+
+ /* Estilize o scrollbar apenas dentro do componente .checkbox-year */
+ .checkbox-date::-webkit-scrollbar {
+  width: 4px; /* Largura desejada para o scrollbar do .checkbox-year */
+}
+.checkboxBottom {
+  margin-bottom: 5px;
+}
+h3{
+  text-shadow: 2px 2px 4px rgba(3, 3, 3, 0.5); /* Adicione uma sombra */
+  margin-bottom: 6px;
+  color: rgb(5, 0, 0); /* Cor do texto branca */
+  font-size: 14px;
+}
+p{
+  padding: 1px;
+}
+h4{
+  color: rgb(5, 0, 0); /* Cor do texto branca */
+  position: relative;
+  bottom: 1px;
+ }
+/* Linha vertical de separação */
+.vertical-divider {
+  border-right: 2px solid #cebe8a; /* Cor e espessura da linha vertical */
+  margin-right: 84%; /* Espaçamento à direita da linha (ajuste conforme necessário) */
+}
+/* tabela, alteração de cor */
+/* cor da linha dos titulos */
+.custom-table-row {
+  background-color: rgba(214, 90, 90, 0.25);
+}
+.custom-table-dashboard thead tr {
+  background-color: #bd9e5a;
+  color: black;
+
+}
+/* Parte responsiva */
+
+@media screen and (max-width: 1370px) {
+  .filter-title {
+    font-size: 15px; /* Tamanho de fonte menor para telas menores */
+    margin-left: 46px; /* Adicione a margem esquerda desejada */
+    margin-top: -181px; /*Adicione margem na parte inferior do título */
+  }
+  h4{
+    font-size: 13px;
+    }
+  p{
+    font-size: 12px;
+  }
+  .checkbox-type h3,
+  .checkbox-year h3,
+  .checkbox-axle h3,
+  .checkbox-status h3,
+  .checkbox-date h3,
+  .custom-bar-convenants h3,
+  .custom-bar-fdd-vertical h3 {
+    font-size: 12px; /* Tamanho de fonte menor para telas menores */
+    margin-bottom: 5px; /* Espaçamento menor entre os elementos */
+  }
+}
+
+@media screen and (max-width: 1370px) {
+  .checkboxBottom {
+    font-size: 11px; /* Tamanho de fonte menor para telas menores */
+  }
+  .checkbox-type{
+    padding: 5px 28px 1px 10px;
+
+  }
+  .checkbox-year{
+    padding: 5px 85px 0px 8px;
+    max-height: 128px;
+    max-width: 170px;
+  }
+ /* Estilize o scrollbar apenas dentro do componente .checkbox-year */
+  .checkbox-year::-webkit-scrollbar {
+    width: 5px; /* Largura desejada para o scrollbar do .checkbox-year */
+}
+  .checkbox-axle{
+    padding: 5px 66px 1px 12px;
+  }
+  .checkbox-status{
+    padding: 5px 40px 0px 10px;
+  }
+  .checkbox-date{
+    padding: 5px 47px 1px 10px;
+  }
+  .ant-checkbox .ant-checkbox-inner {
+    width: 13px;
+    height: 13px;
+  }
+  .ant-tree .ant-tree-checkbox .ant-tree-checkbox-inner {
+    width: 13px;
+    height: 13px;
+  }
+}
+
+@media screen and (max-width: 1370px) {
+  .custom-bar-convenants {
+    position: relative;
+    bottom: 610px;
+    right: 145px;
+    padding: 5px 140px 10px 5px;
+    display: inline-block;
+    border: 2px solid #cebe8a;
+    box-shadow: 2px 2px 4px rgb(0, 21, 42);
+    max-width: 350px;
+    max-height: 165px;
+  }
+  .bar-chart{
+    bottom: 80px
+  }
+  .total-expense-amount-convenants{
+    left: 240px;
+    display: inline-block;
+    position: relative;
+    top: 12px;
+    }
+  .custom-donut-convenants {
+    position: relative;
+    left: 205px; /* Defina a posição horizontal desejada */
+    bottom: 460px;
+    display: inline-block;
+    padding: 5px 0px 1px 10px;
+    border: 2px solid #cebe8a;
+    box-shadow: 2px 2px 4px rgb(0, 21, 42);
+    max-width: 350px;
+    max-height: 280px;
+   }
+
+  .pie-chart{
+    display: inline-block;
+    position: relative;
+    bottom: 33px;
+    left: 0px;
+   }
+   .pass-value{
+    left: 150px;
+    display: inline-block;
+    position: relative;
+    top: 70px;
+
+   }
+     .custom-bar-fdd-vertical{
+    position: relative;
+    bottom: 105px;
+    right: 495px; /* Defina a posição horizontal desejada */
+    display: inline-block;
+    border: 2px solid #cebe8a;
+    box-shadow: 2px 2px 5px rgb(0, 21, 42);
+    max-width: 250px; /* Ajuste a largura desejada */
+
+
+  }
+  .table-object-convenants{
+    display: inline-block;
+    left: 570px;
+    bottom: 802px;
+    position: relative;
+    padding: 12px 2px 170px 2px;
+    border: 2px solid #cebe8a;
+    box-shadow: 2px 2px 4px rgb(0, 21, 42);
+    max-height: 342px; /* Defina a altura máxima desejada */
+    max-width:770px ;
+    overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
+    width: 55%;
+  }
+  .table-convenants{
+    display: inline-block;
+    left: 470px;
+    bottom: 790px;
+    position: relative;
+    padding: 17px 25px 17px 30px;
+    border: 2px solid #cebe8a;
+    box-shadow: 2px 2px 4px rgb(0, 21, 42);
+    max-height: 247px; /* Defina a altura máxima desejada */
+    overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
+    width: 63.2%;
+  }
+}
