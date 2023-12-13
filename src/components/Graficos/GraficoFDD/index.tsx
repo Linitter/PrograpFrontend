@@ -40,6 +40,15 @@ interface DataTypeConvenantsAuthor {
   convenats: DataType[];
 }
 
+interface ExpandedDataTypeObject {
+  key: React.Key;
+  id: string;
+  objectsId: string;
+  status: string;
+  executedValue: string;
+  deliveryDate: string;
+}
+
 // expensão da tabela de autor
 interface ExpandedDataTypeAuthor {
   key: React.Key;
@@ -381,7 +390,7 @@ export default function GraficoFDD() {
   };
 
   // TABELA de eixos com os itens somatoria
-  const columnsConvenants: ColumnsType<DataType> = [
+  const columnsFdd: ColumnsType<DataType> = [
     {
       title: 'N° Convênio',
       dataIndex: 'agreementNumber',
@@ -467,78 +476,87 @@ export default function GraficoFDD() {
   // tabela de eixo
   const columns: ColumnsType<DataType> = [
     {
-      title: 'Autor',
-      dataIndex: 'name',
-      key: 'name',
-      width: '75%',
+      title: 'N° Convênio',
+      dataIndex: 'agreementNumber',
+      key: 'agreementNumber',
+      width: '85%',
     },
     {
-      title: 'valor',
-      dataIndex: 'id',
-      key: 'id',
-      width: '25%',
-      render: (id: string) => somarValorTotal(id) || '', // Renderiza o valor total do autor
+      title: 'Ano',
+      dataIndex: 'year',
+      key: 'year',
+      width: '20%',
     },
   ];
-  // LISTAGEM DE EIXOS
-  // TABELA DE METAS
-  const expandedRowRender = (record: any) => {
-    //adicionar uma chave única para cada DESTINAÇÃO usando o índice
-    const authorWithKeys = record.covenantAuthor.map(
-      (convenantsAuthor: any, index: any) => ({
-        ...convenantsAuthor,
-        key: `convenantsAuthor_${index}`,
-      }),
-    );
-    // filtra as metas vinculados com um fundo a fundo
-    const filteredConvenant = authorWithKeys.filter(
-      (convenantsAuthor: any) => convenantsAuthor?.authors?.id === record?.id,
-    );
 
-    // tabela do fundo a fundo
-    const columns: TableColumnsType<any> = [
+  const expandedRowRender = (record: any) => {
+    const objectWithKeys = objectResource.map((objectResource, index) => ({
+      ...objectResource,
+      key: `objectResource_${index}`,
+    }));
+
+    // Filtra os objetos vinculados a uma meta
+    const filterObjectResource = objectWithKeys.filter(object => {
+      return (
+        object.fdd?.id === record.id && // Apenas objetos vinculados à meta selecionada
+        (selectedStatus.length === 0 ||
+          selectedStatus.includes(object.status)) &&
+        (selectedNatureExpense.length === 0 ||
+          selectedNatureExpense.includes(object.natureExpense))
+      );
+    });
+    //Objetos
+    const columns: TableColumnsType<ExpandedDataTypeObject> = [
       {
-        title: 'N° Convênio',
-        dataIndex: 'covenants',
-        key: 'covenants',
-        width: '20%',
-        render: (value: any) => {
-          return value?.agreementNumber || 'N/A';
-        },
+        title: 'Objeto',
+        dataIndex: 'objects',
+        key: 'objects',
+        width: '27%',
+        render: objects => (objects ? objects?.name : ''),
       },
       {
-        title: 'Emenda',
-        dataIndex: 'covenants',
-        key: 'covenants',
-        width: '30%',
-        render: (value: any) => {
-          return value?.amendment || 'N/A';
-        },
-      },
-      {
-        title: 'Valor previsto',
-        dataIndex: 'contributionValue',
-        key: 'contributionValue',
-        width: '30%',
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+        width: '10%',
         render: (value: any) => value || '*********',
       },
       {
-        title: 'Ano',
-        dataIndex: 'covenants',
-        key: 'covenants',
+        title: 'Natureza',
+        dataIndex: 'natureExpense',
+        key: 'natureExpense',
+        width: '18%',
+        render: (value: any) => value || '*********',
+      },
+      {
+        title: 'Qtde',
+        dataIndex: 'amount',
+        key: 'amount',
+        width: '1%',
+        render: (value: any) => value || '*********',
+      },
+      {
+        title: 'Valor unitário',
+        dataIndex: 'unitaryValue',
+        key: 'unitaryValue',
+        width: '20%',
+        render: (value: any) => value || '*********',
+      },
+
+      {
+        title: 'Valor executado',
+        dataIndex: 'executedValue',
+        key: 'executedValue',
         width: '25%',
-        render: (value: any) => {
-          return value?.year || 'N/A';
-        },
+        render: (value: any) => value || '*********',
       },
     ];
 
     return (
       <Table
         columns={columns}
-        dataSource={filteredConvenant}
+        dataSource={filterObjectResource}
         pagination={false}
-        rowClassName={() => 'custom-table-destiny'} // Defina o nome da classe para o estilo personalizado
       />
     );
   };
@@ -833,7 +851,7 @@ export default function GraficoFDD() {
 
       <div className="custom-donut-fdd">
         {/* grafico de pizza */}
-        <h3>Valor do autor</h3>
+        <h3>Valor FDD</h3>
         <div className="pass-value">
           <h4>Valor Total</h4>
           {/* Exibe o valor total com a formatação "R$ 54.654,00" */}
@@ -886,10 +904,10 @@ export default function GraficoFDD() {
         <Table
           columns={columns}
           rowKey={record => record.id} // Utilize a chave única (record.id) como a chave da linha
-          dataSource={author}
+          dataSource={FDD}
           expandable={{
             expandedRowRender,
-            defaultExpandedRowKeys: author.map((record: any) => record.id), // Defina as chaves das linhas que devem ser expandidas por padrão
+            defaultExpandedRowKeys: FDD.map((record: any) => record.id), // Defina as chaves das linhas que devem ser expandidas por padrão
           }}
           rowClassName={() => 'custom-table-row'} // Defina o nome da classe para o estilo personalizado
           className="custom-table-dashboard"
@@ -899,9 +917,9 @@ export default function GraficoFDD() {
       <div className="table-convenants">
         {/* tabelas de eixos com somatoria */}
         <Table
-          columns={columnsConvenants}
+          columns={columnsFdd}
           rowKey="name"
-          dataSource={convenants} // Use os dados atualizados da tabela
+          dataSource={FDD} // Use os dados atualizados da tabela
           className="custom-table-dashboard"
           rowClassName={() => 'custom-table-row'} // Defina o nome da classe para o estilo personalizado
           pagination={false}

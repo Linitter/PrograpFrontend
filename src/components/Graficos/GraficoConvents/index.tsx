@@ -205,64 +205,56 @@ export default function GraficoConvenants() {
     return formattedSum;
   };
 
-  // Contar a quantidade de cada tipo de eixo e calcular a soma dos valores
-  const authorInfo: Record<
+  const convenantsInfo: Record<
     string,
-    { count: number; contributionValue: number; nameAuthor: string }
+    {
+      globalValue: number;
+      globalValueTotal: number;
+      count: number;
+    }
   > = {};
 
-  let totalContributionValue = 0;
+  let totalGlobalValue = 0;
+  let count = 0;
 
-  author.forEach(author => {
-    let soma = 0; // Initialize soma as a number
+  const findConvenants = convenants.filter(
+    (item: any) => item.globalValue && item.deleted_at === null,
+  );
 
-    const findAuthors = convenantsAuthor.filter(
-      (item: any) => item.authors.id === author.id && item.deleted_at === null,
-    );
+  findConvenants.forEach((item: any) => {
+    const globalValue = item.globalValue.replace(/\./g, '').replace(',', '.');
+    const globalValueAsNumber = parseFloat(globalValue);
+    if (!isNaN(globalValueAsNumber)) {
+      totalGlobalValue += globalValueAsNumber; // Increment the total
+      count++;
+      convenantsInfo[item.agreementNumber] = {
+        count: 0,
+        globalValueTotal: totalGlobalValue,
+        globalValue: globalValueAsNumber, // Store the numeric value
+      };
+    }
+  });
 
-    findAuthors.forEach((item: any) => {
-      const contributionValueWithoutDots = item.contributionValue.replace(
-        /\./g,
-        '',
-      );
+  const totalAmount = totalGlobalValue;
 
-      const contributionValueAsNumber = parseFloat(
-        contributionValueWithoutDots.replace(',', '.'),
-      );
-
-      if (!isNaN(contributionValueAsNumber)) {
-        soma += contributionValueAsNumber;
-        totalContributionValue += contributionValueAsNumber; // Incrementar o total
-      }
-    });
-
-    authorInfo[author.id] = {
-      count: findAuthors.length,
-      contributionValue: soma,
-      nameAuthor: author.name,
+  const donutChartData = Object.values(convenantsInfo).map((info: any) => {
+    const value = (info.globalValue / totalAmount) * 100;
+    return {
+      name: `${info.globalValue}`, // Nome ou rótulo do valor
+      data: parseFloat(value.toFixed(1)), // Convertendo para número de uma casa decimal
     };
   });
-  const sortedAuthors = Object.values(authorInfo).sort(
-    (a, b) => b.contributionValue - a.contributionValue,
+  const formattedChartData: ApexNonAxisChartSeries = donutChartData.map(
+    item => item.data,
   );
-
-  // Selecionar os 5 primeiros autores após a ordenação
-  const top5Authors = sortedAuthors.slice(0, 5);
-
   // Criar rótulos personalizados para a legenda com os top 5 autores
-  const legendLabels = top5Authors.map(author => {
-    const { contributionValue, nameAuthor } = author;
-    const percentage = (contributionValue / totalContributionValue) * 100;
-    return `${nameAuthor} - R$ ${contributionValue.toLocaleString('pt-BR', {
+  const legendLabels = Object.keys(convenantsInfo).map(agreementNumberFdd => {
+    const { globalValue } = convenantsInfo[agreementNumberFdd];
+    return `${agreementNumberFdd} - ${globalValue.toLocaleString('pt-BR', {
       style: 'currency',
       currency: 'BRL',
-    })} (${percentage.toFixed(2)}%)`;
+    })}`;
   });
-
-  // Criar valores percentuais para o gráfico de pizza com os top 5 autores
-  const seriesValues = top5Authors.map(
-    author => (author.contributionValue / totalContributionValue) * 100,
-  );
 
   // Configuração do gráfico de pizza com os top 5 autores
   const donutChartOptions: ApexOptions = {
@@ -274,22 +266,14 @@ export default function GraficoConvenants() {
     },
     labels: legendLabels,
     colors: randomColors.slice(0, legendLabels.length),
-    series: seriesValues,
+    series: formattedChartData,
+    tooltip: {
+      enabled: true,
+      y: {
+        formatter: (value: number) => `${value.toFixed(1)}%`, // Adiciona o símbolo de porcentagem ao valor do tooltip
+      },
+    },
   };
-
-  //calculando a soma dos valores  de todos os eixos
-  const sumOfValues = convenantsAuthor.map(item => {
-    // Remova todos os caracteres não numéricos
-    const numericAmount = item.contributionValue.replace(/[^\d,]/g, '');
-
-    // Substitua a vírgula por ponto (para parse correto como número)
-    const cleanedAmount = numericAmount.replace(',', '.');
-
-    // Converta para um número de ponto flutuante
-    return parseFloat(cleanedAmount);
-  });
-  // Calcula o valor total
-  const totalAmount = sumOfValues.reduce((total, amount) => total + amount, 0);
 
   // grafico vertical
   //Defina os status que você deseja acompanhar
@@ -483,82 +467,90 @@ export default function GraficoConvenants() {
   // tabela de eixo
   const columns: ColumnsType<DataType> = [
     {
-      title: 'Autor',
-      dataIndex: 'name',
-      key: 'name',
-      width: '75%',
+      title: 'N° Convênio',
+      dataIndex: 'agreementNumber',
+      key: 'agreementNumber',
+      width: '85%',
     },
     {
-      title: 'valor',
-      dataIndex: 'id',
-      key: 'id',
-      width: '25%',
-      render: (id: string) => somarValorTotal(id) || '', // Renderiza o valor total do autor
+      title: 'Ano',
+      dataIndex: 'year',
+      key: 'year',
+      width: '20%',
     },
   ];
-  // LISTAGEM DE EIXOS
-  // TABELA DE METAS
-  const expandedRowRender = (record: any) => {
-    //adicionar uma chave única para cada DESTINAÇÃO usando o índice
-    const authorWithKeys = record.covenantAuthor.map(
-      (convenantsAuthor: any, index: any) => ({
-        ...convenantsAuthor,
-        key: `convenantsAuthor_${index}`,
-      }),
-    );
-    // filtra as metas vinculados com um fundo a fundo
-    const filteredConvenant = authorWithKeys.filter(
-      (convenantsAuthor: any) => convenantsAuthor?.authors?.id === record?.id,
-    );
 
-    // tabela do fundo a fundo
-    const columns: TableColumnsType<any> = [
+  const expandedRowRender = (record: any) => {
+    const objectWithKeys = objectResource.map((objectResource, index) => ({
+      ...objectResource,
+      key: `objectResource_${index}`,
+    }));
+
+    // Filtra os objetos vinculados a uma meta
+    const filterObjectResource = objectWithKeys.filter(object => {
+      return (
+        object.covenants?.id === record.id && // Apenas objetos vinculados à meta selecionada
+        (selectedStatus.length === 0 ||
+          selectedStatus.includes(object.status)) &&
+        (selectedNatureExpense.length === 0 ||
+          selectedNatureExpense.includes(object.natureExpense))
+      );
+    });
+    //Objetos
+    const columns: TableColumnsType<ExpandedDataTypeObject> = [
       {
-        title: 'N° Convênio',
-        dataIndex: 'covenants',
-        key: 'covenants',
-        width: '20%',
-        render: (value: any) => {
-          return value?.agreementNumber || 'N/A';
-        },
+        title: 'Objeto',
+        dataIndex: 'objects',
+        key: 'objects',
+        width: '27%',
+        render: objects => (objects ? objects?.name : ''),
       },
       {
-        title: 'Emenda',
-        dataIndex: 'covenants',
-        key: 'covenants',
-        width: '30%',
-        render: (value: any) => {
-          return value?.amendment || 'N/A';
-        },
-      },
-      {
-        title: 'Valor previsto',
-        dataIndex: 'contributionValue',
-        key: 'contributionValue',
-        width: '30%',
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+        width: '10%',
         render: (value: any) => value || '*********',
       },
       {
-        title: 'Ano',
-        dataIndex: 'covenants',
-        key: 'covenants',
+        title: 'Natureza',
+        dataIndex: 'natureExpense',
+        key: 'natureExpense',
+        width: '18%',
+        render: (value: any) => value || '*********',
+      },
+      {
+        title: 'Qtde',
+        dataIndex: 'amount',
+        key: 'amount',
+        width: '1%',
+        render: (value: any) => value || '*********',
+      },
+      {
+        title: 'Valor unitário',
+        dataIndex: 'unitaryValue',
+        key: 'unitaryValue',
+        width: '20%',
+        render: (value: any) => value || '*********',
+      },
+
+      {
+        title: 'Valor executado',
+        dataIndex: 'executedValue',
+        key: 'executedValue',
         width: '25%',
-        render: (value: any) => {
-          return value?.year || 'N/A';
-        },
+        render: (value: any) => value || '*********',
       },
     ];
 
     return (
       <Table
         columns={columns}
-        dataSource={filteredConvenant}
+        dataSource={filterObjectResource}
         pagination={false}
-        rowClassName={() => 'custom-table-destiny'} // Defina o nome da classe para o estilo personalizado
       />
     );
   };
-
   {
     /* const expandedRowRenderObject = (record: any) => {
     const objectWithKeys = objectResource.map((objectResource, index) => ({
@@ -849,7 +841,7 @@ export default function GraficoConvenants() {
 
       <div className="custom-donut-convenants">
         {/* grafico de pizza */}
-        <h3>Valor do autor</h3>
+        <h3>Valor FDD</h3>
         <div className="pass-value">
           <h4>Valor Total</h4>
           {/* Exibe o valor total com a formatação "R$ 54.654,00" */}
@@ -900,10 +892,10 @@ export default function GraficoConvenants() {
         <Table
           columns={columns}
           rowKey={record => record.id} // Utilize a chave única (record.id) como a chave da linha
-          dataSource={author}
+          dataSource={convenants}
           expandable={{
             expandedRowRender,
-            defaultExpandedRowKeys: author.map(record => record.id), // Defina as chaves das linhas que devem ser expandidas por padrão
+            defaultExpandedRowKeys: convenants.map((record: any) => record.id), // Defina as chaves das linhas que devem ser expandidas por padrão
           }}
           rowClassName={() => 'custom-table-row'} // Defina o nome da classe para o estilo personalizado
           className="custom-table-dashboard"
