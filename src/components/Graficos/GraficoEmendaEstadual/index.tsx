@@ -857,7 +857,7 @@ export default function GraficoEmenda() {
         </div>
       </div>
 
-      <div className="custom-donut-fdd">
+      <div className="custom-donut-emenda">
         {/* grafico de pizza */}
         <h3>Valor repasse emenda</h3>
         <div className="pass-value">

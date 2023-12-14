@@ -40,12 +40,12 @@
 
 }
 /* MARGEM DO GRAFICO grafico de pizza, juntamente com os dados */
-.custom-donut-fdd {
+.custom-donut-emenda {
   position: relative;
   left: 285px; /* Defina a posição horizontal desejada */
   bottom: 483px;
   display: inline-block;
-  padding: 20px 180px 15px 10px;
+  padding: 20px 190px 15px 10px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-width: 500px;

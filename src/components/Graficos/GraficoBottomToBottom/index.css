@@ -45,7 +45,7 @@
   left: 290px; /* Defina a posição horizontal desejada */
   bottom: 483px;
   display: inline-block;
-  padding: 20px 140px 15px 10px;
+  padding: 20px 80px 15px 10px;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-width: 500px;
@@ -89,7 +89,7 @@
 /* GRAFICO EM BARRA VERTICAL */
 .custom-bar-vertical{
   position: relative;
-  bottom: 90px;
+  bottom: 134px ;
   right: 670px;
   display: inline-block;
   border: 2px solid #cebe8a;
