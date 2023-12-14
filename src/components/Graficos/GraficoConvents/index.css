@@ -8,7 +8,7 @@
 
 .custom-bar-convenants {
   position: relative;
-  bottom: 658px !important;
+  bottom: 560px !important;
   right: 215px;
   display: inline-block;
   padding: 12px 46px 1px 13px;
@@ -43,9 +43,9 @@
 .custom-donut-convenants {
   position: relative;
   left: 285px; /* Defina a posição horizontal desejada */
-  bottom: 483px;
+  bottom: 390px;
   display: inline-block;
-  padding: 20px 170px 15px 10px;
+  padding: 20px 170px 0px 10px !important;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-width: 500px;
@@ -89,7 +89,7 @@
 /* GRAFICO EM BARRA VERTICAL */
 .custom-bar-convenants-vertical{
   position: relative;
-  bottom: 90px;
+  bottom: 5px;
   right: 715px;
   display: inline-block;
   border: 2px solid #cebe8a;
@@ -113,7 +113,7 @@
 .table-object-convenants{
   display: inline-block;
   left: 820px;
-  bottom: 915px;
+  bottom: 818px !important;
   position: relative;
   padding: 35px 8px 278px 8px;
   border: 2px solid #cebe8a;
@@ -132,9 +132,9 @@
 .table-convenants{
   display: inline-block;
   left: 620px;
-  bottom: 898px;
+  bottom: 815px !important;
   position: relative;
-  padding: 40px 8px 42px 8px;
+  padding: 15px 8px 42px 8px !important;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   overflow-y: auto; /* Adicione a rolagem vertical quando necessário */

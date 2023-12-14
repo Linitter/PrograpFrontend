@@ -64,7 +64,6 @@ export default function GraficoConvenants() {
   const [convenantsAuthor, setCoventsAuthor] = useState<any[]>([]); // obejtos/recusos
 
   const [barChartData, setBarChartData] = useState<number[]>([0, 0]); // Initialize with zeros
-  const [selectedAxes, setSelectedAxes] = useState<string[]>([]);
   const [selectedYears, setSelectedYears] = useState<string[]>([]);
   const [filteredData, setFilteredData] = useState<DataType[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
@@ -660,15 +659,6 @@ export default function GraficoConvenants() {
       setObjectResource(response.data);
     }
   }
-  //funções dos checkbox
-  const handleAxisChange = (e: CheckboxChangeEvent, axis: string) => {
-    const selected = e.target.checked;
-    if (selected) {
-      setSelectedAxes([...selectedAxes, axis]);
-    } else {
-      setSelectedAxes(selectedAxes.filter(item => item !== axis));
-    }
-  };
 
   const handleYearChange = (e: CheckboxChangeEvent, year: string) => {
     const selected = e.target.checked;
@@ -692,8 +682,6 @@ export default function GraficoConvenants() {
     natureExpense: string,
   ) => {
     const selected = e.target.checked;
-    console.log('natureExpense', natureExpense);
-    console.log('selected', selected);
     if (selected) {
       setSelectedNatureExpense([...selectedNatureExpense, natureExpense]);
     } else {
@@ -705,36 +693,45 @@ export default function GraficoConvenants() {
 
   //Parte doss filtros do checkbox
   useEffect(() => {
-    author.forEach((item: any) => {
-      somarValorTotal(item);
-    });
-  }, [author]);
+    const filteredTableData = convenants
+      .filter(filterBySelectedYears)
+      .map(item => mapGoalsAndFilterResourceObjects(item));
+    setFilteredData(filteredTableData);
+  }, [convenants, selectedYears, selectedStatus, selectedNatureExpense]);
 
-  {
-    /*function mapGoalsAndFilterResourceObjects(item: any) {
-    console.log('i', item);
-    const filteredGoals = item.map((item: any) => {
-      const filteredResourceObjects = item?.resourceObjects.filter(
-        (objectResourceItem: any) =>
-          (selectedStatus.length === 0 ||
-            selectedStatus.includes(objectResourceItem.status)) &&
-          (selectedNatureExpense.length === 0 ||
-            selectedNatureExpense.includes(objectResourceItem.natureExpense)),
-      );
-      console.log('a', filteredResourceObjects);
+  function filterBySelectedYears(item: any) {
+    const isYearSelected =
+      selectedYears.length === 0 ||
+      selectedYears.includes(item.year?.toString());
 
-      return {
-        ...item,
-        resourceObjects: filteredResourceObjects,
-      };
-    });
+    const hasSelectedStatus =
+      selectedStatus.length === 0 ||
+      item.resourceObjects.some((objectResourceItem: any) => {
+        return selectedStatus.includes(objectResourceItem.status);
+      });
+
+    // Adicione a verificação para a propriedade natureExpense
+    const hasSelectedNatureExpense =
+      selectedNatureExpense.length === 0 ||
+      item.resourceObjects.some((objectResourceItem: any) => {
+        return selectedNatureExpense.includes(objectResourceItem.natureExpense);
+      });
+
+    return isYearSelected && hasSelectedStatus && hasSelectedNatureExpense;
+  }
+  function mapGoalsAndFilterResourceObjects(item: any) {
+    const filteredResourceObjects = item?.resourceObjects.filter(
+      (objectResourceItem: any) =>
+        (selectedStatus.length === 0 ||
+          selectedStatus.includes(objectResourceItem.status)) &&
+        (selectedNatureExpense.length === 0 ||
+          selectedNatureExpense.includes(objectResourceItem.natureExpense)),
+    );
 
     return {
       ...item,
-      goal: filteredGoals,
-      key: item.id,
+      resourceObjects: filteredResourceObjects,
     };
-  }*/
   }
   return (
     <>
@@ -744,24 +741,18 @@ export default function GraficoConvenants() {
           <h3>Tipo</h3>
           <Checkbox
             className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Bancada')}
-            checked={selectedNatureExpense.includes('Bancada')}
+            onChange={e => handleNatureExpenseChange(e, 'Investimento')}
+            checked={selectedNatureExpense.includes('Investimento')}
           >
-            Bancada
+            Investimento
           </Checkbox>
+          <br />
           <Checkbox
             className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Individual')}
-            checked={selectedNatureExpense.includes('Individual')}
+            onChange={e => handleNatureExpenseChange(e, 'Custeio')}
+            checked={selectedNatureExpense.includes('Custeio')}
           >
-            Individual
-          </Checkbox>
-          <Checkbox
-            className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Especial')}
-            checked={selectedNatureExpense.includes('Especial')}
-          >
-            Especial
+            Custeio
           </Checkbox>
         </div>
 
@@ -793,24 +784,6 @@ export default function GraficoConvenants() {
           <br />
         </div>
 
-        <div className="checkbox-axle">
-          <h3>Eixo</h3>
-          <Checkbox
-            className="checkboxBottom"
-            onChange={e => handleAxisChange(e, 'EIXO I')}
-            checked={selectedAxes.includes('EIXO I')}
-          >
-            EIXO I
-          </Checkbox>
-          <br />
-          <Checkbox
-            className="checkboxBottom"
-            onChange={e => handleAxisChange(e, 'EIXO IV')}
-            checked={selectedAxes.includes('EIXO IV')}
-          >
-            EIXO IV
-          </Checkbox>
-        </div>
         <div className="checkbox-status">
           <h3>Status</h3>
           <Checkbox
@@ -892,7 +865,7 @@ export default function GraficoConvenants() {
         <Table
           columns={columns}
           rowKey={record => record.id} // Utilize a chave única (record.id) como a chave da linha
-          dataSource={convenants}
+          dataSource={filteredData}
           expandable={{
             expandedRowRender,
             defaultExpandedRowKeys: convenants.map((record: any) => record.id), // Defina as chaves das linhas que devem ser expandidas por padrão
