@@ -7,7 +7,7 @@
 
 .custom-bar-fdd {
   position: relative;
-  bottom: 558px;
+  bottom: 558px !important;
   right: 215px;
   display: inline-block;
   padding: 12px 46px 1px 13px;
@@ -89,7 +89,7 @@
 /* GRAFICO EM BARRA VERTICAL */
 .custom-bar-fdd-vertical{
   position: relative;
-  bottom: 5px;
+  bottom: 5px !important;
   right: 715px;
   display: inline-block;
   border: 2px solid #cebe8a;
@@ -113,7 +113,7 @@
 .table-object-convenants{
   display: inline-block;
   left: 820px;
-  bottom: 915px;
+  bottom: 818px !important;
   position: relative;
   padding: 35px 8px 278px 8px;
   border: 2px solid #cebe8a;
