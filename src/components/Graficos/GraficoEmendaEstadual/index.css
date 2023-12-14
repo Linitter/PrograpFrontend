@@ -5,9 +5,9 @@
   display: none !important;
 }
 
-.custom-bar-fdd {
+.custom-bar-emenda {
   position: relative;
-  bottom: 655px;
+  bottom: 695px !important;
   right: 215px;
   display: inline-block;
   padding: 12px 46px 1px 13px;
@@ -16,7 +16,7 @@
   width: 500px;
 }
 /* Estilize o tooltip */
-.custom-bar-fdd  .apexcharts-tooltip {
+.custom-bar-emenda  .apexcharts-tooltip {
   color: #030303 !important; /* Cor do texto (importante para substituir as configurações padrão) */
 }
 
@@ -43,7 +43,7 @@
 .custom-donut-emenda {
   position: relative;
   left: 285px; /* Defina a posição horizontal desejada */
-  bottom: 483px;
+  bottom: 525px !important;
   display: inline-block;
   padding: 20px 190px 15px 10px;
   border: 2px solid #cebe8a;
@@ -87,9 +87,9 @@
 }
 
 /* GRAFICO EM BARRA VERTICAL */
-.custom-bar-fdd-vertical{
+.custom-bar-emenda-vertical{
   position: relative;
-  bottom: 90px;
+  bottom: 140px !important;
   right: 715px;
   display: inline-block;
   border: 2px solid #cebe8a;
@@ -98,7 +98,7 @@
   max-height: 10%;
 }
 /* Estilize o tooltip */
-.custom-bar-fdd-vertical  .apexcharts-tooltip {
+.custom-bar-emenda-vertical  .apexcharts-tooltip {
   color: #070707 !important; /* Cor do texto (importante para substituir as configurações padrão) */
 }
 
@@ -110,10 +110,10 @@
 
 /* estilização da tabela de eixos */
 
-.table-object-convenants{
+.table-object-emenda{
   display: inline-block;
   left: 820px;
-  bottom: 915px;
+  bottom: 955px !important;
   position: relative;
   padding: 35px 8px 278px 8px;
   border: 2px solid #cebe8a;
@@ -123,16 +123,16 @@
   overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
 }
 /* Estilize o scrollbar apenas dentro da table ad eobjetos*/
-.table-object-convenants::-webkit-scrollbar {
+.table-object-emenda::-webkit-scrollbar {
   width: 7px; /* Largura desejada para o scrollbar do .checkbox-year */
   background-color:  rgba(0, 0, 0, 0.25); /* Cor da alça da barra de rolagem */
 
 }
 /* tabela de eixo */
-.table-convenants{
+.table-emenda{
   display: inline-block;
   left: 620px;
-  bottom: 898px;
+  bottom: 948px;
   position: relative;
   padding: 40px 8px 42px 8px;
   border: 2px solid #cebe8a;
@@ -142,7 +142,7 @@
   width: 60%;
 }
 /* Estilize o scrollbar apenas dentro do componente .checkbox-year */
-.table-convenants::-webkit-scrollbar {
+.table-emenda::-webkit-scrollbar {
   width: 7px; /* Largura desejada para o scrollbar do .checkbox-year */
   background-color:  rgba(0, 0, 0, 0.25); /* Cor da alça da barra de rolagem */
 

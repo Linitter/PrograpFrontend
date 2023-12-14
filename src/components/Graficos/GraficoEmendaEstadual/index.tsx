@@ -879,7 +879,7 @@ export default function GraficoEmenda() {
         />
       </div>
 
-      <div className="custom-bar-fdd">
+      <div className="custom-bar-emenda">
         {/* grafico em barra horizontal */}
         <h3>Tipo de despesa</h3>
         <div className="total-expense-amount">
@@ -897,7 +897,7 @@ export default function GraficoEmenda() {
         />
       </div>
 
-      <div className="custom-bar-fdd-vertical">
+      <div className="custom-bar-emenda-vertical">
         <h3 className="h3Etapa">Etapa</h3>
         {/* grafico em bar vertical */}
         <ReactApexChart
@@ -907,7 +907,7 @@ export default function GraficoEmenda() {
           height={210}
         />
       </div>
-      <div className="table-object-convenants">
+      <div className="table-object-emenda">
         {/* tabela com expanção - eixos -> metas -> objetos */}
         <Table
           columns={columns}
@@ -922,7 +922,7 @@ export default function GraficoEmenda() {
           pagination={false}
         />
       </div>
-      <div className="table-convenants">
+      <div className="table-emenda">
         {/* tabelas de eixos com somatoria */}
         <Table
           columns={columnsFdd}
