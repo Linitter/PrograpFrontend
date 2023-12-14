@@ -715,36 +715,45 @@ export default function GraficoFDD() {
 
   //Parte doss filtros do checkbox
   useEffect(() => {
-    author.forEach((item: any) => {
-      somarValorTotal(item);
-    });
-  }, [author]);
+    const filteredTableData = FDD.filter(filterBySelectedYears).map(item =>
+      mapGoalsAndFilterResourceObjects(item),
+    );
+    setFilteredData(filteredTableData);
+  }, [FDD, selectedYears, selectedStatus, selectedNatureExpense]);
 
-  {
-    /*function mapGoalsAndFilterResourceObjects(item: any) {
-    console.log('i', item);
-    const filteredGoals = item.map((item: any) => {
-      const filteredResourceObjects = item?.resourceObjects.filter(
-        (objectResourceItem: any) =>
-          (selectedStatus.length === 0 ||
-            selectedStatus.includes(objectResourceItem.status)) &&
-          (selectedNatureExpense.length === 0 ||
-            selectedNatureExpense.includes(objectResourceItem.natureExpense)),
-      );
-      console.log('a', filteredResourceObjects);
+  function filterBySelectedYears(item: any) {
+    const isYearSelected =
+      selectedYears.length === 0 ||
+      selectedYears.includes(item.year?.toString());
 
-      return {
-        ...item,
-        resourceObjects: filteredResourceObjects,
-      };
-    });
+    const hasSelectedStatus =
+      selectedStatus.length === 0 ||
+      item.resourceObjects.some((objectResourceItem: any) => {
+        return selectedStatus.includes(objectResourceItem.status);
+      });
+
+    // Adicione a verificação para a propriedade natureExpense
+    const hasSelectedNatureExpense =
+      selectedNatureExpense.length === 0 ||
+      item.resourceObjects.some((objectResourceItem: any) => {
+        return selectedNatureExpense.includes(objectResourceItem.natureExpense);
+      });
+
+    return isYearSelected && hasSelectedStatus && hasSelectedNatureExpense;
+  }
+  function mapGoalsAndFilterResourceObjects(item: any) {
+    const filteredResourceObjects = item?.resourceObjects.filter(
+      (objectResourceItem: any) =>
+        (selectedStatus.length === 0 ||
+          selectedStatus.includes(objectResourceItem.status)) &&
+        (selectedNatureExpense.length === 0 ||
+          selectedNatureExpense.includes(objectResourceItem.natureExpense)),
+    );
 
     return {
       ...item,
-      goal: filteredGoals,
-      key: item.id,
+      resourceObjects: filteredResourceObjects,
     };
-  }*/
   }
   return (
     <>
@@ -754,24 +763,18 @@ export default function GraficoFDD() {
           <h3>Tipo</h3>
           <Checkbox
             className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Bancada')}
-            checked={selectedNatureExpense.includes('Bancada')}
+            onChange={e => handleNatureExpenseChange(e, 'Investimento')}
+            checked={selectedNatureExpense.includes('Investimento')}
           >
-            Bancada
+            Investimento
           </Checkbox>
+          <br />
           <Checkbox
             className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Individual')}
-            checked={selectedNatureExpense.includes('Individual')}
+            onChange={e => handleNatureExpenseChange(e, 'Custeio')}
+            checked={selectedNatureExpense.includes('Custeio')}
           >
-            Individual
-          </Checkbox>
-          <Checkbox
-            className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Especial')}
-            checked={selectedNatureExpense.includes('Especial')}
-          >
-            Especial
+            Custeio
           </Checkbox>
         </div>
 
@@ -803,24 +806,6 @@ export default function GraficoFDD() {
           <br />
         </div>
 
-        <div className="checkbox-axle">
-          <h3>Eixo</h3>
-          <Checkbox
-            className="checkboxBottom"
-            onChange={e => handleAxisChange(e, 'EIXO I')}
-            checked={selectedAxes.includes('EIXO I')}
-          >
-            EIXO I
-          </Checkbox>
-          <br />
-          <Checkbox
-            className="checkboxBottom"
-            onChange={e => handleAxisChange(e, 'EIXO IV')}
-            checked={selectedAxes.includes('EIXO IV')}
-          >
-            EIXO IV
-          </Checkbox>
-        </div>
         <div className="checkbox-status">
           <h3>Status</h3>
           <Checkbox
@@ -904,7 +889,7 @@ export default function GraficoFDD() {
         <Table
           columns={columns}
           rowKey={record => record.id} // Utilize a chave única (record.id) como a chave da linha
-          dataSource={FDD}
+          dataSource={filteredData}
           expandable={{
             expandedRowRender,
             defaultExpandedRowKeys: FDD.map((record: any) => record.id), // Defina as chaves das linhas que devem ser expandidas por padrão

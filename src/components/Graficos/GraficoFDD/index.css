@@ -7,7 +7,7 @@
 
 .custom-bar-fdd {
   position: relative;
-  bottom: 655px;
+  bottom: 558px;
   right: 215px;
   display: inline-block;
   padding: 12px 46px 1px 13px;
@@ -43,7 +43,7 @@
 .custom-donut-fdd {
   position: relative;
   left: 285px; /* Defina a posição horizontal desejada */
-  bottom: 483px;
+  bottom: 390px;
   display: inline-block;
   padding: 20px 135px 15px 10px;
   border: 2px solid #cebe8a;
@@ -89,7 +89,7 @@
 /* GRAFICO EM BARRA VERTICAL */
 .custom-bar-fdd-vertical{
   position: relative;
-  bottom: 90px;
+  bottom: 5px;
   right: 715px;
   display: inline-block;
   border: 2px solid #cebe8a;
