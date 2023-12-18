@@ -73,6 +73,7 @@ export default function GraficoTesouro() {
   const [objectResource, setObjectResource] = useState<any[]>([]); // obejtos/recusos
   const [tesouro, setTesouro] = useState<any[]>([]); // obejtos/recusos
   const [convenantsAuthor, setCoventsAuthor] = useState<any[]>([]); // obejtos/recusos
+  const [filteredData, setFilteredData] = useState<DataType[]>([]);
 
   const [barChartData, setBarChartData] = useState<number[]>([0, 0]); // Initialize with zeros
   const [selectedAxes, setSelectedAxes] = useState<string[]>([]);
@@ -173,6 +174,17 @@ export default function GraficoTesouro() {
   // grafico de pizza
   // criando cores aleatórias para o grafico
 
+  const randomColors = [
+    '#00152A',
+    '#af8e44',
+    '#077776',
+    '#8B4513',
+    '#4CAF50',
+    '#A52A2A',
+    '#763568',
+    '#00BCD4',
+  ];
+
   const somarValorTotal = (authorId: any) => {
     let soma = 0;
 
@@ -203,39 +215,6 @@ export default function GraficoTesouro() {
     return formattedSum;
   };
 
-  // Contar a quantidade de cada tipo de eixo e calcular a soma dos valores
-  const tesouroInfo: Record<
-    string,
-    {
-      transferAmount: number;
-      transferAmountTotal: number;
-      count: number;
-    }
-  > = {};
-
-  let totalBalance = 0;
-  let count = 0;
-
-  const findEmenda = tesouro.filter(
-    (item: any) => item.transferAmount && item.deleted_at === null,
-  );
-
-  findEmenda.forEach((item: any) => {
-    const transferAmount = item.transferAmount
-      .replace(/\./g, '')
-      .replace(',', '.');
-    const transferAmountAsNumber = parseFloat(transferAmount);
-    if (!isNaN(transferAmountAsNumber)) {
-      totalBalance += transferAmountAsNumber; // Increment the total
-      count++;
-      tesouroInfo[item.amendmentNumber] = {
-        count: 0,
-        transferAmountTotal: totalBalance,
-        transferAmount: transferAmountAsNumber, // Store the numeric value
-      };
-    }
-  });
-
   // grafico vertical
   //Defina os status que você deseja acompanhar
   const statusToTrack = ['Entregue', 'Concluído', 'Em execução'];
@@ -250,7 +229,7 @@ export default function GraficoTesouro() {
   objectResource.forEach(obj => {
     if (obj.stateTreasury) {
       console.log('a', obj);
-      console.log('a', obj.stateTreasury);
+      console.log('a77', obj.stateTreasury);
       // Verifique se o objeto possui um ID de convenants
       const status = obj.status;
 
@@ -345,9 +324,9 @@ export default function GraficoTesouro() {
   // tabela de eixo
   const columns: ColumnsType<DataType> = [
     {
-      title: 'N° Emenda',
-      dataIndex: 'amendmentNumber',
-      key: 'amendmentNumber',
+      title: 'Fonte',
+      dataIndex: 'source',
+      key: 'source',
       width: '85%',
     },
     {
@@ -429,6 +408,21 @@ export default function GraficoTesouro() {
       />
     );
   };
+
+  const columnsFdd: ColumnsType<DataType> = [
+    {
+      title: 'Fonte',
+      dataIndex: 'source',
+      key: 'source',
+      width: '20%',
+    },
+    {
+      title: 'Ano',
+      dataIndex: 'year',
+      key: 'year',
+      width: '20%',
+    },
+  ];
 
   {
     /* const expandedRowRenderObject = (record: any) => {
@@ -574,31 +568,51 @@ export default function GraficoTesouro() {
     }
   };
 
-  {
-    /*function mapGoalsAndFilterResourceObjects(item: any) {
-    console.log('i', item);
-    const filteredGoals = item.map((item: any) => {
-      const filteredResourceObjects = item?.resourceObjects.filter(
-        (objectResourceItem: any) =>
-          (selectedStatus.length === 0 ||
-            selectedStatus.includes(objectResourceItem.status)) &&
-          (selectedNatureExpense.length === 0 ||
-            selectedNatureExpense.includes(objectResourceItem.natureExpense)),
-      );
-      console.log('a', filteredResourceObjects);
+  //Parte doss filtros do checkbox
+  useEffect(() => {
+    const filteredTableData = tesouro
+      .filter(filterBySelectedYears)
+      .map(item => mapGoalsAndFilterResourceObjects(item));
+    setFilteredData(filteredTableData);
+  }, [tesouro, selectedYears, selectedStatus, selectedNatureExpense]);
 
-      return {
-        ...item,
-        resourceObjects: filteredResourceObjects,
-      };
-    });
+  function filterBySelectedYears(item: any) {
+    console.log('item', item);
+    const filterItem: any = objectResource.filter(
+      obj => obj.stateTreasury !== null,
+    );
+    const isYearSelected =
+      selectedYears.length === 0 ||
+      selectedYears.includes(item?.year?.toString());
+
+    const hasSelectedStatus =
+      selectedStatus.length === 0 ||
+      filterItem?.some((objectResourceItem: any) => {
+        return selectedStatus.includes(objectResourceItem.status);
+      });
+
+    // Adicione a verificação para a propriedade natureExpense
+    const hasSelectedNatureExpense =
+      selectedNatureExpense.length === 0 ||
+      filterItem?.some((objectResourceItem: any) => {
+        return selectedNatureExpense.includes(objectResourceItem.natureExpense);
+      });
+
+    return isYearSelected && hasSelectedStatus && hasSelectedNatureExpense;
+  }
+  function mapGoalsAndFilterResourceObjects(item: any) {
+    const filteredResourceObjects = item?.resourceObjects?.filter(
+      (objectResourceItem: any) =>
+        (selectedStatus.length === 0 ||
+          selectedStatus.includes(objectResourceItem.status)) &&
+        (selectedNatureExpense.length === 0 ||
+          selectedNatureExpense.includes(objectResourceItem.natureExpense)),
+    );
 
     return {
       ...item,
-      goal: filteredGoals,
-      key: item.id,
+      resourceObjects: filteredResourceObjects,
     };
-  }*/
   }
   return (
     <>
@@ -608,24 +622,18 @@ export default function GraficoTesouro() {
           <h3>Tipo</h3>
           <Checkbox
             className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Bancada')}
-            checked={selectedNatureExpense.includes('Bancada')}
+            onChange={e => handleNatureExpenseChange(e, 'Investimento')}
+            checked={selectedNatureExpense.includes('Investimento')}
           >
-            Bancada
+            Investimento
           </Checkbox>
+          <br />
           <Checkbox
             className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Individual')}
-            checked={selectedNatureExpense.includes('Individual')}
+            onChange={e => handleNatureExpenseChange(e, 'Custeio')}
+            checked={selectedNatureExpense.includes('Custeio')}
           >
-            Individual
-          </Checkbox>
-          <Checkbox
-            className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Especial')}
-            checked={selectedNatureExpense.includes('Especial')}
-          >
-            Especial
+            Custeio
           </Checkbox>
         </div>
 
@@ -657,24 +665,6 @@ export default function GraficoTesouro() {
           <br />
         </div>
 
-        <div className="checkbox-axle">
-          <h3>Eixo</h3>
-          <Checkbox
-            className="checkboxBottom"
-            onChange={e => handleAxisChange(e, 'EIXO I')}
-            checked={selectedAxes.includes('EIXO I')}
-          >
-            EIXO I
-          </Checkbox>
-          <br />
-          <Checkbox
-            className="checkboxBottom"
-            onChange={e => handleAxisChange(e, 'EIXO IV')}
-            checked={selectedAxes.includes('EIXO IV')}
-          >
-            EIXO IV
-          </Checkbox>
-        </div>
         <div className="checkbox-status">
           <h3>Status</h3>
           <Checkbox
@@ -736,7 +726,7 @@ export default function GraficoTesouro() {
         <Table
           columns={columns}
           rowKey={record => record.id} // Utilize a chave única (record.id) como a chave da linha
-          dataSource={tesouro}
+          dataSource={filteredData}
           expandable={{
             expandedRowRender,
             defaultExpandedRowKeys: tesouro.map((record: any) => record.id), // Defina as chaves das linhas que devem ser expandidas por padrão
