@@ -661,6 +661,7 @@ export default function GraficoEmenda() {
   async function loadingAuthorForm() {
     const response = await getStateAmendment('stateAmendment');
     if (response !== false) {
+      console.log('stateAmendment', response.data);
       setEmenda(response.data);
     }
   }
@@ -723,36 +724,49 @@ export default function GraficoEmenda() {
 
   //Parte doss filtros do checkbox
   useEffect(() => {
-    author.forEach((item: any) => {
-      somarValorTotal(item);
-    });
-  }, [author]);
+    const filteredTableData = emenda
+      .filter(filterBySelectedYears)
+      .map(item => mapGoalsAndFilterResourceObjects(item));
+    setFilteredData(filteredTableData);
+  }, [emenda, selectedYears, selectedStatus, selectedNatureExpense]);
 
-  {
-    /*function mapGoalsAndFilterResourceObjects(item: any) {
-    console.log('i', item);
-    const filteredGoals = item.map((item: any) => {
-      const filteredResourceObjects = item?.resourceObjects.filter(
-        (objectResourceItem: any) =>
-          (selectedStatus.length === 0 ||
-            selectedStatus.includes(objectResourceItem.status)) &&
-          (selectedNatureExpense.length === 0 ||
-            selectedNatureExpense.includes(objectResourceItem.natureExpense)),
-      );
-      console.log('a', filteredResourceObjects);
+  function filterBySelectedYears(item: any) {
+    console.log('item', item);
+    const filterItem: any = objectResource.filter(
+      obj => obj.stateAmendment !== null,
+    );
+    const isYearSelected =
+      selectedYears.length === 0 ||
+      selectedYears.includes(item?.year?.toString());
 
-      return {
-        ...item,
-        resourceObjects: filteredResourceObjects,
-      };
-    });
+    const hasSelectedStatus =
+      selectedStatus.length === 0 ||
+      filterItem?.some((objectResourceItem: any) => {
+        return selectedStatus.includes(objectResourceItem.status);
+      });
+
+    // Adicione a verificação para a propriedade natureExpense
+    const hasSelectedNatureExpense =
+      selectedNatureExpense.length === 0 ||
+      filterItem?.some((objectResourceItem: any) => {
+        return selectedNatureExpense.includes(objectResourceItem.natureExpense);
+      });
+
+    return isYearSelected && hasSelectedStatus && hasSelectedNatureExpense;
+  }
+  function mapGoalsAndFilterResourceObjects(item: any) {
+    const filteredResourceObjects = item?.resourceObjects?.filter(
+      (objectResourceItem: any) =>
+        (selectedStatus.length === 0 ||
+          selectedStatus.includes(objectResourceItem.status)) &&
+        (selectedNatureExpense.length === 0 ||
+          selectedNatureExpense.includes(objectResourceItem.natureExpense)),
+    );
 
     return {
       ...item,
-      goal: filteredGoals,
-      key: item.id,
+      resourceObjects: filteredResourceObjects,
     };
-  }*/
   }
   return (
     <>
@@ -762,24 +776,18 @@ export default function GraficoEmenda() {
           <h3>Tipo</h3>
           <Checkbox
             className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Bancada')}
-            checked={selectedNatureExpense.includes('Bancada')}
+            onChange={e => handleNatureExpenseChange(e, 'Investimento')}
+            checked={selectedNatureExpense.includes('Investimento')}
           >
-            Bancada
+            Investimento
           </Checkbox>
+          <br />
           <Checkbox
             className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Individual')}
-            checked={selectedNatureExpense.includes('Individual')}
+            onChange={e => handleNatureExpenseChange(e, 'Custeio')}
+            checked={selectedNatureExpense.includes('Custeio')}
           >
-            Individual
-          </Checkbox>
-          <Checkbox
-            className="checkboxBottom"
-            onChange={e => handleNatureExpenseChange(e, 'Especial')}
-            checked={selectedNatureExpense.includes('Especial')}
-          >
-            Especial
+            Custeio
           </Checkbox>
         </div>
 
@@ -811,24 +819,6 @@ export default function GraficoEmenda() {
           <br />
         </div>
 
-        <div className="checkbox-axle">
-          <h3>Eixo</h3>
-          <Checkbox
-            className="checkboxBottom"
-            onChange={e => handleAxisChange(e, 'EIXO I')}
-            checked={selectedAxes.includes('EIXO I')}
-          >
-            EIXO I
-          </Checkbox>
-          <br />
-          <Checkbox
-            className="checkboxBottom"
-            onChange={e => handleAxisChange(e, 'EIXO IV')}
-            checked={selectedAxes.includes('EIXO IV')}
-          >
-            EIXO IV
-          </Checkbox>
-        </div>
         <div className="checkbox-status">
           <h3>Status</h3>
           <Checkbox
@@ -912,7 +902,7 @@ export default function GraficoEmenda() {
         <Table
           columns={columns}
           rowKey={record => record.id} // Utilize a chave única (record.id) como a chave da linha
-          dataSource={emenda}
+          dataSource={filteredData}
           expandable={{
             expandedRowRender,
             defaultExpandedRowKeys: emenda.map((record: any) => record.id), // Defina as chaves das linhas que devem ser expandidas por padrão
