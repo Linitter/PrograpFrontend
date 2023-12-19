@@ -769,10 +769,10 @@ export default function BottomToBottom() {
           >
             <PlusOutlined /> Fundo a Fundo
           </Button>
-          <Input.Search
+          {/*<Input.Search
             style={{ width: '40%' }}
             placeholder="Pesquisar Fonte" // Adicione um espaço reservado
-          />
+          /> */}
         </Form.Item>
       </Row>
       <Table
