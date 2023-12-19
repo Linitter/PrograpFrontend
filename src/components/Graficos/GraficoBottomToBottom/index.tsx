@@ -645,6 +645,8 @@ export default function GraficoBottomToBottom() {
       .map(item => mapGoalsAndFilterResourceObjects(item))
       .filter(item => item.goal.length > 0);
     setFilteredData(filteredTableData);
+
+    console.log('filteredTableData', filteredTableData);
   }, [
     bottomToBottom,
     selectedAxes,
