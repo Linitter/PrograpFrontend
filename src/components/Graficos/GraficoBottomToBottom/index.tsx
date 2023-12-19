@@ -119,7 +119,10 @@ export default function GraficoBottomToBottom() {
     if (objectResource.length > 0) {
       // Filtrar os objetos que têm o campo goal definido
       const fundoAFundoObjects = objectResource.filter(
-        obj => obj.goal !== undefined && obj.goal !== null,
+        obj =>
+          obj.goal !== undefined &&
+          obj.goal !== null &&
+          obj.deleted_at !== null,
       );
       // Filtrar os objetos relacionados ao fundo a fundo
       const investimentoCount = fundoAFundoObjects.filter(
@@ -645,8 +648,6 @@ export default function GraficoBottomToBottom() {
       .map(item => mapGoalsAndFilterResourceObjects(item))
       .filter(item => item.goal.length > 0);
     setFilteredData(filteredTableData);
-
-    console.log('filteredTableData', filteredTableData);
   }, [
     bottomToBottom,
     selectedAxes,
