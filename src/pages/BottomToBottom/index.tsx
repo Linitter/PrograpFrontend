@@ -579,7 +579,7 @@ export default function BottomToBottom() {
                     label: (
                       <Popconfirm
                         title="Tem certeza de que deseja desabilitar este registro?"
-                        onConfirm={() => ClickDeletebottomToBottom(record.id)}
+                        onConfirm={() => ClickDeletebottomToBottom(record)}
                       >
                         Excluir
                       </Popconfirm>
@@ -641,6 +641,12 @@ export default function BottomToBottom() {
       setbottomToBottom(response.data);
     }
   }
+  const loadingOnebottomToBottom = async (id: string) => {
+    const response = await getBottomToBottom(`bottomToBottom/${id}`);
+    if (response !== false) {
+      return response.data;
+    }
+  };
   // metas
   async function loadingGoalForm() {
     const response = await getGoals('goals');
@@ -666,10 +672,23 @@ export default function BottomToBottom() {
   }
   //função de exlusão do fundo a fundo
   const ClickDeletebottomToBottom = async (record: any) => {
-    await deleteBottomToBottom(record);
-    const newbottomToBottom = [...bottomToBottom];
-    newbottomToBottom.splice(record, -1);
-    setbottomToBottom(newbottomToBottom);
+    try {
+      const res = await loadingOnebottomToBottom(record.id);
+      const goals = res.goal;
+
+      if (goals.length > 0) {
+        for (let i = 0; i < goals.length; i++) {
+          await deleteGoals(goals[i].id);
+        }
+      }
+      await deleteBottomToBottom(record.id);
+      const newbottomToBottom = [...bottomToBottom];
+      newbottomToBottom.splice(record, -1);
+      setbottomToBottom(newbottomToBottom);
+    } catch (error) {
+      message.error('Ocorreu um erro ao excluir o bloco.');
+    }
+
     loadingbottomToBottomForm();
   };
   //função de exlusão da meta
