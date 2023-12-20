@@ -119,10 +119,7 @@ export default function GraficoBottomToBottom() {
     if (objectResource.length > 0) {
       // Filtrar os objetos que têm o campo goal definido
       const fundoAFundoObjects = objectResource.filter(
-        obj =>
-          obj.goal !== undefined &&
-          obj.goal !== null &&
-          obj.deleted_at !== null,
+        obj => obj.goal !== undefined && obj.goal !== null,
       );
       // Filtrar os objetos relacionados ao fundo a fundo
       const investimentoCount = fundoAFundoObjects.filter(
