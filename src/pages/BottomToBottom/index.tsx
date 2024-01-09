@@ -774,6 +774,16 @@ export default function BottomToBottom() {
       key: `bottomToBottom${index}`,
     }),
   );
+
+  const handleSearch = (searchText: any) => {
+    console.log('Valor pesquisado:', searchText);
+  };
+
+  const onChangeSearch = (e: any) => {
+    const searchText = e.target.value;
+    handleSearch(searchText); // Chama a função de pesquisa a cada alteração no campo de entrada
+  };
+
   return (
     <>
       <Row style={{ paddingBottom: 'inherit', display: 'flow-root' }}>
@@ -788,10 +798,12 @@ export default function BottomToBottom() {
           >
             <PlusOutlined /> Fundo a Fundo
           </Button>
-          {/*<Input.Search
+          <Input.Search
             style={{ width: '40%' }}
-            placeholder="Pesquisar Fonte" // Adicione um espaço reservado
-          /> */}
+            placeholder="Pesquisar Fonte"
+            onChange={onChangeSearch}
+            onSearch={handleSearch} // Isso ainda será acionado ao pressionar Enter
+          />
         </Form.Item>
       </Row>
       <Table
