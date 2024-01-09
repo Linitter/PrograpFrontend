@@ -356,6 +356,7 @@ const Sistema: React.FC = () => {
               <Breadcrumb.Item className="menu">
                 {
                   {
+                    '1': <span>Dashboard</span>,
                     '2': <span>FDD</span>,
                     '3': <span>Convênio</span>,
                     '4': <span>Fundo a Fundo</span>,
