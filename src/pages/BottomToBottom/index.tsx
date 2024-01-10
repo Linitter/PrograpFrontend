@@ -798,12 +798,13 @@ export default function BottomToBottom() {
           >
             <PlusOutlined /> Fundo a Fundo
           </Button>
+          {/*}
           <Input.Search
             style={{ width: '40%' }}
             placeholder="Pesquisar Fonte"
             onChange={onChangeSearch}
             onSearch={handleSearch} // Isso ainda será acionado ao pressionar Enter
-          />
+          />*/}
         </Form.Item>
       </Row>
       <Table
