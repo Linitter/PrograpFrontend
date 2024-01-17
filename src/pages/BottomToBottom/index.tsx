@@ -130,14 +130,21 @@ export default function BottomToBottom() {
         title: 'Meta',
         dataIndex: 'description',
         key: 'description',
-        width: '60%',
+        width: '50%',
       },
       {
         title: 'Valor previsto',
         dataIndex: 'predictedValue',
         key: 'predictedValue',
         width: '12%',
-        render: (value: any) => value || '*********',
+        render: (value: any) => `R$ ${value}` || '*********',
+      },
+      {
+        title: 'Valor executado',
+        dataIndex: 'executedValue',
+        key: 'executedValue',
+        width: '12%',
+        render: (value: any) => `R$ ${value}` || '*********',
       },
       {
         title: 'Saldo',
@@ -145,6 +152,7 @@ export default function BottomToBottom() {
         dataIndex: 'balance', // fiz alteração para balance'
         key: 'balance',
         width: '12%',
+        render: (value: any) => `R$ ${value}` || '*********',
       },
 
       {
@@ -287,21 +295,21 @@ export default function BottomToBottom() {
         dataIndex: 'unitaryValue',
         key: 'unitaryValue',
         width: '8%',
-        render: (value: any) => value || '*********',
+        render: (value: any) => `R$ ${value}` || '*********',
       },
       {
         title: 'Valor total estimado',
         dataIndex: 'estimatedTotalValue',
         key: 'estimatedTotalValue',
         width: '8%',
-        render: (value: any) => value || '*********',
+        render: (value: any) => `R$ ${value}` || '*********',
       },
       {
         title: 'Valor executado',
         dataIndex: 'executedValue',
         key: 'executedValue',
         width: '9%',
-        render: (value: any) => value || '*********',
+        render: (value: any) => `R$ ${value}` || '*********',
       },
       {
         title: 'Data de previsão',

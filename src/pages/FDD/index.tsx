@@ -210,21 +210,21 @@ export default function FDD() {
         dataIndex: 'unitaryValue',
         key: 'unitaryValue',
         width: '8%',
-        render: (value: any) => value || '*********',
+        render: (value: any) => `R$ ${value}` || '*********',
       },
       {
         title: 'Valor total estimado',
         dataIndex: 'estimatedTotalValue',
         key: 'estimatedTotalValue',
         width: '8%',
-        render: (value: any) => value || '*********',
+        render: (value: any) => `R$ ${value}` || '*********',
       },
       {
         title: 'Valor executado',
         dataIndex: 'executedValue',
         key: 'executedValue',
         width: '8%',
-        render: (value: any) => value || '*********',
+        render: (value: any) => `R$ ${value}` || '*********',
       },
 
       {
@@ -412,10 +412,10 @@ export default function FDD() {
     },
 
     {
-      title: 'Nº convênio',
+      title: 'Nº',
       dataIndex: 'agreementNumber',
       key: 'agreementNumber',
-      width: '9%',
+      width: '6%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
       render: (value: any) => value || '*******',
     },
@@ -434,7 +434,7 @@ export default function FDD() {
       key: 'transferAmount',
       width: '12%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
-      render: (value: any) => value || '*******',
+      render: (value: any) => `R$ ${value}` || '*******',
     },
     {
       title: 'Valor contrapartida',
@@ -442,7 +442,7 @@ export default function FDD() {
       key: 'counterpartValue',
       width: '12%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
-      render: (value: any) => value || '*******',
+      render: (value: any) => `R$ ${value}` || '*******',
     },
     {
       title: 'Valor global',
@@ -450,7 +450,7 @@ export default function FDD() {
       key: 'globalValue',
       width: '12%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
-      render: (value: any) => value || '*******',
+      render: (value: any) => `R$ ${value}` || '*******',
     },
     {
       title: 'Descrição',
@@ -466,7 +466,7 @@ export default function FDD() {
       key: 'balance',
       width: '12%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
-      render: (value: any) => value || '*******',
+      render: (value: any) => `R$ ${value}` || '*******',
     },
     {
       title: 'Ação',

@@ -627,6 +627,7 @@ const ModalObjectResource = ({
                     { value: 'ARP', label: 'ARP' },
                     { value: 'Aditivo', label: 'Aditivo' },
                     { value: 'Licitação', label: 'Licitação' },
+                    { value: 'Compra Direta', label: 'Compra Direta' },
                   ]}
                 />
               </Form.Item>

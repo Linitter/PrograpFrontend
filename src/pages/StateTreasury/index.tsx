@@ -208,21 +208,21 @@ export default function StateTreasury() {
         dataIndex: 'unitaryValue',
         key: 'unitaryValue',
         width: '8%',
-        render: (value: any) => value || '*********',
+        render: (value: any) => `R$ ${value}` || '*********',
       },
       {
         title: 'Valor total estimado',
         dataIndex: 'estimatedTotalValue',
         key: 'estimatedTotalValue',
         width: '8%',
-        render: (value: any) => value || '*********',
+        render: (value: any) => `R$ ${value}` || '*********',
       },
       {
         title: 'Valor executado',
         dataIndex: 'executedValue',
         key: 'executedValue',
         width: '8%',
-        render: (value: any) => value || '*********',
+        render: (value: any) => `R$ ${value}` || '*********',
       },
 
       {

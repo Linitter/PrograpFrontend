@@ -194,7 +194,7 @@ const ModalFdd = ({ id, openModal, closeModal, updateFddList }: Props) => {
               <Col span={6}>
                 <Form.Item
                   name={['agreementNumber']}
-                  label="Número do convênio"
+                  label="Número"
                   hasFeedback
                 >
                   <Input />

@@ -22,6 +22,7 @@ const ModalGoal = ({
   const [form] = Form.useForm();
 
   const [predictedValue, setPredictedValue] = useState<string>('');
+  const [executedValue, setExecutedValue] = useState<string>('');
   const [balance, setBalance] = useState<string>('');
 
   //Setando id do fundo a fundo no formulario para criação das metas
@@ -64,6 +65,7 @@ const ModalGoal = ({
             description: response.data.description, // descriçaõ
             predictedValue: response.data.predictedValue, //valor  previsto
             balance: response.data.balance, // saldo
+            executedValue: response.data.executedValue,
           });
           setPredictedValue(response.data.predictedValue);
           setBalance(response.data.balance);
@@ -82,10 +84,17 @@ const ModalGoal = ({
       editingGoal.predictedValue === undefined ||
       editingGoal.predictedValue === null
     ) {
-      editingGoal.predictedValue = 'R$ 0.000,00';
+      editingGoal.predictedValue = '0.000,00';
     }
     if (editingGoal.balance === undefined || editingGoal.balance === null) {
-      editingGoal.balance = 'R$ 0.000,00';
+      editingGoal.balance = '0.000,00';
+    }
+
+    if (
+      editingGoal.executedValue === undefined ||
+      editingGoal.executedValue === null
+    ) {
+      editingGoal.executedValue = '0.000,00';
     }
 
     await postGoals(editingGoal);
@@ -100,10 +109,17 @@ const ModalGoal = ({
       editingGoal.predictedValue === undefined ||
       editingGoal.predictedValue === null
     ) {
-      editingGoal.predictedValue = 'R$ 0.000,00';
+      editingGoal.predictedValue = '0.000,00';
     }
     if (editingGoal.balance === undefined || editingGoal.balance === null) {
-      editingGoal.balance = 'R$ 0.000,00';
+      editingGoal.balance = '0.000,00';
+    }
+
+    if (
+      editingGoal.executedValue === undefined ||
+      editingGoal.executedValue === null
+    ) {
+      editingGoal.executedValue = ' 0.000,00';
     }
 
     await updateGoals(editingGoal, id);
@@ -114,6 +130,11 @@ const ModalGoal = ({
     const valorSemSimbolo = value.replace(/R\$\s?/, '');
     setPredictedValue(valorSemSimbolo);
     form.setFieldsValue({ predictedValue: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+  };
+  const handleSetExecutedValue = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setExecutedValue(valorSemSimbolo);
+    form.setFieldsValue({ executedValue: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
   };
 
   const handleSetBalance = (value: string) => {
@@ -144,7 +165,7 @@ const ModalGoal = ({
                 <TextArea rows={4} />
               </Form.Item>
             </Col>
-            <Col offset={1} span={10}>
+            <Col offset={1} span={8}>
               <Form.Item name={['predictedValue']} label="Valor previsto">
                 <CurrencyInput
                   props={undefined}
@@ -153,7 +174,16 @@ const ModalGoal = ({
                 />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col offset={0} span={7}>
+              <Form.Item name={['executedValue']} label="Valor executado">
+                <CurrencyInput
+                  props={undefined}
+                  handleMoeda={handleSetExecutedValue}
+                  value={predictedValue}
+                />
+              </Form.Item>
+            </Col>
+            <Col offset={0} span={7}>
               <Form.Item name={['balance']} label="Saldo">
                 <CurrencyInput
                   props={undefined}
