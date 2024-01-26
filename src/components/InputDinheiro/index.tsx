@@ -5,9 +5,10 @@ type DataType = {
   props: any;
   value: string;
   handleMoeda: (moeda: string) => void;
+  disabled?: boolean; // Adicionado a propriedade disabled
 };
 
-const CurrencyInput = ({ props, value, handleMoeda }: DataType) => {
+const CurrencyInput = ({ props, value, disabled, handleMoeda }: DataType) => {
   function moeda(e: React.ChangeEvent<HTMLInputElement>) {
     const { value } = e.target;
     const onlyNumbers = value.replace(/\D/g, '');
@@ -41,6 +42,8 @@ const CurrencyInput = ({ props, value, handleMoeda }: DataType) => {
       value={`R$ ${displayValue}`}
       onChange={handleChange}
       maxLength={25}
+      disabled={disabled}
+      style={disabled ? { color: '#aaa', backgroundColor: '#f5f5f5' } : {}}
     />
   );
 };

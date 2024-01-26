@@ -333,12 +333,14 @@ const ModalObjectResource = ({
     amount: any,
     unitaryValue: any,
   ) => {
-    const numericAmount = parseFloat(amount);
+    const numericAmount = Number(amount);
 
     if (typeof unitaryValue === 'string') {
-      const valorSemPontos = unitaryValue.replace(/\./g, ''); // Remove os pontos
+      const valorSemPontos = unitaryValue.replace(/\./g, '').replace(/,/g, '.');
 
-      const numericUnitaryValue = parseFloat(valorSemPontos);
+      const numericUnitaryValue = Number(valorSemPontos);
+      console.log('unitaryValue', numericUnitaryValue);
+      console.log('amount', numericAmount);
 
       const estimatedTotalValue = numericAmount * numericUnitaryValue || 0;
 
@@ -664,6 +666,7 @@ const ModalObjectResource = ({
                   props={undefined}
                   handleMoeda={handleSetEstimatedTotalValue}
                   value={estimatedTotalValue}
+                  disabled={true}
                 />
               </Form.Item>
             </Col>
