@@ -25,7 +25,7 @@ import {
   getObjectResource,
 } from '../../hooks/objectResourceService';
 import ModalObjectResource from '../../components/ModalObjectResource';
-import { deleteGoals, getGoals } from '../../hooks/goalService';
+import { deleteGoals, getGoals, updateGoals } from '../../hooks/goalService';
 import ModalGoal from '../../components/ModalGoal';
 import {
   apiDestination,
@@ -50,7 +50,8 @@ interface ExpandedDataTypeGoal {
   id: string;
   description: string;
   predictedValue: string;
-  balance: string;
+  balance: any;
+  resourceObjects: any;
   bottomToBottomId: string;
 }
 // expação da tabela de objetos
@@ -339,7 +340,7 @@ export default function BottomToBottom() {
                       label: (
                         <Popconfirm
                           title="Tem certeza de que deseja desabilitar este objeto ?"
-                          onConfirm={() => ClickDeleteObjResource(record.id)}
+                          onConfirm={() => ClickDeleteObjResource(record)}
                         >
                           Excluir
                         </Popconfirm>
@@ -631,6 +632,24 @@ export default function BottomToBottom() {
     },
   ];
 
+  const updatedBalance = (resourceObjects: any) => {
+    let totalValue = 0;
+
+    // const resourceObjects = fdd.resourceObjects;
+    resourceObjects.forEach((resourceObject: any) => {
+      const executedValueString = resourceObject?.executedValue || '0';
+
+      const executedValue =
+        parseFloat(executedValueString.replace(',', '.')) || 0;
+
+      totalValue += executedValue;
+    });
+
+    totalValue = parseFloat(totalValue.toFixed(2));
+
+    return totalValue;
+  };
+
   useEffect(() => {
     setShowModal(false);
   }, []);
@@ -709,11 +728,13 @@ export default function BottomToBottom() {
   };
   //função de exlusão do obejto/recurso
   const ClickDeleteObjResource = async (record: any) => {
-    await deleteObjectResource(record);
+    await deleteObjectResource(record.id);
     const newObjResource = [...objectResource];
-    newObjResource.splice(record, -1);
+    newObjResource.splice(record.id, -1);
     setObjectResource(newObjResource);
     loadingObjectResourceForm();
+
+    updatedBalanceList(record.goal);
   };
   //função de exlusão da Entrega
   const ClickDeleteDelivery = async (record: any) => {
@@ -742,6 +763,22 @@ export default function BottomToBottom() {
       newRObjectResource,
     ]);
     loadingObjectResourceForm();
+    loadingGoalForm();
+  };
+
+  const submitUpdate = async (goal: any) => {
+    await updateGoals(goal, goal.id);
+    updateGoalList(goal);
+  };
+
+  const updatedBalanceList = async (values: any) => {
+    const res = await getGoals(`goals/${values.id}`);
+    if (res) {
+      const goalItem = res.data;
+      const valorBalance = updatedBalance(goalItem.resourceObjects);
+      goalItem.balance = valorBalance;
+      submitUpdate(goalItem);
+    }
   };
 
   const updateDeliveryList = (newDestiny: any) => {
@@ -852,6 +889,7 @@ export default function BottomToBottom() {
         openModal={modalObjectResource}
         closeModal={hideModalObjectResourse}
         updateResourceObjectsList={updateResourceObjectsList}
+        updateBalanceList={updatedBalanceList}
       />
 
       <ModalObjectDelivery

@@ -29,6 +29,7 @@ import ModalObjectDelivery from '../../components/ModalObjectDelivery';
 import {
   deleteStateAmendment,
   getStateAmendment,
+  updateStateAmendment,
 } from '../../hooks/stateAmendmentService';
 import ModalStateAmendment from '../../components/ModalStateAmendment';
 
@@ -41,7 +42,8 @@ interface DataType {
   amendmentNumber: string;
   transferAmount: string;
   description: string;
-  balance: string;
+  balance: any;
+  resourceObjects: any;
 }
 // exapanção de obejto/recurso
 interface ExpandedDataTypeObject {
@@ -253,7 +255,7 @@ export default function StateAmendment() {
                       label: (
                         <Popconfirm
                           title="Tem certeza de que deseja desabilitar este objeto ?"
-                          onConfirm={() => ClickDeleteObjResource(record.id)}
+                          onConfirm={() => ClickDeleteObjResource(record)}
                         >
                           Excluir
                         </Popconfirm>
@@ -587,6 +589,24 @@ export default function StateAmendment() {
     loadingDeliveryForm();
   }, []);
 
+  const updatedBalance = (resourceObjects: any) => {
+    let totalValue = 0;
+
+    // const resourceObjects = fdd.resourceObjects;
+    resourceObjects.forEach((resourceObject: any) => {
+      const executedValueString = resourceObject?.executedValue || '0';
+
+      const executedValue =
+        parseFloat(executedValueString.replace(',', '.')) || 0;
+
+      totalValue += executedValue;
+    });
+
+    totalValue = parseFloat(totalValue.toFixed(2));
+
+    return totalValue;
+  };
+
   async function loadingStateAmendmentForm() {
     const response = await getStateAmendment('StateAmendment');
     if (response !== false) {
@@ -618,11 +638,12 @@ export default function StateAmendment() {
   };
 
   const ClickDeleteObjResource = async (record: any) => {
-    await deleteObjectResource(record);
+    await deleteObjectResource(record.id);
     const newObjResource = [...objectResource];
-    newObjResource.splice(record, -1);
+    newObjResource.splice(record.id, -1);
     setObjectResource(newObjResource);
     loadingObjectResourceForm();
+    updatedBalanceList(record.stateAmendment);
   };
 
   const ClickDeleteDestinaions = async (record: any) => {
@@ -646,6 +667,29 @@ export default function StateAmendment() {
       newRObjectResource,
     ]);
     loadingObjectResourceForm();
+    loadingStateAmendmentForm();
+  };
+  const submitUpdate = async (stateAmendment: any) => {
+    await updateStateAmendment(stateAmendment, stateAmendment.id);
+    updateStateAmendmentList(stateAmendment);
+  };
+
+  const updatedBalanceList = async (values: any) => {
+    const resState = await getStateAmendment(`stateAmendment/${values.id}`);
+    if (resState) {
+      const StateItem = resState.data;
+      const resObj = await getObjectResource(`resourceobjects`);
+      if (resObj) {
+        const newObj = resObj.data;
+        const filterObj = newObj.filter((obj: any) => {
+          return obj.stateAmendment?.id === values.id;
+        });
+
+        const valorBalance = updatedBalance(filterObj);
+        StateItem.balance = valorBalance;
+        submitUpdate(StateItem);
+      }
+    }
   };
 
   const updateDeliveryList = (newDestiny: any) => {
@@ -726,6 +770,7 @@ export default function StateAmendment() {
         openModal={modalObjectResource}
         closeModal={hideModalObjectResourse}
         updateResourceObjectsList={updateResourceObjectsList}
+        updateBalanceList={updatedBalanceList}
       />
 
       <ModalObjectDelivery

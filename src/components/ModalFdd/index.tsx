@@ -40,7 +40,7 @@ const ModalFdd = ({ id, openModal, closeModal, updateFddList }: Props) => {
 
   //Listagem, se tiver id set no formulário
   useEffect(() => {
-    loadingCovenants();
+    loadingFdd();
     resetDados();
   }, [id]);
 
@@ -51,7 +51,7 @@ const ModalFdd = ({ id, openModal, closeModal, updateFddList }: Props) => {
     setBalance('');
   };
 
-  async function loadingCovenants() {
+  async function loadingFdd() {
     if (id) {
       await getFdd(`fdd/${id}`).then(response => {
         if (response !== false) {

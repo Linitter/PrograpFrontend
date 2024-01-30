@@ -29,6 +29,7 @@ import ModalObjectDelivery from '../../components/ModalObjectDelivery';
 import {
   deleteStateTreasury,
   getStateTreasury,
+  updateStateTreasury,
 } from '../../hooks/StateTreasury';
 import ModalstateTreasury from '../../components/ModalstateTreasury';
 
@@ -41,7 +42,8 @@ interface DataType {
   amendmentNumber: string;
   transferAmount: string;
   description: string;
-  balance: string;
+  balance: any;
+  resourceObjects: any;
 }
 
 interface ExpandedDataTypeObject {
@@ -246,7 +248,7 @@ export default function StateTreasury() {
                       label: (
                         <Popconfirm
                           title="Tem certeza de que deseja desabilitar este objeto ?"
-                          onConfirm={() => ClickDeleteObjResource(record.id)}
+                          onConfirm={() => ClickDeleteObjResource(record)}
                         >
                           Excluir
                         </Popconfirm>
@@ -529,6 +531,24 @@ export default function StateTreasury() {
     loadingDeliveryForm();
   }, []);
 
+  const updatedBalance = (resourceObjects: any) => {
+    let totalValue = 0;
+
+    // const resourceObjects = fdd.resourceObjects;
+    resourceObjects.forEach((resourceObject: any) => {
+      const executedValueString = resourceObject?.executedValue || '0';
+
+      const executedValue =
+        parseFloat(executedValueString.replace(',', '.')) || 0;
+
+      totalValue += executedValue;
+    });
+
+    totalValue = parseFloat(totalValue.toFixed(2));
+
+    return totalValue;
+  };
+
   async function loadingstateTreasuryForm() {
     const response = await getStateTreasury('stateTreasury');
     if (response !== false) {
@@ -560,11 +580,12 @@ export default function StateTreasury() {
   };
 
   const ClickDeleteObjResource = async (record: any) => {
-    await deleteObjectResource(record);
+    await deleteObjectResource(record.id);
     const newObjResource = [...objectResource];
-    newObjResource.splice(record, -1);
+    newObjResource.splice(record.id, -1);
     setObjectResource(newObjResource);
     loadingObjectResourceForm();
+    //  updatedBalanceList(record.stateAmendment);
   };
 
   const ClickDeleteDestinaions = async (record: any) => {
@@ -588,6 +609,32 @@ export default function StateTreasury() {
       newRObjectResource,
     ]);
     loadingObjectResourceForm();
+    loadingstateTreasuryForm();
+  };
+
+  const submitUpdate = async (stateTreasury: any) => {
+    await updateStateTreasury(stateTreasury, stateTreasury.id);
+    updatestateTreasuryList(stateTreasury);
+  };
+
+  const updatedBalanceList = async (values: any) => {
+    {
+      /*  const resState = await getStateTreasury(`stateTreasury/${values.id}`);
+    if (resState) {
+      const StateItem = resState.data;
+      const resObj = await getObjectResource(`resourceobjects`);
+      if (resObj) {
+        const newObj = resObj.data;
+        const filterObj = newObj.filter((obj: any) => {
+          return obj.stateTreasury?.id === values.id;
+        });
+
+        const valorBalance = updatedBalance(filterObj);
+        StateItem.balance = valorBalance;
+        submitUpdate(StateItem);
+      }
+    }*/
+    }
   };
 
   const updateDeliveryList = (newDestiny: any) => {
@@ -666,6 +713,7 @@ export default function StateTreasury() {
         openModal={modalObjectResource}
         closeModal={hideModalObjectResourse}
         updateResourceObjectsList={updateResourceObjectsList}
+        updateBalanceList={updatedBalanceList}
       />
 
       <ModalObjectDelivery

@@ -40,6 +40,7 @@ type Props = {
   idStateAmendment: string;
   openModal: boolean;
   updateResourceObjectsList: any;
+  updateBalanceList: any;
   closeModal: (refresh: boolean) => void;
 };
 
@@ -69,6 +70,7 @@ const ModalObjectResource = ({
   idStateAmendment,
   idStateTreasury,
   openModal,
+  updateBalanceList,
   closeModal,
   updateResourceObjectsList,
 }: Props) => {
@@ -132,7 +134,6 @@ const ModalObjectResource = ({
     if (id) {
       await getOneResourceobjects(id).then(response => {
         if (response !== false) {
-          console.log('res', response.data);
           form.setFieldsValue({
             id: response.data?.id,
             objects: response.data.objects?.id, // id do obejto
@@ -254,6 +255,25 @@ const ModalObjectResource = ({
   function handleSelectObject(value: any) {
     setSelectedObjectId(value); // Atualiza o estado com o ID selecionado
   }
+  const novoBalanceValue = (objResource: any) => {
+    let id;
+    if (idFdd !== null && idFdd !== '') {
+      id = objResource.fdd;
+    } else if (idCovenants !== null && idCovenants !== '') {
+      id = objResource.covenants;
+    } else if (idGoal !== null && idGoal !== '') {
+      id = objResource.goal;
+    } else if (idStateAmendment !== null && idStateAmendment !== '') {
+      id = objResource.stateAmendment;
+    } else if (idStateTreasury !== null && idStateTreasury !== '') {
+      id = objResource.stateTreasury;
+    } else {
+      id = null;
+    }
+    updateBalanceList({
+      id,
+    });
+  };
 
   const salvarObjetoRecurso = async (e: any) => {
     e.destinationObjects = destinationObjects;
@@ -284,7 +304,9 @@ const ModalObjectResource = ({
     editingObjectsResource.stateTreasury = fieldValues.stateTreasury;
     editingObjectsResource.fdd = fieldValues.fdd;
     await salvarObjetoRecurso(editingObjectsResource);
+    novoBalanceValue(editingObjectsResource);
   };
+
   // // Função para determinar os campos nulos
   const determineFields = () => {
     const fields = {
@@ -326,6 +348,7 @@ const ModalObjectResource = ({
     editingObjectsResource.stateTreasury = fieldValues.stateTreasury;
     editingObjectsResource.fdd = fieldValues.fdd;
     await atualizarObjetoRecurso(editingObjectsResource);
+    novoBalanceValue(editingObjectsResource);
   };
 
   // Função para calcular e atualizar o valor total com base na quantidade e valor unitário
@@ -412,10 +435,10 @@ const ModalObjectResource = ({
 
   const handleSetExecutedValue = (value: string) => {
     const valorSemSimbolo = value.replace(/R\$\s?/, '');
-    setExecutedValue(valorSemSimbolo);
-    form.setFieldsValue({ executedValue: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário  };
-  };
 
+    setExecutedValue(valorSemSimbolo);
+    form.setFieldsValue({ executedValue: valorSemSimbolo });
+  };
   //tabela de concedentes e valores
   const columns: ColumnsType<DataType> = [
     {

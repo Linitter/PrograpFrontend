@@ -26,7 +26,7 @@ import {
   getDeliveryObject,
 } from '../../hooks/deliveryObject';
 import ModalObjectDelivery from '../../components/ModalObjectDelivery';
-import { deleteFdd, getFdd } from '../../hooks/fdd';
+import { deleteFdd, getFdd, updateFdd } from '../../hooks/fdd';
 import ModalFdd from '../../components/ModalFdd';
 
 interface DataType {
@@ -40,7 +40,8 @@ interface DataType {
   counterpartValue: string;
   globalValue: string;
   description: string;
-  balance: string;
+  balance: any;
+  resourceObjects: any;
 }
 // exapanção de obejto/recurso
 interface ExpandedDataTypeObject {
@@ -248,7 +249,7 @@ export default function FDD() {
                       label: (
                         <Popconfirm
                           title="Tem certeza de que deseja desabilitar este objeto ?"
-                          onConfirm={() => ClickDeleteObjResource(record.id)}
+                          onConfirm={() => ClickDeleteObjResource(record)}
                         >
                           Excluir
                         </Popconfirm>
@@ -525,6 +526,25 @@ export default function FDD() {
     },
   ];
 
+  const updatedBalance = (resourceObjects: any) => {
+    let totalValue = 0;
+    console.log('resourceObjects', resourceObjects);
+
+    // const resourceObjects = fdd.resourceObjects;
+    resourceObjects.forEach((resourceObject: any) => {
+      const executedValueString = resourceObject?.executedValue || '0';
+
+      const executedValue =
+        parseFloat(executedValueString.replace(',', '.')) || 0;
+
+      totalValue += executedValue;
+    });
+
+    totalValue = parseFloat(totalValue.toFixed(2));
+
+    return totalValue;
+  };
+
   // Função para atualizar as unidades
   const updateDeliveryUnits = (newUnits: UnitsResponse[]) => {
     setUnits(newUnits);
@@ -613,11 +633,13 @@ export default function FDD() {
   };
 
   const ClickDeleteObjResource = async (record: any) => {
-    await deleteObjectResource(record);
+    await deleteObjectResource(record.id);
     const newObjResource = [...objectResource];
-    newObjResource.splice(record, -1);
+    newObjResource.splice(record.id, -1);
     setObjectResource(newObjResource);
     loadingObjectResourceForm();
+
+    updatedBalanceList(record.fdd);
   };
 
   const ClickDeleteDestinaions = async (record: any) => {
@@ -638,6 +660,24 @@ export default function FDD() {
       newRObjectResource,
     ]);
     loadingObjectResourceForm();
+    loadingFDDForm();
+  };
+
+  const submitUpdate = async (fdd: any) => {
+    await updateFdd(fdd, fdd.id);
+    updateFddList(fdd);
+  };
+
+  const updatedBalanceList = async (values: any) => {
+    const res = await getFdd(`fdd/${values.id}`);
+    if (res) {
+      const fddItem = res.data;
+      console.log('fddd', fddItem);
+
+      const valorBalance = updatedBalance(fddItem.resourceObjects);
+      fddItem.balance = valorBalance;
+      submitUpdate(fddItem);
+    }
   };
 
   const updateDeliveryList = (newDestiny: any) => {
@@ -716,6 +756,7 @@ export default function FDD() {
         openModal={modalObjectResource}
         closeModal={hideModalObjectResourse}
         updateResourceObjectsList={updateResourceObjectsList}
+        updateBalanceList={updatedBalanceList}
       />
 
       <ModalObjectDelivery

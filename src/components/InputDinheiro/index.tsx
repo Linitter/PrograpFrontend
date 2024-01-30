@@ -43,7 +43,7 @@ const CurrencyInput = ({ props, value, disabled, handleMoeda }: DataType) => {
       onChange={handleChange}
       maxLength={25}
       disabled={disabled}
-      style={disabled ? { color: '#aaa', backgroundColor: '#f5f5f5' } : {}}
+      style={disabled ? { color: '#aaa', backgroundColor: '#cd' } : {}}
     />
   );
 };

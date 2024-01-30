@@ -26,7 +26,11 @@ import {
   getDeliveryObject,
 } from '../../hooks/deliveryObject';
 import ModalObjectDelivery from '../../components/ModalObjectDelivery';
-import { deleteCovenants, getCovenants } from '../../hooks/covenantsService';
+import {
+  deleteCovenants,
+  getCovenants,
+  updateCovenants,
+} from '../../hooks/covenantsService';
 import ModalCovenants from '../../components/ModalCovenants';
 
 interface DataType {
@@ -42,7 +46,8 @@ interface DataType {
   counterpartValue: string;
   globalValue: string;
   description: string;
-  balance: string;
+  balance: any;
+  resourceObjects: any;
   covenantAuthor: any[];
 }
 
@@ -251,7 +256,7 @@ export default function Covenants() {
                       label: (
                         <Popconfirm
                           title="Tem certeza de que deseja desabilitar este objeto ?"
-                          onConfirm={() => ClickDeleteObjResource(record.id)}
+                          onConfirm={() => ClickDeleteObjResource(record)}
                         >
                           Excluir
                         </Popconfirm>
@@ -572,6 +577,24 @@ export default function Covenants() {
     },
   ];
 
+  const updatedBalance = (resourceObjects: any) => {
+    let totalValue = 0;
+
+    // const resourceObjects = fdd.resourceObjects;
+    resourceObjects.forEach((resourceObject: any) => {
+      const executedValueString = resourceObject?.executedValue || '0';
+
+      const executedValue =
+        parseFloat(executedValueString.replace(',', '.')) || 0;
+
+      totalValue += executedValue;
+    });
+
+    totalValue = parseFloat(totalValue.toFixed(2));
+
+    return totalValue;
+  };
+
   // Função para atualizar as unidades
   const updateDeliveryUnits = (newUnits: UnitsResponse[]) => {
     setUnits(newUnits);
@@ -660,11 +683,13 @@ export default function Covenants() {
   };
 
   const ClickDeleteObjResource = async (record: any) => {
-    await deleteObjectResource(record);
+    await deleteObjectResource(record.id);
     const newObjResource = [...objectResource];
-    newObjResource.splice(record, -1);
+    newObjResource.splice(record.id, -1);
     setObjectResource(newObjResource);
     loadingObjectResourceForm();
+
+    updatedBalanceList(record.covenants);
   };
 
   const ClickDeleteDestinaions = async (record: any) => {
@@ -685,6 +710,22 @@ export default function Covenants() {
       newRObjectResource,
     ]);
     loadingObjectResourceForm();
+    loadingcovenantsForm();
+  };
+
+  const submitUpdate = async (convenants: any) => {
+    await updateCovenants(convenants, convenants.id);
+    updateCovenantsList(convenants);
+  };
+
+  const updatedBalanceList = async (values: any) => {
+    const res = await getCovenants(`covenants/${values.id}`);
+    if (res) {
+      const covenantsItem = res.data;
+      const valorBalance = updatedBalance(covenantsItem?.resourceObjects);
+      covenantsItem.balance = valorBalance;
+      submitUpdate(covenantsItem);
+    }
   };
 
   const updateDeliveryList = (newDestiny: any) => {
@@ -763,6 +804,7 @@ export default function Covenants() {
         openModal={modalObjectResource}
         closeModal={hideModalObjectResourse}
         updateResourceObjectsList={updateResourceObjectsList}
+        updateBalanceList={updatedBalanceList}
       />
 
       <ModalObjectDelivery
