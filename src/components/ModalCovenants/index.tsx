@@ -105,6 +105,14 @@ const ModalCovenants = ({
     resetDados();
   }, [id]);
 
+  useEffect(() => {
+    setGlobalValue('');
+    setBalance('');
+    setCounterpartValue('');
+    setTransferAmount('');
+    setContributionValue('');
+  }, [openModal]);
+
   const resetDados = () => {
     setGlobalValue('');
     setBalance('');
@@ -345,13 +353,19 @@ const ModalCovenants = ({
     const repasseValue = transferAmount || '0,00';
     const contrapartidaValue = counterpartValue || '0,00';
 
-    const repasseNumber = parseFloat(
-      repasseValue.replace('R$ ', '').replace('.', '').replace(',', '.'),
-    );
-    const contrapartidaNumber = parseFloat(
-      contrapartidaValue.replace('R$ ', '').replace('.', '').replace(',', '.'),
-    );
+    const repasseValueString = repasseValue
+      .replace(/\./g, '')
+      .replace(',', '.');
 
+    // Converter a string formatada para número
+    const repasseNumber = parseFloat(repasseValueString);
+
+    const counterValueString = contrapartidaValue
+      .replace(/\./g, '')
+      .replace(',', '.');
+
+    // Converter a string formatada para número
+    const contrapartidaNumber = parseFloat(counterValueString);
     const valorGlobal = (repasseNumber + contrapartidaNumber).toFixed(2);
     const number = parseFloat(valorGlobal);
 

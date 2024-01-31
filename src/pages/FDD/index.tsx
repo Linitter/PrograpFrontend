@@ -528,21 +528,30 @@ export default function FDD() {
 
   const updatedBalance = (resourceObjects: any) => {
     let totalValue = 0;
-    console.log('resourceObjects', resourceObjects);
 
-    // const resourceObjects = fdd.resourceObjects;
     resourceObjects.forEach((resourceObject: any) => {
-      const executedValueString = resourceObject?.executedValue || '0';
+      const executedValueString = resourceObject?.executedValue;
 
-      const executedValue =
-        parseFloat(executedValueString.replace(',', '.')) || 0;
+      // Remover separadores de milhar e substituir a vírgula por ponto
+      const sanitizedValueString = executedValueString
+        .replace(/\./g, '')
+        .replace(',', '.');
+
+      // Converter a string formatada para número
+      const executedValue = parseFloat(sanitizedValueString);
 
       totalValue += executedValue;
     });
 
     totalValue = parseFloat(totalValue.toFixed(2));
 
-    return totalValue;
+    // Formatar o valor com separadores de milhar e duas casas decimais
+    const formattedTotal = totalValue.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+    return formattedTotal;
   };
 
   // Função para atualizar as unidades
@@ -672,7 +681,6 @@ export default function FDD() {
     const res = await getFdd(`fdd/${values.id}`);
     if (res) {
       const fddItem = res.data;
-      console.log('fddd', fddItem);
 
       const valorBalance = updatedBalance(fddItem.resourceObjects);
       fddItem.balance = valorBalance;
