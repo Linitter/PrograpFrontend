@@ -44,6 +44,7 @@ interface DataType {
   description: string;
   balance: any;
   resourceObjects: any;
+  totalValueExecuted: any;
 }
 // exapanção de obejto/recurso
 interface ExpandedDataTypeObject {
@@ -503,7 +504,7 @@ export default function StateAmendment() {
       key: 'transferAmount',
       width: '15%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
-      render: (value: any) => value || '*******',
+      render: (value: any) => `R$ ${value}` || '****',
     },
 
     {
@@ -515,12 +516,20 @@ export default function StateAmendment() {
       render: (value: any) => value || '*******',
     },
     {
+      title: 'Valor total executado',
+      dataIndex: 'totalValueExecuted',
+      key: 'totalValueExecuted',
+      width: '10%',
+      className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
+      render: (value: any) => `R$ ${value}` || '****',
+    },
+    {
       title: 'Saldo',
       dataIndex: 'balance',
       key: 'balance',
-      width: '12%',
+      width: '10%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
-      render: (value: any) => value || '*******',
+      render: (value: any) => `R$ ${value}` || '****',
     },
     {
       title: 'Ação',
@@ -589,7 +598,7 @@ export default function StateAmendment() {
     loadingDeliveryForm();
   }, []);
 
-  const updatedBalance = (resourceObjects: any) => {
+  const updatedTotalValue = (resourceObjects: any) => {
     let totalValue = 0;
 
     resourceObjects.forEach((resourceObject: any) => {
@@ -615,6 +624,36 @@ export default function StateAmendment() {
     });
 
     return formattedTotal;
+  };
+
+  const updatedBalance = (valorExecutado: any, resourceObjects: any) => {
+    // Obtém o valor do repasse do objeto resourceObjects
+    const repasse = resourceObjects[0]?.stateAmendment?.transferAmount;
+
+    const repasseString = repasse.replace(/\./g, '').replace(',', '.');
+    const valorExecutadoString = valorExecutado
+      .replace(/\./g, '')
+      .replace(',', '.');
+
+    // Converte os valores para números (usando ponto como separador decimal)
+    const valorExecutadoNumerico = parseFloat(valorExecutadoString);
+    const repasseNumerico = parseFloat(repasseString);
+
+    // Verifica se os valores são válidos antes de subtrair
+    if (!isNaN(valorExecutadoNumerico) && !isNaN(repasseNumerico)) {
+      // Subtrai o repasse do valorExecutado
+      const resultado = repasseNumerico - valorExecutadoNumerico;
+
+      // Formata o resultado com duas casas decimais usando toLocaleString
+      const resultadoFormatado = resultado.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+      return resultadoFormatado;
+    } else {
+      return;
+    }
   };
 
   async function loadingStateAmendmentForm() {
@@ -695,7 +734,9 @@ export default function StateAmendment() {
           return obj.stateAmendment?.id === values.id;
         });
 
-        const valorBalance = updatedBalance(filterObj);
+        const valorTotalValue = updatedTotalValue(filterObj);
+        const valorBalance = updatedBalance(valorTotalValue, filterObj);
+        StateItem.totalValueExecuted = valorTotalValue;
         StateItem.balance = valorBalance;
         submitUpdate(StateItem);
       }
@@ -768,6 +809,7 @@ export default function StateAmendment() {
         openModal={showModal}
         closeModal={hideModal}
         updateStateAmendmentList={updateStateAmendmentList}
+        updateBalanceList={updatedBalanceList}
       />
 
       <ModalObjectResource

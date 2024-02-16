@@ -47,6 +47,7 @@ interface DataType {
   globalValue: string;
   description: string;
   balance: any;
+  totalValueExecuted: any;
   resourceObjects: any;
   covenantAuthor: any[];
 }
@@ -486,7 +487,7 @@ export default function Covenants() {
       key: 'transferAmount',
       width: '10%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
-      render: (value: any) => value || '*******',
+      render: (value: any) => `R$ ${value}` || '****',
     },
     {
       title: 'Valor contrapartida',
@@ -494,7 +495,7 @@ export default function Covenants() {
       key: 'counterpartValue',
       width: '10%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
-      render: (value: any) => value || '*******',
+      render: (value: any) => `R$ ${value}` || '****',
     },
     {
       title: 'Valor global',
@@ -502,15 +503,23 @@ export default function Covenants() {
       key: 'globalValue',
       width: '8%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
-      render: (value: any) => value || '*******',
+      render: (value: any) => `R$ ${value}` || '****',
     },
     {
       title: 'Descrição',
       dataIndex: 'description',
       key: 'description',
-      width: '17%',
+      width: '15%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
       render: (value: any) => value || '*******',
+    },
+    {
+      title: 'Valor total executado',
+      dataIndex: 'totalValueExecuted',
+      key: 'totalValueExecuted',
+      width: '8%',
+      className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
+      render: (value: any) => `R$ ${value}` || '****',
     },
     {
       title: 'Saldo',
@@ -518,7 +527,7 @@ export default function Covenants() {
       key: 'balance',
       width: '8%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
-      render: (value: any) => value || '*******',
+      render: (value: any) => `R$ ${value}` || '****',
     },
     {
       title: 'Ação',
@@ -577,7 +586,7 @@ export default function Covenants() {
     },
   ];
 
-  const updatedBalance = (resourceObjects: any) => {
+  const updatedTotalValue = (resourceObjects: any) => {
     let totalValue = 0;
 
     resourceObjects.forEach((resourceObject: any) => {
@@ -603,6 +612,36 @@ export default function Covenants() {
     });
 
     return formattedTotal;
+  };
+
+  const updatedBalance = (valorExecutado: any, resourceObjects: any) => {
+    // Obtém o valor do repasse do objeto resourceObjects
+    const repasse = resourceObjects[0]?.covenants?.transferAmount;
+
+    const repasseString = repasse.replace(/\./g, '').replace(',', '.');
+    const valorExecutadoString = valorExecutado
+      .replace(/\./g, '')
+      .replace(',', '.');
+
+    // Converte os valores para números (usando ponto como separador decimal)
+    const valorExecutadoNumerico = parseFloat(valorExecutadoString);
+    const repasseNumerico = parseFloat(repasseString);
+
+    // Verifica se os valores são válidos antes de subtrair
+    if (!isNaN(valorExecutadoNumerico) && !isNaN(repasseNumerico)) {
+      // Subtrai o repasse do valorExecutado
+      const resultado = repasseNumerico - valorExecutadoNumerico;
+
+      // Formata o resultado com duas casas decimais usando toLocaleString
+      const resultadoFormatado = resultado.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+      return resultadoFormatado;
+    } else {
+      return;
+    }
   };
 
   // Função para atualizar as unidades
@@ -732,8 +771,15 @@ export default function Covenants() {
     const res = await getCovenants(`covenants/${values.id}`);
     if (res) {
       const covenantsItem = res.data;
-      const valorBalance = updatedBalance(covenantsItem?.resourceObjects);
+
+      const valorTotalValue = updatedTotalValue(covenantsItem?.resourceObjects);
+      const valorBalance = updatedBalance(
+        valorTotalValue,
+        covenantsItem?.resourceObjects,
+      );
+
       covenantsItem.balance = valorBalance;
+      covenantsItem.totalValueExecuted = valorTotalValue;
       submitUpdate(covenantsItem);
     }
   };
@@ -802,6 +848,7 @@ export default function Covenants() {
         openModal={showModal}
         closeModal={hideModal}
         updateCovenantsList={updateCovenantsList}
+        updateBalanceList={updatedBalanceList}
       />
 
       <ModalObjectResource

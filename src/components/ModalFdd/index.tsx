@@ -9,16 +9,24 @@ type Props = {
   id: string;
   openModal: boolean;
   updateFddList: any;
+  updateBalanceList: any;
   closeModal: (refresh: boolean) => void;
 };
 
-const ModalFdd = ({ id, openModal, closeModal, updateFddList }: Props) => {
+const ModalFdd = ({
+  id,
+  openModal,
+  closeModal,
+  updateFddList,
+  updateBalanceList,
+}: Props) => {
   const [showModal, setShowModal] = useState(false);
 
   const [transferAmount, setTransferAmount] = useState<string>('');
   const [counterpartValue, setCounterpartValue] = useState<string>('');
   const [globalValue, setGlobalValue] = useState<string>('');
   const [balance, setBalance] = useState<string>('');
+  const [executedValue, setExecutedValue] = useState<string>('');
 
   const [form] = Form.useForm();
   // criação de convêncios
@@ -72,11 +80,13 @@ const ModalFdd = ({ id, openModal, closeModal, updateFddList }: Props) => {
             globalValue: response.data.globalValue, // Valor global
             description: response.data.description, // Descrição
             balance: response.data.balance, // saldo
+            totalValueExecuted: response.data.totalValueExecuted,
           });
           setTransferAmount(response.data.transferAmount);
           setCounterpartValue(response.data.counterpartValue);
           setGlobalValue(response.data.globalValue);
           setBalance(response.data.balance);
+          setExecutedValue(response.data.totalValueExecuted);
         } else {
           message.error('Ocorreu um erro inesperado ao obter fundo a fundo.');
         }
@@ -99,6 +109,7 @@ const ModalFdd = ({ id, openModal, closeModal, updateFddList }: Props) => {
     setDefaultCurrencyValue('balance', '0.000,00');
     await updateFdd(editingFdd, id);
     updateFddList(editingFdd);
+    updateBalanceList({ id });
   };
 
   // CRIAÇÃO DO FDD
@@ -179,6 +190,11 @@ const ModalFdd = ({ id, openModal, closeModal, updateFddList }: Props) => {
     setBalance(valorSemSimbolo);
     form.setFieldsValue({ balance: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
   };
+  const handleSetExecutedValue = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setExecutedValue(valorSemSimbolo);
+    form.setFieldsValue({ totalValueExecuted: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+  };
 
   useEffect(() => {
     setShowModal(false);
@@ -200,12 +216,12 @@ const ModalFdd = ({ id, openModal, closeModal, updateFddList }: Props) => {
         <Form layout="vertical" form={form}>
           <Row gutter={24}>
             <>
-              <Col offset={1} span={6}>
+              <Col offset={1} span={5}>
                 <Form.Item name={['source']} label="Fonte" hasFeedback>
                   <Select options={[{ value: 'Federal', label: 'Federal' }]} />
                 </Form.Item>
               </Col>
-              <Col span={6}>
+              <Col span={5}>
                 <Form.Item
                   name={['agreementNumber']}
                   label="Número"
@@ -219,7 +235,7 @@ const ModalFdd = ({ id, openModal, closeModal, updateFddList }: Props) => {
                   <Input />
                 </Form.Item>
               </Col>
-              <Col span={6}>
+              <Col span={7}>
                 <Form.Item
                   name={['transferAmount']}
                   label="Valor do repasse"
@@ -232,7 +248,7 @@ const ModalFdd = ({ id, openModal, closeModal, updateFddList }: Props) => {
                   />
                 </Form.Item>
               </Col>
-              <Col offset={1} span={7}>
+              <Col offset={1} span={5}>
                 <Form.Item
                   name={['counterpartValue']}
                   label="Valor contrapartida"
@@ -245,7 +261,7 @@ const ModalFdd = ({ id, openModal, closeModal, updateFddList }: Props) => {
                   />
                 </Form.Item>
               </Col>
-              <Col span={7}>
+              <Col span={5}>
                 <Form.Item name={['globalValue']} label="Valor global">
                   <CurrencyInput
                     props={undefined}
@@ -255,7 +271,21 @@ const ModalFdd = ({ id, openModal, closeModal, updateFddList }: Props) => {
                 </Form.Item>
               </Col>
 
-              <Col span={8}>
+              <Col span={5}>
+                <Form.Item
+                  name={['totalValueExecuted']}
+                  label="Valor total executado"
+                  hasFeedback
+                >
+                  <CurrencyInput
+                    props={undefined}
+                    handleMoeda={handleSetExecutedValue}
+                    value={executedValue}
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col span={6}>
                 <Form.Item name={['balance']} label="Saldo" hasFeedback>
                   <CurrencyInput
                     props={undefined}

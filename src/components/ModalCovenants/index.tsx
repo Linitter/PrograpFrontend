@@ -45,6 +45,7 @@ type Props = {
   id: string;
   openModal: boolean;
   updateCovenantsList: any;
+  updateBalanceList: any;
   closeModal: (refresh: boolean) => void;
 };
 
@@ -53,6 +54,7 @@ const ModalCovenants = ({
   openModal,
   closeModal,
   updateCovenantsList,
+  updateBalanceList,
 }: Props) => {
   // author = autor
   const [author, setAuthor] = useState<AuthorResponse[]>([]);
@@ -78,6 +80,7 @@ const ModalCovenants = ({
   const [balance, setBalance] = useState<string>('');
   const [counterpartValue, setCounterpartValue] = useState<string>('');
   const [transferAmount, setTransferAmount] = useState<string>('');
+  const [executedValue, setExecutedValue] = useState<string>('');
 
   const [contributionValue, setContributionValue] = useState<string>('');
 
@@ -138,10 +141,12 @@ const ModalCovenants = ({
             description: response.data.description, // Descrição
             balance: response.data.balance, // Saldo
             covenantAuthor: response.data.covenantAuthor, //conveio/autor
+            totalValueExecuted: response.data.totalValueExecuted,
           });
 
           setGlobalValue(response.data.globalValue);
           setBalance(response.data.balance);
+          setExecutedValue(response.data.totalValueExecuted);
           setCounterpartValue(response.data.counterpartValue);
           setTransferAmount(response.data.transferAmount);
 
@@ -282,7 +287,9 @@ const ModalCovenants = ({
     e.covenantAuthor = covenantAuthor;
     const updatedCovenant = await updateCovenants(e, id);
     updateCovenantsList(updatedCovenant);
+    updateBalanceList({ id });
   };
+
   const submitUpdate = async () => {
     const editingCovenants = form.getFieldsValue(true);
     // Defina os valores padrão se estiverem vazios ou nulos
@@ -417,6 +424,12 @@ const ModalCovenants = ({
     form.setFieldsValue({ balance: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
   };
 
+  const handleSetExecutedValue = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setExecutedValue(valorSemSimbolo);
+    form.setFieldsValue({ totalValueExecuted: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+  };
+
   const handleSetTransferAmount = (value: string) => {
     const valorSemSimbolo = value.replace(/R\$\s?/, '');
     setTransferAmount(valorSemSimbolo);
@@ -514,7 +527,7 @@ const ModalCovenants = ({
                 </Form.Item>
               </Col>
 
-              <Col offset={1} span={5}>
+              <Col offset={1} span={4}>
                 <Form.Item
                   name={['transferAmount']}
                   label="Valor do repasse"
@@ -527,7 +540,7 @@ const ModalCovenants = ({
                   />
                 </Form.Item>
               </Col>
-              <Col span={5}>
+              <Col span={4}>
                 <Form.Item
                   name={['counterpartValue']}
                   label="Valor contrapartida"
@@ -540,7 +553,7 @@ const ModalCovenants = ({
                   />
                 </Form.Item>
               </Col>
-              <Col span={6}>
+              <Col span={5}>
                 <Form.Item name={['globalValue']} label="Valor global">
                   <CurrencyInput
                     props={undefined}
@@ -549,8 +562,21 @@ const ModalCovenants = ({
                   />
                 </Form.Item>
               </Col>
+              <Col span={5}>
+                <Form.Item
+                  name={['totalValueExecuted']}
+                  label="Valor total executado"
+                  hasFeedback
+                >
+                  <CurrencyInput
+                    props={undefined}
+                    handleMoeda={handleSetExecutedValue}
+                    value={executedValue}
+                  />
+                </Form.Item>
+              </Col>
 
-              <Col span={6}>
+              <Col span={4}>
                 <Form.Item name={['balance']} label="Saldo" hasFeedback>
                   <CurrencyInput
                     props={undefined}

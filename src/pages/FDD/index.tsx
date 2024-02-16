@@ -41,6 +41,7 @@ interface DataType {
   globalValue: string;
   description: string;
   balance: any;
+  totalValueExecuted: any;
   resourceObjects: any;
 }
 // exapanção de obejto/recurso
@@ -462,12 +463,20 @@ export default function FDD() {
       render: (value: any) => value || '*******',
     },
     {
+      title: 'Valor total executado',
+      dataIndex: 'totalValueExecuted',
+      key: 'totalValueExecuted',
+      width: '8%',
+      className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
+      render: (value: any) => `R$ ${value}` || '****',
+    },
+    {
       title: 'Saldo',
       dataIndex: 'balance',
       key: 'balance',
       width: '12%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
-      render: (value: any) => `R$ ${value}` || '*******',
+      render: (value: any) => `R$ ${value}` || '****',
     },
     {
       title: 'Ação',
@@ -526,7 +535,7 @@ export default function FDD() {
     },
   ];
 
-  const updatedBalance = (resourceObjects: any) => {
+  const updatedTotalValue = (resourceObjects: any) => {
     let totalValue = 0;
 
     resourceObjects.forEach((resourceObject: any) => {
@@ -552,6 +561,35 @@ export default function FDD() {
     });
 
     return formattedTotal;
+  };
+  const updatedBalance = (valorExecutado: any, resourceObjects: any) => {
+    // Obtém o valor do repasse do objeto resourceObjects
+    const repasse = resourceObjects[0]?.fdd?.transferAmount;
+
+    const repasseString = repasse.replace(/\./g, '').replace(',', '.');
+    const valorExecutadoString = valorExecutado
+      .replace(/\./g, '')
+      .replace(',', '.');
+
+    // Converte os valores para números (usando ponto como separador decimal)
+    const valorExecutadoNumerico = parseFloat(valorExecutadoString);
+    const repasseNumerico = parseFloat(repasseString);
+
+    // Verifica se os valores são válidos antes de subtrair
+    if (!isNaN(valorExecutadoNumerico) && !isNaN(repasseNumerico)) {
+      // Subtrai o repasse do valorExecutado
+      const resultado = repasseNumerico - valorExecutadoNumerico;
+
+      // Formata o resultado com duas casas decimais usando toLocaleString
+      const resultadoFormatado = resultado.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+      return resultadoFormatado;
+    } else {
+      return;
+    }
   };
 
   // Função para atualizar as unidades
@@ -682,8 +720,13 @@ export default function FDD() {
     if (res) {
       const fddItem = res.data;
 
-      const valorBalance = updatedBalance(fddItem.resourceObjects);
+      const valorTotalValue = updatedTotalValue(fddItem.resourceObjects);
+      const valorBalance = updatedBalance(
+        valorTotalValue,
+        fddItem?.resourceObjects,
+      );
       fddItem.balance = valorBalance;
+      fddItem.totalValueExecuted = valorTotalValue;
       submitUpdate(fddItem);
     }
   };
@@ -752,6 +795,7 @@ export default function FDD() {
         openModal={showModal}
         closeModal={hideModal}
         updateFddList={updateFddList}
+        updateBalanceList={updatedBalanceList}
       />
 
       <ModalObjectResource

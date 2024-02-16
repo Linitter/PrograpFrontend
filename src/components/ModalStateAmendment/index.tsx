@@ -21,6 +21,7 @@ type Props = {
   id: string;
   openModal: boolean;
   updateStateAmendmentList: any;
+  updateBalanceList: any;
   closeModal: (refresh: boolean) => void;
 };
 
@@ -29,6 +30,7 @@ const ModalStateAmendment = ({
   openModal,
   closeModal,
   updateStateAmendmentList,
+  updateBalanceList,
 }: Props) => {
   const [author, setAuthor] = useState<AuthorResponse[]>([]);
   const [selectAuthorId, setSelectedAuthorId] = useState('');
@@ -36,6 +38,7 @@ const ModalStateAmendment = ({
 
   const [transferAmount, setTransferAmount] = useState<string>('');
   const [balance, setBalance] = useState<string>('');
+  const [executedValue, setExecutedValue] = useState<string>('');
 
   const [form] = Form.useForm();
 
@@ -64,6 +67,7 @@ const ModalStateAmendment = ({
   const resetDados = () => {
     setTransferAmount('');
     setBalance('');
+    setExecutedValue('');
   };
 
   async function loadingStateAmendment() {
@@ -79,10 +83,12 @@ const ModalStateAmendment = ({
             transferAmount: response.data.transferAmount, // valor do repasse
             description: response.data.description, // descrição
             balance: response.data.balance, // saldo
+            totalValueExecuted: response.data.totalValueExecuted,
           });
 
           setTransferAmount(response.data.transferAmount);
           setBalance(response.data.balance);
+          setExecutedValue(response.data.totalValueExecuted);
         } else {
           message.error('Ocorreu um erro inesperado ao obter fundo a fundo.');
         }
@@ -120,6 +126,7 @@ const ModalStateAmendment = ({
     // Agora, atualize os detalhes do convênio
     await updateStateAmendment(editingStateAmendment, id);
     updateStateAmendmentList(editingStateAmendment);
+    updateBalanceList({ id });
   };
 
   // CRIAÇÃO Da Emenda Estadual
@@ -161,6 +168,12 @@ const ModalStateAmendment = ({
     form.setFieldsValue({ balance: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
   };
 
+  const handleSetExecutedValue = (value: string) => {
+    const valorSemSimbolo = value.replace(/R\$\s?/, '');
+    setExecutedValue(valorSemSimbolo);
+    form.setFieldsValue({ totalValueExecuted: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário
+  };
+
   useEffect(() => {
     setShowModal(false);
   }, []);
@@ -192,7 +205,7 @@ const ModalStateAmendment = ({
         <Form layout="vertical" form={form}>
           <Row gutter={24}>
             <>
-              <Col offset={1} span={6}>
+              <Col offset={1} span={5}>
                 <Form.Item name={['source']} label="Fonte" hasFeedback>
                   <Select
                     options={[{ value: 'Estadual', label: 'Estadual' }]}
@@ -223,7 +236,7 @@ const ModalStateAmendment = ({
                   marginTop: '29px',
                   marginLeft: '-1%',
                   marginRight: '12px',
-                  width: '8%',
+                  width: '7%',
                 }}
                 onClick={() => {
                   setShowModal(true);
@@ -231,7 +244,7 @@ const ModalStateAmendment = ({
               >
                 <PlusOutlined />
               </Button>
-              <Col span={8}>
+              <Col span={6}>
                 <Form.Item
                   name={['amendmentNumber']}
                   label="Numero da emenda"
@@ -240,12 +253,13 @@ const ModalStateAmendment = ({
                   <Input />
                 </Form.Item>
               </Col>
-              <Col offset={1} span={6}>
+              <Col offset={0} span={3}>
                 <Form.Item name={['year']} label="Ano" hasFeedback>
                   <Input />
                 </Form.Item>
               </Col>
-              <Col span={8}>
+
+              <Col offset={1} span={8}>
                 <Form.Item
                   name={['transferAmount']}
                   label="Valor do repasse"
@@ -258,8 +272,21 @@ const ModalStateAmendment = ({
                   />
                 </Form.Item>
               </Col>
+              <Col span={7}>
+                <Form.Item
+                  name={['totalValueExecuted']}
+                  label="Valor total executado"
+                  hasFeedback
+                >
+                  <CurrencyInput
+                    props={undefined}
+                    handleMoeda={handleSetExecutedValue}
+                    value={executedValue}
+                  />
+                </Form.Item>
+              </Col>
 
-              <Col span={8}>
+              <Col span={7}>
                 <Form.Item name={['balance']} label="Saldo" hasFeedback>
                   <CurrencyInput
                     props={undefined}

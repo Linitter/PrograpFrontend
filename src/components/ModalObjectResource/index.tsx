@@ -379,6 +379,7 @@ const ModalObjectResource = ({
       );
 
       form.setFieldsValue({ estimatedTotalValue: valorSemSimbolo });
+      form.setFieldsValue({ executedValue: valorSemSimbolo });
     }
   };
 
@@ -424,13 +425,13 @@ const ModalObjectResource = ({
 
     handleAmountAndUnitaryValueChange(amount, valorSemSimbolo);
     setUnitaryValue(valorSemSimbolo);
-    form.setFieldsValue({ unitaryValue: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário  };
+    form.setFieldsValue({ unitaryValue: valorSemSimbolo });
   };
 
   const handleSetEstimatedTotalValue = (value: string) => {
     const valorSemSimbolo = value.replace(/R\$\s?/, '');
     setEstimatedTotalValue(valorSemSimbolo);
-    form.setFieldsValue({ estimatedTotalValue: valorSemSimbolo }); // Define o valor formatado no campo 'amount' do formulário  };
+    form.setFieldsValue({ estimatedTotalValue: valorSemSimbolo });
   };
 
   const handleSetExecutedValue = (value: string) => {
