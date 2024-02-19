@@ -141,7 +141,7 @@ export default function BottomToBottom() {
         render: (value: any) => `R$ ${value}` || '*********',
       },
       {
-        title: 'Valor executado',
+        title: 'Valor total executado',
         dataIndex: 'executedValue',
         key: 'executedValue',
         width: '12%',
@@ -632,7 +632,7 @@ export default function BottomToBottom() {
     },
   ];
 
-  const updatedBalance = (resourceObjects: any) => {
+  const updatedTotalValue = (resourceObjects: any) => {
     let totalValue = 0;
 
     resourceObjects.forEach((resourceObject: any) => {
@@ -781,12 +781,49 @@ export default function BottomToBottom() {
     updateGoalList(goal);
   };
 
+  const updatedBalance = (valorExecutado: any, goal: any) => {
+    // Obtém o valor do repasse do objeto resourceObjects
+    console.log('goal', goal);
+    const repasse = goal?.predictedValue;
+    console.log('repasse', repasse);
+
+    if (repasse) {
+      const repasseString = repasse.replace(/\./g, '').replace(',', '.');
+      const valorExecutadoString = valorExecutado
+        .replace(/\./g, '')
+        .replace(',', '.');
+
+      // Converte os valores para números (usando ponto como separador decimal)
+      const valorExecutadoNumerico = parseFloat(valorExecutadoString);
+      const repasseNumerico = parseFloat(repasseString);
+
+      // Verifica se os valores são válidos antes de subtrair
+      if (!isNaN(valorExecutadoNumerico) && !isNaN(repasseNumerico)) {
+        // Subtrai o repasse do valorExecutado
+        const resultado = repasseNumerico - valorExecutadoNumerico;
+
+        // Formata o resultado com duas casas decimais usando toLocaleString
+        const resultadoFormatado = resultado.toLocaleString('pt-BR', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+
+        return resultadoFormatado;
+      } else {
+        return;
+      }
+    }
+  };
+
   const updatedBalanceList = async (values: any) => {
     const res = await getGoals(`goals/${values.id}`);
     if (res) {
       const goalItem = res.data;
-      const valorBalance = updatedBalance(goalItem.resourceObjects);
+      const totalValue = updatedTotalValue(goalItem.resourceObjects);
+
+      const valorBalance = updatedBalance(totalValue, goalItem);
       goalItem.balance = valorBalance;
+      goalItem.executedValue = totalValue;
       submitUpdate(goalItem);
     }
   };
@@ -887,6 +924,7 @@ export default function BottomToBottom() {
         openModal={modalGoal}
         closeModal={hideModalGoals}
         updateGoalList={updateGoalList}
+        updateBalanceList={updatedBalanceList}
       />
 
       <ModalObjectResource

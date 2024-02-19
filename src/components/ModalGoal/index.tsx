@@ -9,6 +9,7 @@ type Props = {
   openModal: boolean;
   updateGoalList: any; //ATUALIZAÇÃO DE METAS
   idBottomToBottom: any;
+  updateBalanceList: any;
   closeModal: (refresh: boolean) => void;
 };
 
@@ -18,6 +19,7 @@ const ModalGoal = ({
   openModal,
   closeModal,
   updateGoalList,
+  updateBalanceList,
 }: Props) => {
   const [form] = Form.useForm();
 
@@ -124,6 +126,7 @@ const ModalGoal = ({
 
     await updateGoals(editingGoal, id);
     updateGoalList(editingGoal);
+    updateBalanceList({ id });
   };
 
   const handleSetPredicatedValue = (value: string) => {
@@ -175,11 +178,11 @@ const ModalGoal = ({
               </Form.Item>
             </Col>
             <Col offset={0} span={7}>
-              <Form.Item name={['executedValue']} label="Valor executado">
+              <Form.Item name={['executedValue']} label="Valor total executado">
                 <CurrencyInput
                   props={undefined}
                   handleMoeda={handleSetExecutedValue}
-                  value={predictedValue}
+                  value={executedValue}
                 />
               </Form.Item>
             </Col>
