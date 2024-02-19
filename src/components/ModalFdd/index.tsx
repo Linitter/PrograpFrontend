@@ -94,6 +94,18 @@ const ModalFdd = ({
     }
   }
 
+  const loadAllFdd = async () => {
+    const response = await getFdd('fdd');
+    if (response) {
+      const fddData = response.data;
+      const sortedFdd = fddData.sort((a: any, b: any) => {
+        return parseInt(a.position, 10) - parseInt(b.position, 10);
+      });
+
+      return sortedFdd;
+    }
+  };
+
   //ATUALIZAÇÃO DE FDD************
   const submitUpdate = async () => {
     const editingFdd = form.getFieldsValue(true);
@@ -107,6 +119,7 @@ const ModalFdd = ({
     setDefaultCurrencyValue('counterpartValue', '0.000,00');
     setDefaultCurrencyValue('globalValue', '0.000,00');
     setDefaultCurrencyValue('balance', '0.000,00');
+    setDefaultCurrencyValue('totalValueExecuted', '0.000,00');
     await updateFdd(editingFdd, id);
     updateFddList(editingFdd);
     updateBalanceList({ id });
@@ -115,6 +128,15 @@ const ModalFdd = ({
   // CRIAÇÃO DO FDD
   const submitCreate = async () => {
     const editingFdd = form.getFieldsValue(true);
+
+    const lastFdd = await loadAllFdd();
+    const maxPosition =
+      lastFdd.length > 0
+        ? Math.max(...lastFdd.map((fdd: any) => fdd.position))
+        : 0;
+    const newPosition = maxPosition + 1;
+    editingFdd.position = newPosition;
+
     // Defina os valores padrão se estiverem vazios ou nulos
     const setDefaultCurrencyValue = (field: any, defaultValue: any) => {
       if (editingFdd[field] === undefined || editingFdd[field] === null) {
@@ -124,6 +146,7 @@ const ModalFdd = ({
     setDefaultCurrencyValue('transferAmount', '0.000,00');
     setDefaultCurrencyValue('counterpartValue', '0.000,00');
     setDefaultCurrencyValue('globalValue', '0.000,00');
+    setDefaultCurrencyValue('totalValueExecuted', '0.000,00');
     setDefaultCurrencyValue('balance', '0.000,00');
     await postFdd(editingFdd);
     updateFddList(editingFdd);

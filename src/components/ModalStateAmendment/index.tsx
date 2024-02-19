@@ -120,8 +120,9 @@ const ModalStateAmendment = ({
         editingStateAmendment[field] = defaultValue;
       }
     };
-    setDefaultCurrencyValue('transferAmount', 'R$ 0.000,00');
-    setDefaultCurrencyValue('balance', 'R$ 0.000,00');
+    setDefaultCurrencyValue('transferAmount', '0.000,00');
+    setDefaultCurrencyValue('balance', '0.000,00');
+    setDefaultCurrencyValue('totalValueExecuted', '0.000,00');
 
     // Agora, atualize os detalhes do convênio
     await updateStateAmendment(editingStateAmendment, id);
@@ -129,9 +130,30 @@ const ModalStateAmendment = ({
     updateBalanceList({ id });
   };
 
+  const loadAllState = async () => {
+    const response = await getStateAmendment('StateAmendment');
+    if (response) {
+      const state = response.data;
+      const sortedState = state.sort((a: any, b: any) => {
+        return parseInt(a.position, 10) - parseInt(b.position, 10);
+      });
+
+      return sortedState;
+    }
+  };
+
   // CRIAÇÃO Da Emenda Estadual
   const submitCreate = async () => {
     const editingStateAmendment = form.getFieldsValue(true);
+
+    const lastState = await loadAllState();
+    const maxPosition =
+      lastState.length > 0
+        ? Math.max(...lastState.map((state: any) => state.position))
+        : 0;
+    const newPosition = maxPosition + 1;
+    editingStateAmendment.position = newPosition;
+
     const setDefaultCurrencyValue = (field: any, defaultValue: any) => {
       if (
         editingStateAmendment[field] === undefined ||
@@ -140,9 +162,9 @@ const ModalStateAmendment = ({
         editingStateAmendment[field] = defaultValue;
       }
     };
-    setDefaultCurrencyValue('transferAmount', 'R$ 0.000,00');
-
-    setDefaultCurrencyValue('balance', 'R$ 0.000,00');
+    setDefaultCurrencyValue('transferAmount', '0.000,00');
+    setDefaultCurrencyValue('balance', '0.000,00');
+    setDefaultCurrencyValue('totalValueExecuted', '0.000,00');
 
     await postStateAmendment(editingStateAmendment);
     updateStateAmendmentList(editingStateAmendment);

@@ -565,30 +565,31 @@ export default function FDD() {
   const updatedBalance = (valorExecutado: any, resourceObjects: any) => {
     // Obtém o valor do repasse do objeto resourceObjects
     const repasse = resourceObjects[0]?.fdd?.transferAmount;
+    if (repasse) {
+      const repasseString = repasse.replace(/\./g, '').replace(',', '.');
+      const valorExecutadoString = valorExecutado
+        .replace(/\./g, '')
+        .replace(',', '.');
 
-    const repasseString = repasse.replace(/\./g, '').replace(',', '.');
-    const valorExecutadoString = valorExecutado
-      .replace(/\./g, '')
-      .replace(',', '.');
+      // Converte os valores para números (usando ponto como separador decimal)
+      const valorExecutadoNumerico = parseFloat(valorExecutadoString);
+      const repasseNumerico = parseFloat(repasseString);
 
-    // Converte os valores para números (usando ponto como separador decimal)
-    const valorExecutadoNumerico = parseFloat(valorExecutadoString);
-    const repasseNumerico = parseFloat(repasseString);
+      // Verifica se os valores são válidos antes de subtrair
+      if (!isNaN(valorExecutadoNumerico) && !isNaN(repasseNumerico)) {
+        // Subtrai o repasse do valorExecutado
+        const resultado = repasseNumerico - valorExecutadoNumerico;
 
-    // Verifica se os valores são válidos antes de subtrair
-    if (!isNaN(valorExecutadoNumerico) && !isNaN(repasseNumerico)) {
-      // Subtrai o repasse do valorExecutado
-      const resultado = repasseNumerico - valorExecutadoNumerico;
+        // Formata o resultado com duas casas decimais usando toLocaleString
+        const resultadoFormatado = resultado.toLocaleString('pt-BR', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
 
-      // Formata o resultado com duas casas decimais usando toLocaleString
-      const resultadoFormatado = resultado.toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-
-      return resultadoFormatado;
-    } else {
-      return;
+        return resultadoFormatado;
+      } else {
+        return;
+      }
     }
   };
 
@@ -652,7 +653,13 @@ export default function FDD() {
   async function loadingFDDForm() {
     const response = await getFdd('fdd');
     if (response !== false) {
-      setFDD(response.data);
+      const fddData = response.data;
+
+      const sortedCovenants = fddData.sort((a: any, b: any) => {
+        return parseInt(a.position, 10) - parseInt(b.position, 10);
+      });
+
+      setFDD(sortedCovenants);
     }
   }
 

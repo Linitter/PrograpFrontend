@@ -530,7 +530,8 @@ export default function StateTreasury() {
     loadingObjectResourceForm();
     loadingDeliveryForm();
   }, []);
-  const updatedBalance = (resourceObjects: any) => {
+  {
+    /* const updatedBalance = (resourceObjects: any) => {
     let totalValue = 0;
 
     resourceObjects.forEach((resourceObject: any) => {
@@ -556,12 +557,25 @@ export default function StateTreasury() {
     });
 
     return formattedTotal;
+
+
+    const submitUpdate = async (stateTreasury: any) => {
+    await updateStateTreasury(stateTreasury, stateTreasury.id);
+    updatestateTreasuryList(stateTreasury);
   };
+  }; */
+  }
 
   async function loadingstateTreasuryForm() {
     const response = await getStateTreasury('stateTreasury');
     if (response !== false) {
-      setstateTreasury(response.data);
+      const stateData = response.data;
+
+      const sortedState = stateData.sort((a: any, b: any) => {
+        return parseInt(a.position, 10) - parseInt(b.position, 10);
+      });
+
+      setstateTreasury(sortedState);
     }
   }
 
@@ -619,11 +633,6 @@ export default function StateTreasury() {
     ]);
     loadingObjectResourceForm();
     loadingstateTreasuryForm();
-  };
-
-  const submitUpdate = async (stateTreasury: any) => {
-    await updateStateTreasury(stateTreasury, stateTreasury.id);
-    updatestateTreasuryList(stateTreasury);
   };
 
   const updatedBalanceList = async (values: any) => {

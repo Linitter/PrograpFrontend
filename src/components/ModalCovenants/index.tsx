@@ -12,6 +12,7 @@ import {
 } from 'antd';
 import { useEffect, useState } from 'react';
 import {
+  getCovenants,
   getOneCovenants,
   postCovenants,
   updateCovenants,
@@ -124,6 +125,18 @@ const ModalCovenants = ({
     setContributionValue('');
   };
 
+  const loadAllConvenants = async () => {
+    const response = await getCovenants('covenants');
+    if (response) {
+      const covenants = response.data;
+      const sortedCovenants = covenants.sort((a: any, b: any) => {
+        return parseInt(a.position, 10) - parseInt(b.position, 10);
+      });
+
+      return sortedCovenants;
+    }
+  };
+
   async function loadingCovenants() {
     if (id) {
       await getOneCovenants(id).then(response => {
@@ -149,7 +162,6 @@ const ModalCovenants = ({
           setExecutedValue(response.data.totalValueExecuted);
           setCounterpartValue(response.data.counterpartValue);
           setTransferAmount(response.data.transferAmount);
-
           setcovenantAuthor(response.data.covenantAuthor || []);
           setCurrentAuthor(response.data.covenantAuthor || []);
         } else {
@@ -305,6 +317,7 @@ const ModalCovenants = ({
     setDefaultCurrencyValue('counterpartValue', '0.000,00');
     setDefaultCurrencyValue('globalValue', '0.000,00');
     setDefaultCurrencyValue('balance', '0.000,00');
+    setDefaultCurrencyValue('totalValueExecuted', '0.000,00');
 
     // Agora, atualize os detalhes do convênio
     await atualizarConvenio(editingCovenants);
@@ -320,6 +333,15 @@ const ModalCovenants = ({
   // CRIAÇÃO DE convenios
   const submitCreate = async () => {
     const editingCovenants = form.getFieldsValue(true);
+
+    const lastCovenants = await loadAllConvenants();
+    const maxPosition =
+      lastCovenants.length > 0
+        ? Math.max(...lastCovenants.map((covenants: any) => covenants.position))
+        : 0;
+    const newPosition = maxPosition + 1;
+    editingCovenants.position = newPosition;
+
     const setDefaultCurrencyValue = (field: any, defaultValue: any) => {
       if (
         editingCovenants[field] === undefined ||
@@ -332,6 +354,7 @@ const ModalCovenants = ({
     setDefaultCurrencyValue('counterpartValue', '0.000,00');
     setDefaultCurrencyValue('globalValue', '0.000,00');
     setDefaultCurrencyValue('balance', '0.000,00');
+    setDefaultCurrencyValue('totalValueExecuted', '0.000,00');
 
     await salvarConvenio(editingCovenants);
   };

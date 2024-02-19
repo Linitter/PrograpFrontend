@@ -59,6 +59,18 @@ const ModalstateTreasury = ({
     }
   }
 
+  const loadAllState = async () => {
+    const response = await getStateTreasury('stateTreasury');
+    if (response) {
+      const state = response.data;
+      const sortedState = state.sort((a: any, b: any) => {
+        return parseInt(a.position, 10) - parseInt(b.position, 10);
+      });
+
+      return sortedState;
+    }
+  };
+
   //ATUALIZAÇÃO Do Tesouro Estadual************
   const submitUpdate = async () => {
     const editingStateTreasury = form.getFieldsValue(true);
@@ -70,6 +82,15 @@ const ModalstateTreasury = ({
   // CRIAÇÃO Do Tesouro Estadual
   const submitCreate = async () => {
     const editingStateTreasury = form.getFieldsValue(true);
+
+    const lastState = await loadAllState();
+    const maxPosition =
+      lastState.length > 0
+        ? Math.max(...lastState.map((state: any) => state.position))
+        : 0;
+    const newPosition = maxPosition + 1;
+    editingStateTreasury.position = newPosition;
+
     await postStateTreasury(editingStateTreasury);
     updateStateTreasuryList(editingStateTreasury);
   };
