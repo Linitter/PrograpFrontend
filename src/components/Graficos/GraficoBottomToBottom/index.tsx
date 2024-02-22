@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { TableColumnsType } from 'antd';
 import { Checkbox } from 'antd';
-import './index.css';
+import '../index.css';
 import Table, { ColumnsType } from 'antd/es/table';
 import { getObjectResource } from '../../../hooks/objectResourceService';
 import { getGoals } from '../../../hooks/goalService';
@@ -758,7 +758,7 @@ export default function GraficoBottomToBottom() {
           </Checkbox>
           <br />
         </div>
-
+        {/**
         <div className="checkbox-axle">
           <h3>Eixo</h3>
           <Checkbox
@@ -777,6 +777,7 @@ export default function GraficoBottomToBottom() {
             EIXO IV
           </Checkbox>
         </div>
+        */}
         <div className="checkbox-status">
           <h3>Status</h3>
           <Checkbox
@@ -868,7 +869,7 @@ export default function GraficoBottomToBottom() {
           pagination={false}
         />
       </div>
-      <div className="table-axle">
+      <div className="table">
         {/* tabelas de eixos com somatoria */}
         <Table
           columns={columnsAxle}

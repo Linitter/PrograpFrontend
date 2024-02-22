@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { TableColumnsType } from 'antd';
 import { Checkbox } from 'antd';
-import './index.css';
+import '../index.css';
 import Table, { ColumnsType } from 'antd/es/table';
 import { getObjectResource } from '../../../hooks/objectResourceService';
 
@@ -812,7 +812,7 @@ export default function GraficoConvenants() {
         </div>
       </div>
 
-      <div className="custom-donut-convenants">
+      <div className="custom-donut">
         {/* grafico de pizza */}
         <h3>Valor global convênio</h3>
         <div className="pass-value">
@@ -833,7 +833,7 @@ export default function GraficoConvenants() {
           id="donutChart" // Adicione um ID ao gráfico
         />
       </div>
-      <div className="custom-bar-convenants">
+      <div className="custom-bar">
         {/* grafico em barra horizontal */}
         <h3>Tipo de despesa</h3>
         <div className="total-expense-amount">
@@ -850,7 +850,7 @@ export default function GraficoConvenants() {
           height={140}
         />
       </div>
-      <div className="custom-bar-convenants-vertical">
+      <div className="custom-bar-vertical">
         <h3 className="h3Etapa">Etapa</h3>
         {/* grafico em bar vertical */}
         <ReactApexChart
@@ -860,7 +860,7 @@ export default function GraficoConvenants() {
           height={210}
         />
       </div>
-      <div className="table-object-convenants">
+      <div className="table-object">
         {/* tabela com expanção - eixos -> metas -> objetos */}
         <Table
           columns={columns}
@@ -875,7 +875,7 @@ export default function GraficoConvenants() {
           pagination={false}
         />
       </div>
-      <div className="table-convenants">
+      <div className="table">
         {/* tabelas de eixos com somatoria */}
         <Table
           columns={columnsConvenants}

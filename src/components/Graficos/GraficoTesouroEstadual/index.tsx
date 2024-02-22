@@ -703,7 +703,7 @@ export default function GraficoTesouro() {
           <p className="invest-cust">{barChartData[1].toFixed(2)}%</p>
         </div>
         <ReactApexChart
-          className="bar-chart"
+          className="bar-chart-tesouro"
           options={barChartOptions}
           series={getBarChartSeries()}
           type="bar"

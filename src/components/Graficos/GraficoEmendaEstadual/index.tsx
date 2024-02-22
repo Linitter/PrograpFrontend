@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { TableColumnsType } from 'antd';
 import { Checkbox } from 'antd';
-import './index.css';
+import '../index.css';
 import Table, { ColumnsType } from 'antd/es/table';
 import { getObjectResource } from '../../../hooks/objectResourceService';
 
@@ -847,7 +847,7 @@ export default function GraficoEmenda() {
         </div>
       </div>
 
-      <div className="custom-donut-emenda">
+      <div className="custom-donut">
         {/* grafico de pizza */}
         <h3>Valor repasse emenda</h3>
         <div className="pass-value">
@@ -869,7 +869,7 @@ export default function GraficoEmenda() {
         />
       </div>
 
-      <div className="custom-bar-emenda">
+      <div className="custom-bar">
         {/* grafico em barra horizontal */}
         <h3>Tipo de despesa</h3>
         <div className="total-expense-amount">
@@ -887,7 +887,7 @@ export default function GraficoEmenda() {
         />
       </div>
 
-      <div className="custom-bar-emenda-vertical">
+      <div className="custom-bar-vertical">
         <h3 className="h3Etapa">Etapa</h3>
         {/* grafico em bar vertical */}
         <ReactApexChart
@@ -897,7 +897,7 @@ export default function GraficoEmenda() {
           height={210}
         />
       </div>
-      <div className="table-object-emenda">
+      <div className="table-object">
         {/* tabela com expanção - eixos -> metas -> objetos */}
         <Table
           columns={columns}
@@ -912,7 +912,7 @@ export default function GraficoEmenda() {
           pagination={false}
         />
       </div>
-      <div className="table-emenda">
+      <div className="table">
         {/* tabelas de eixos com somatoria */}
         <Table
           columns={columnsFdd}

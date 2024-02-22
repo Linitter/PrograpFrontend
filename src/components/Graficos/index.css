@@ -5,27 +5,27 @@
   display: none !important;
 }
 
-
 .custom-bar {
   position: relative;
-  bottom: 655px;
-  right: 190px;
+  bottom: 553px !important;
+  right: 215px;
   display: inline-block;
-  padding: 12px 46px 1px 13px;
+  padding: 12px 46px 1px 13px !important;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
-  width: 480px;
+  width: 500px;
 }
 /* Estilize o tooltip */
 .custom-bar  .apexcharts-tooltip {
   color: #030303 !important; /* Cor do texto (importante para substituir as configurações padrão) */
 }
 
+
 .total-expense-amount{
-  left: 40px;
+  left: 65px;
   display: inline-block;
   position: relative;
-  top: 10px;
+  top: 0px;
   }
 .bar-chart{
   display: inline-block;
@@ -42,32 +42,35 @@
 /* MARGEM DO GRAFICO grafico de pizza, juntamente com os dados */
 .custom-donut {
   position: relative;
-  left: 290px; /* Defina a posição horizontal desejada */
-  bottom: 483px;
+  left: 285px; /* Defina a posição horizontal desejada */
+  bottom: 385px;
   display: inline-block;
-  padding: 20px 140px 0px 10px !important;
+  padding: 20px 100px 15px 10px ;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-width: 500px;
   max-height: 220px;
-  width: 480px;
+  height: 220px;
+
  }
+
  /* grafico */
  .pie-chart{
   display: inline-block;
   position: relative;
-  bottom: 40px;
-  float: left;
-  right: 25px;
-  width: 98%;
+  right: 25px !important;
+  padding: 0;
+  margin: 0;
+  height: 80%;
  }
 
 
+
  .pass-value{
-  left: 360px;
-  display: inline-block;
-  position: relative;
-  top: 23px;
+  left: 350px !important;
+  display: inline-block !important;
+  position: relative !important;
+  top: 0 !important;
 
  }
 .repas-ano{
@@ -89,8 +92,8 @@
 /* GRAFICO EM BARRA VERTICAL */
 .custom-bar-vertical{
   position: relative;
-  bottom: 90px ;
-  right: 670px;
+  bottom: 0px !important;
+  right: 715px;
   display: inline-block;
   border: 2px solid #cebe8a;
   box-shadow: 2px 1px 5px rgb(0, 21, 42);
@@ -112,14 +115,14 @@
 
 .table-object{
   display: inline-block;
-  left: 800px;
-  bottom: 915px;
+  left: 820px;
+  bottom: 813px !important;
   position: relative;
-  padding: 35px 8px 278px 8px;
+  padding: 35px 8px 278px 8px !important;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
-  max-height: 427px; /* Defina a altura máxima desejada */
-  width: 50%;
+  max-height: 432px; /* Defina a altura máxima desejada */
+  width: 48%;
   overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
 }
 /* Estilize o scrollbar apenas dentro da table ad eobjetos*/
@@ -129,20 +132,20 @@
 
 }
 /* tabela de eixo */
-.table-axle{
+.table{
   display: inline-block;
-  left: 620px;
-  bottom: 894px;
+  left: 620px !important;
+  bottom: 805px;
   position: relative;
-  padding: 30px 8px 30px 8px;
+  padding: 40px 8px 42px 8px !important;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
   max-height: 252px; /* Defina a altura máxima desejada */
-  width: 61%;
+  width: 60%;
 }
 /* Estilize o scrollbar apenas dentro do componente .checkbox-year */
-.table-axle::-webkit-scrollbar {
+.table::-webkit-scrollbar {
   width: 7px; /* Largura desejada para o scrollbar do .checkbox-year */
   background-color:  rgba(0, 0, 0, 0.25); /* Cor da alça da barra de rolagem */
 
@@ -190,7 +193,7 @@
   background-color:  rgba(88, 85, 85, 0.25); /* Cor da alça da barra de rolagem */
 }
 
-.checkbox-axle{
+.checkbox{
   padding: 5px 105px 2px 17px; /* Espaçamento interno (aumentei o padding para ajustar a margem) */
   /* border: 2px solid #ccc; */
   margin-top: 25px;
@@ -367,9 +370,9 @@ h4{
   .table-object{
     display: inline-block;
     left: 570px;
-    bottom: 802px;
+    bottom: 802px !important;
     position: relative;
-    padding: 12px 2px 170px 2px;
+    padding: 12px 2px 170px 2px !important;
     border: 2px solid #cebe8a;
     box-shadow: 2px 2px 4px rgb(0, 21, 42);
     max-height: 342px; /* Defina a altura máxima desejada */
@@ -377,10 +380,10 @@ h4{
     overflow-y: auto; /* Adicione a rolagem vertical quando necessário */
     width: 55%;
   }
-  .table-axle{
+  .table{
     display: inline-block;
     left: 470px;
-    bottom: 790px;
+    bottom: 790px !important;
     position: relative;
     padding: 17px 25px 17px 30px;
     border: 2px solid #cebe8a;

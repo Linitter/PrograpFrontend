@@ -7,7 +7,7 @@
 
 .custom-bar-tesouro {
   position: relative;
-  bottom: 520px;
+  bottom: 425px;
   left: 290px;
   display: inline-block;
   padding: 12px 46px 1px 13px;
@@ -77,7 +77,7 @@
 /* GRAFICO EM BARRA VERTICAL */
 .custom-bar-tesouro-vertical{
   position: relative;
-  bottom: 175px;
+  bottom: 125px;
   right: 210px;
   display: inline-block;
   border: 2px solid #cebe8a;
