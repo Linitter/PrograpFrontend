@@ -595,6 +595,7 @@ const ModalCovenants = ({
                     props={undefined}
                     handleMoeda={handleSetExecutedValue}
                     value={executedValue}
+                    disabled={true}
                   />
                 </Form.Item>
               </Col>
@@ -605,6 +606,7 @@ const ModalCovenants = ({
                     props={undefined}
                     handleMoeda={handleSetBalance}
                     value={balance}
+                    disabled={true}
                   />
                 </Form.Item>
               </Col>

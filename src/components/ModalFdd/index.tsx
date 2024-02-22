@@ -304,6 +304,7 @@ const ModalFdd = ({
                     props={undefined}
                     handleMoeda={handleSetExecutedValue}
                     value={executedValue}
+                    disabled={true}
                   />
                 </Form.Item>
               </Col>
@@ -314,6 +315,7 @@ const ModalFdd = ({
                     props={undefined}
                     handleMoeda={handleSetBalance}
                     value={balance}
+                    disabled={true}
                   />
                 </Form.Item>
               </Col>
