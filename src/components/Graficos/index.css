@@ -45,7 +45,7 @@
   left: 285px; /* Defina a posição horizontal desejada */
   bottom: 385px;
   display: inline-block;
-  padding: 0px 0px 0px 0px !important;
+  padding: 0px 100px 0px 0px !important;
   border: 2px solid #cebe8a;
   box-shadow: 2px 2px 4px rgb(0, 21, 42);
   max-width: 500px;
@@ -59,18 +59,13 @@
   display: inline-block;
   position: relative;
   right: 25px !important;
-  padding: 0;
   margin: 0;
-  width: 100% !important;
-  height: 80%;
  }
 
  .pass-value{
-  left: 350px !important;
   display: inline-block !important;
   position: relative !important;
   top: 0 !important;
-
  }
 .repas-ano{
   color: #bd9e5a;
