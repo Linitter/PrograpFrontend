@@ -16,7 +16,7 @@ if (window.location.hostname.indexOf(domainNameProd) > -1) {
 } else {
   urlsServices.SIGUWS = 'https://siguws-h.ssp.go.gov.br/';
   urlsServices.LEGADOWS = 'https://legadows-h.ssp.go.gov.br/';
-  urlsServices.SSOWS = 'https://ssows.ssp.go.gov.br/';
+  urlsServices.SSOWS = 'https://ssows-h.ssp.go.gov.br/';
   urlsServices.BACKENDWS = 'https://progapws-homo.policiacivil.go.gov.br';
   ambiente = 'HOMO';
   if (window.location.hostname.indexOf(domainNameDesv) > -1) {
