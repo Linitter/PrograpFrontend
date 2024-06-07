@@ -9,7 +9,7 @@ import {
 import { getAxles } from '../../hooks/axleService';
 import { PlusOutlined } from '@ant-design/icons';
 import ModalAxle from '../ModalAxle';
-import CurrencyInput from '../InputDinheiro';
+import InputDinheiro from '../InputDinheiro';
 require('./index.css');
 
 type AxlesResponse = {
@@ -216,7 +216,7 @@ const ModalBottomToBottom = ({
               </Col>
               <Col span={12}>
                 <Form.Item name={['amount']} label="Valor total" hasFeedback>
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetAmount}
                     value={amount}

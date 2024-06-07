@@ -573,6 +573,7 @@ export default function BottomToBottom() {
       key: 'amount',
       width: '22%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
+      render: (value: any) => `R$ ${value}` || '*********',
     },
 
     {

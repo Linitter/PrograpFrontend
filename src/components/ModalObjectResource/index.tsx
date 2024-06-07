@@ -29,7 +29,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import ModalObject from '../ModalObject';
 import { apiDestination } from '../../hooks/deliveryObject';
 import { ColumnsType } from 'antd/es/table';
-import CurrencyInput from '../InputDinheiro';
+import InputDinheiro from '../InputDinheiro';
 
 type Props = {
   id: string;
@@ -674,7 +674,7 @@ const ModalObjectResource = ({
 
             <Col span={6}>
               <Form.Item name={['unitaryValue']} label="Valor unitario">
-                <CurrencyInput
+                <InputDinheiro
                   props={undefined}
                   handleMoeda={handleSetUnitaryValue}
                   value={unitaryValue}
@@ -686,7 +686,7 @@ const ModalObjectResource = ({
                 name={['estimatedTotalValue']}
                 label="Valor total estimado"
               >
-                <CurrencyInput
+                <InputDinheiro
                   props={undefined}
                   handleMoeda={handleSetEstimatedTotalValue}
                   value={estimatedTotalValue}
@@ -701,7 +701,7 @@ const ModalObjectResource = ({
                 label="Valor executado"
                 hasFeedback
               >
-                <CurrencyInput
+                <InputDinheiro
                   props={undefined}
                   handleMoeda={handleSetExecutedValue}
                   value={executedValue}

@@ -1,7 +1,7 @@
 import { Modal, Form, Input, Col, message, Select, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import { getFdd, postFdd, updateFdd } from '../../hooks/fdd';
-import CurrencyInput from '../InputDinheiro';
+import InputDinheiro from '../InputDinheiro';
 
 const { TextArea } = Input;
 
@@ -264,7 +264,7 @@ const ModalFdd = ({
                   label="Valor do repasse"
                   hasFeedback
                 >
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetTransferAmount}
                     value={transferAmount}
@@ -277,7 +277,7 @@ const ModalFdd = ({
                   label="Valor contrapartida"
                   hasFeedback
                 >
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetCounterpartValue}
                     value={counterpartValue}
@@ -286,7 +286,7 @@ const ModalFdd = ({
               </Col>
               <Col span={5}>
                 <Form.Item name={['globalValue']} label="Valor global">
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetGlobalValue}
                     value={globalValue}
@@ -300,7 +300,7 @@ const ModalFdd = ({
                   label="Valor total executado"
                   hasFeedback
                 >
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetExecutedValue}
                     value={executedValue}
@@ -311,7 +311,7 @@ const ModalFdd = ({
 
               <Col span={6}>
                 <Form.Item name={['balance']} label="Saldo" hasFeedback>
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetBalance}
                     value={balance}

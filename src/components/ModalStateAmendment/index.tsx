@@ -8,7 +8,7 @@ import {
   updateStateAmendment,
 } from '../../hooks/stateAmendmentService';
 import { PlusOutlined } from '@ant-design/icons';
-import CurrencyInput from '../InputDinheiro';
+import InputDinheiro from '../InputDinheiro';
 
 const { TextArea } = Input;
 
@@ -287,7 +287,7 @@ const ModalStateAmendment = ({
                   label="Valor do repasse"
                   hasFeedback
                 >
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetTransferAmount}
                     value={transferAmount}
@@ -300,7 +300,7 @@ const ModalStateAmendment = ({
                   label="Valor total executado"
                   hasFeedback
                 >
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetExecutedValue}
                     value={executedValue}
@@ -311,7 +311,7 @@ const ModalStateAmendment = ({
 
               <Col span={7}>
                 <Form.Item name={['balance']} label="Saldo" hasFeedback>
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetBalance}
                     value={balance}

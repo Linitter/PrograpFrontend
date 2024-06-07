@@ -25,7 +25,7 @@ import {
 } from '../../hooks/covenantAuthor';
 import { getAuthor } from '../../hooks/uthorService';
 import ModalAuthor from '../ModalAuthor';
-import CurrencyInput from '../InputDinheiro';
+import InputDinheiro from '../InputDinheiro';
 
 const { TextArea } = Input;
 
@@ -556,7 +556,7 @@ const ModalCovenants = ({
                   label="Valor do repasse"
                   hasFeedback
                 >
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetTransferAmount}
                     value={transferAmount}
@@ -569,7 +569,7 @@ const ModalCovenants = ({
                   label="Valor contrapartida"
                   hasFeedback
                 >
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetCounterpartValue}
                     value={counterpartValue}
@@ -578,7 +578,7 @@ const ModalCovenants = ({
               </Col>
               <Col span={5}>
                 <Form.Item name={['globalValue']} label="Valor global">
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetGlobalValue}
                     value={globalValue}
@@ -591,7 +591,7 @@ const ModalCovenants = ({
                   label="Valor total executado"
                   hasFeedback
                 >
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetExecutedValue}
                     value={executedValue}
@@ -602,7 +602,7 @@ const ModalCovenants = ({
 
               <Col span={4}>
                 <Form.Item name={['balance']} label="Saldo" hasFeedback>
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetBalance}
                     value={balance}
@@ -654,7 +654,7 @@ const ModalCovenants = ({
                   label="Valor"
                   hasFeedback
                 >
-                  <CurrencyInput
+                  <InputDinheiro
                     props={undefined}
                     handleMoeda={handleSetContributionValue}
                     value={contributionValue}

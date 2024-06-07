@@ -1,7 +1,7 @@
 import { Modal, Form, Input, Col, message, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import { getGoals, postGoals, updateGoals } from '../../hooks/goalService';
-import CurrencyInput from '../InputDinheiro';
+import InputDinheiro from '../InputDinheiro';
 const { TextArea } = Input;
 
 type Props = {
@@ -170,7 +170,7 @@ const ModalGoal = ({
             </Col>
             <Col offset={1} span={8}>
               <Form.Item name={['predictedValue']} label="Valor previsto">
-                <CurrencyInput
+                <InputDinheiro
                   props={undefined}
                   handleMoeda={handleSetPredicatedValue}
                   value={predictedValue}
@@ -179,7 +179,7 @@ const ModalGoal = ({
             </Col>
             <Col offset={0} span={7}>
               <Form.Item name={['executedValue']} label="Valor total executado">
-                <CurrencyInput
+                <InputDinheiro
                   props={undefined}
                   handleMoeda={handleSetExecutedValue}
                   value={executedValue}
@@ -189,7 +189,7 @@ const ModalGoal = ({
             </Col>
             <Col offset={0} span={7}>
               <Form.Item name={['balance']} label="Saldo">
-                <CurrencyInput
+                <InputDinheiro
                   props={undefined}
                   handleMoeda={handleSetBalance}
                   value={balance}

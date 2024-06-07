@@ -5,17 +5,16 @@ type DataType = {
   props: any;
   value: string;
   handleMoeda: (moeda: string) => void;
-  disabled?: boolean; // Adicionado a propriedade disabled
+  disabled?: boolean;
 };
 
-const CurrencyInput = ({ props, value, disabled, handleMoeda }: DataType) => {
+const InputDinheiro = ({ props, value, disabled, handleMoeda }: DataType) => {
   function moeda(e: React.ChangeEvent<HTMLInputElement>) {
     const { value } = e.target;
     const onlyNumbers = value.replace(/\D/g, '');
 
-    // Verifica se o valor é um número válido antes de formatar
-    if (!isNaN(parseFloat(onlyNumbers))) {
-      // Format the currency (assuming BRL)
+    if (onlyNumbers) {
+      // Convert the string to a number and format it as a BRL currency
       const number = parseFloat(onlyNumbers) / 100;
       const formattedValue = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
@@ -23,10 +22,10 @@ const CurrencyInput = ({ props, value, disabled, handleMoeda }: DataType) => {
         maximumFractionDigits: 2,
       }).format(number);
 
-      return `${formattedValue}`;
+      return formattedValue;
     }
 
-    return ''; // Retorna uma string vazia se o valor não for um número válido
+    return ''; // Return an empty string if the value is not valid
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,18 +33,18 @@ const CurrencyInput = ({ props, value, disabled, handleMoeda }: DataType) => {
     handleMoeda(formattedValue);
   };
 
-  const displayValue = value || ''; // Definindo o displayValue como string vazia se for undefined
+  const displayValue = value || ''; // Set displayValue as empty string if undefined
 
   return (
     <Input
       {...props}
-      value={`R$ ${displayValue}`}
+      value={displayValue}
       onChange={handleChange}
       maxLength={25}
       disabled={disabled}
-      style={disabled ? { color: '#aaa', backgroundColor: '#cd' } : {}}
+      style={disabled ? { color: '#aaa', backgroundColor: '#cdcdcd' } : {}}
     />
   );
 };
 
-export default CurrencyInput;
+export default InputDinheiro;
