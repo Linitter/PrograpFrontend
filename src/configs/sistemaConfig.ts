@@ -1,7 +1,7 @@
 export const sistemaNameSSO = 'PROGAP';
 export const sistemaDescricao = 'Plataforma para gerenciamento de recursos.';
 export const sistemaVersao = '1.0.0-00';
-export const domainNameProd = 'https://progap.policiacivil.go.gov.br/';
+export const domainNameProd = 'https://progap.policiacivil.go.gov.br';
 export const domainNameHomo = 'https://progap-homo.policiacivil.go.gov.br';
 
 export const domainNameDesv = 'localhost';
