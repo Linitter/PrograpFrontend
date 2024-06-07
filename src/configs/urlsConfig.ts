@@ -22,6 +22,7 @@ if (window.location.hostname.indexOf(domainNameProd) > -1) {
   if (window.location.hostname.indexOf(domainNameDesv) > -1) {
     //PARA DESENVOLVIMENTO
     urlsServices.BACKENDWS = 'http://localhost:3000';
+    urlsServices.SSOWS = 'https://ssows-h.ssp.go.gov.br/';
     //urlsServices.BACKENDWS = 'https://progapws-homo.policiacivil.go.gov.br'
     // urlsServices.BACKEND = 'URLBACKENDHOMO'
   }
