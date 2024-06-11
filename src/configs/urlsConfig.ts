@@ -8,17 +8,12 @@ export const urlsServices = {
 export let ambiente = '';
 
 if (window.location.hostname === domainNameProd) {
-  console.log('teste 1 - ', domainNameProd);
-  console.log('teste 1 -', window.location.hostname);
   urlsServices.SIGUWS = 'https://siguws.ssp.go.gov.br/';
   urlsServices.LEGADOWS = 'https://legadows.ssp.go.gov.br/';
   urlsServices.SSOWS = 'https://ssows.ssp.go.gov.br/';
   urlsServices.BACKENDWS = 'https://progapws.policiacivil.go.gov.br';
   ambiente = 'PROD';
 } else {
-  console.log('teste 2 - ', domainNameProd);
-  console.log('teste 2 - ', window.location.hostname);
-
   urlsServices.SIGUWS = 'https://siguws-h.ssp.go.gov.br/';
   urlsServices.LEGADOWS = 'https://legadows-h.ssp.go.gov.br/';
   urlsServices.SSOWS = 'https://ssows-h.ssp.go.gov.br/';

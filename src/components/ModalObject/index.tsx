@@ -1,8 +1,8 @@
-import { Modal, Form, Input, Col, Select, message, Button, Row } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, Modal, Row, Select, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { getModel } from '../../hooks/model';
 import { getObject, postObject, updateObject } from '../../hooks/object';
-import { PlusOutlined } from '@ant-design/icons';
 import ModalModel from '../ModalModel';
 import ModalNature from '../ModalNature';
 
@@ -189,17 +189,7 @@ const ModalObject = ({
           <Col offset={1} style={{ width: '100%' }}>
             <Row>
               <Col span={19}>
-                <Form.Item
-                  name={['model']}
-                  label="Modelo"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Por favor, insira o nome do modelo do objeto',
-                    },
-                  ]}
-                  hasFeedback
-                >
+                <Form.Item name={['model']} label="Modelo" hasFeedback>
                   <Select
                     showSearch
                     placeholder="Selecione o modelo"
@@ -235,17 +225,7 @@ const ModalObject = ({
           <Col style={{ width: '100%' }}>
             <Row>
               <Col offset={1} span={19}>
-                <Form.Item
-                  name={['nature']}
-                  label="Natureza"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Por favor, insira o nome da natureza do objeto',
-                    },
-                  ]}
-                  hasFeedback
-                >
+                <Form.Item name={['nature']} label="Natureza" hasFeedback>
                   <Select
                     showSearch
                     placeholder="Selecione a natureza"
