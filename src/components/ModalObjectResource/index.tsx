@@ -1,35 +1,35 @@
 import {
-  Modal,
+  Button,
+  Col,
   Form,
   Input,
-  Col,
-  Select,
-  Row,
-  message,
-  Button,
-  Table,
+  Modal,
   Popconfirm,
+  Row,
+  Select,
   Space,
+  Table,
+  message,
 } from 'antd';
 import { useEffect, useState } from 'react';
 
+import {
+  deleteDestinationObjects,
+  getDestinationObjects,
+} from '../../hooks/destinationObjects';
 import {
   getOneResourceobjects,
   postObjectResource,
   updateObjectResource,
 } from '../../hooks/objectResourceService';
-import {
-  deleteDestinationObjects,
-  getDestinationObjects,
-} from '../../hooks/destinationObjects';
 
-import { getObject } from '../../hooks/object';
-import ReactInputMask from 'react-input-mask';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import ModalObject from '../ModalObject';
-import { apiDestination } from '../../hooks/deliveryObject';
 import { ColumnsType } from 'antd/es/table';
+import ReactInputMask from 'react-input-mask';
+import { apiDestination } from '../../hooks/deliveryObject';
+import { getObject } from '../../hooks/object';
 import InputDinheiro from '../InputDinheiro';
+import ModalObject from '../ModalObject';
 
 type Props = {
   id: string;
@@ -54,6 +54,7 @@ interface DataType {
 type ModelObjects = {
   id: string;
   name: string;
+  model: any;
 };
 type UnitsResponse = {
   id: string;
@@ -570,9 +571,9 @@ const ModalObjectResource = ({
                       .toLowerCase()
                       .includes(input.toLowerCase())
                   }
-                  options={objects.map(objects => ({
-                    label: objects.name,
-                    value: objects.id, // Define o ID do treinamento como valor da opção
+                  options={objects.map(obj => ({
+                    label: `${obj.name} - ${obj?.model?.name}`,
+                    value: obj.id, // Define o ID do treinamento como valor da opção
                   }))}
                 />
               </Form.Item>
