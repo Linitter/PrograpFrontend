@@ -1,38 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import { DownOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   Button,
-  Space,
   Dropdown,
-  Popconfirm,
-  MenuProps,
-  Row,
   Form,
-  message,
-  TableColumnsType,
   Input,
+  InputRef,
+  MenuProps,
+  Popconfirm,
+  Row,
+  Space,
+  Table,
+  TableColumnsType,
+  message,
 } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import { DownOutlined } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
-import { Table } from 'antd';
+import type { ColumnType, ColumnsType } from 'antd/es/table';
+import { FilterConfirmProps } from 'antd/es/table/interface';
+import React, { useEffect, useRef, useState } from 'react';
+import Highlighter from 'react-highlight-words';
+import ModalBottomToBottom from '../../components/ModalBottomToBottom';
+import ModalGoal from '../../components/ModalGoal';
+import ModalObjectDelivery from '../../components/ModalObjectDelivery';
+import ModalObjectResource from '../../components/ModalObjectResource';
 import {
   deleteBottomToBottom,
   getBottomToBottom,
 } from '../../hooks/bottomToBottom';
-import ModalBottomToBottom from '../../components/ModalBottomToBottom';
-import {
-  deleteObjectResource,
-  getObjectResource,
-} from '../../hooks/objectResourceService';
-import ModalObjectResource from '../../components/ModalObjectResource';
-import { deleteGoals, getGoals, updateGoals } from '../../hooks/goalService';
-import ModalGoal from '../../components/ModalGoal';
 import {
   apiDestination,
   deleteDeliveryObject,
   getDeliveryObject,
 } from '../../hooks/deliveryObject';
-import ModalObjectDelivery from '../../components/ModalObjectDelivery';
+import { deleteGoals, getGoals, updateGoals } from '../../hooks/goalService';
+import {
+  deleteObjectResource,
+  getObjectResource,
+} from '../../hooks/objectResourceService';
 
 interface DataType {
   key: React.Key;
@@ -42,6 +44,7 @@ interface DataType {
   year: string;
   amount: string;
   balance: string;
+  axle: any;
   goal: any[]; // Alterado para um array de objetos
 }
 // expação da tabela de metas
@@ -91,6 +94,8 @@ type UnitsResponse = {
   superior: string;
 };
 
+type DataIndex = keyof DataType;
+
 export default function BottomToBottom() {
   const [showModal, setShowModal] = useState(false);
   const [modalGoal, setModalGoal] = useState(false); //metas
@@ -112,6 +117,12 @@ export default function BottomToBottom() {
   const [recordDelivery, setRecordDelivery] = useState<any>({});
   const [units, setUnits] = useState<UnitsResponse[]>([]); // Adicione este estado
   const [selectedGoalId, setSelectedGoalId] = useState<any>({});
+
+  //Filtros
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
+  const searchInput = useRef<InputRef>(null);
+
   // somando valores re valore previsto e valor executado para trazer o saldo na tela
 
   // TABELA DE METAS
@@ -544,6 +555,115 @@ export default function BottomToBottom() {
       setModalDelivery(true);
     }
   };
+
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: (param?: FilterConfirmProps) => void,
+    dataIndex: DataIndex,
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleResetFilters = () => {
+    setSearchText('');
+    setSearchedColumn('');
+    loadingbottomToBottomForm();
+  };
+
+  const getColumnSearchProps = (
+    dataIndex: DataIndex,
+  ): ColumnType<DataType> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => {
+              if (clearFilters) {
+                clearFilters();
+              }
+              handleResetFilters();
+              confirm();
+            }}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+    onFilter: (value, record) => {
+      const recordValue =
+        dataIndex === 'axle' ? record.axle?.name : record[dataIndex];
+      return recordValue
+        ? recordValue
+            .toString()
+            .toLowerCase()
+            .includes((value as string).toLowerCase())
+        : false;
+    },
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: text =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
+
   // tabela do fundo a fundo
   const columns: ColumnsType<DataType> = [
     {
@@ -558,6 +678,7 @@ export default function BottomToBottom() {
       dataIndex: 'axle',
       key: 'axle',
       width: '22%',
+      ...getColumnSearchProps('axle'),
       render: axle => (axle ? axle?.name : '*******'),
     },
     {
@@ -566,6 +687,7 @@ export default function BottomToBottom() {
       key: 'year',
       width: '22%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
+      ...getColumnSearchProps('year'),
     },
     {
       title: 'Valor total',
@@ -867,15 +989,6 @@ export default function BottomToBottom() {
       key: `bottomToBottom${index}`,
     }),
   );
-
-  const handleSearch = (searchText: any) => {
-    console.log('Valor pesquisado:', searchText);
-  };
-
-  const onChangeSearch = (e: any) => {
-    const searchText = e.target.value;
-    handleSearch(searchText); // Chama a função de pesquisa a cada alteração no campo de entrada
-  };
 
   return (
     <>

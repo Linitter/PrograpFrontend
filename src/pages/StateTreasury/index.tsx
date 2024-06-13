@@ -1,37 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import {
+  DownOutlined,
+  EllipsisOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import {
   Button,
-  Space,
   Dropdown,
-  Popconfirm,
-  MenuProps,
-  Row,
   Form,
-  message,
+  Input,
+  InputRef,
+  MenuProps,
+  Popconfirm,
+  Row,
+  Space,
+  Table,
   TableColumnsType,
   Tooltip,
+  message,
 } from 'antd';
-import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
-import { DownOutlined } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
-import { Table } from 'antd';
-import {
-  deleteObjectResource,
-  getObjectResource,
-} from '../../hooks/objectResourceService';
+import type { ColumnType, ColumnsType } from 'antd/es/table';
+import { FilterConfirmProps } from 'antd/es/table/interface';
+import React, { useEffect, useRef, useState } from 'react';
+import Highlighter from 'react-highlight-words';
+import ModalObjectDelivery from '../../components/ModalObjectDelivery';
 import ModalObjectResource from '../../components/ModalObjectResource';
+import ModalstateTreasury from '../../components/ModalstateTreasury';
+import {
+  deleteStateTreasury,
+  getStateTreasury,
+} from '../../hooks/StateTreasury';
 import {
   apiDestination,
   deleteDeliveryObject,
   getDeliveryObject,
 } from '../../hooks/deliveryObject';
-import ModalObjectDelivery from '../../components/ModalObjectDelivery';
 import {
-  deleteStateTreasury,
-  getStateTreasury,
-  updateStateTreasury,
-} from '../../hooks/StateTreasury';
-import ModalstateTreasury from '../../components/ModalstateTreasury';
+  deleteObjectResource,
+  getObjectResource,
+} from '../../hooks/objectResourceService';
 
 interface DataType {
   key: React.Key;
@@ -82,6 +89,8 @@ type UnitsResponse = {
   superior: string;
 };
 
+type DataIndex = keyof DataType;
+
 export default function StateTreasury() {
   const [showModal, setShowModal] = useState(false);
 
@@ -99,6 +108,11 @@ export default function StateTreasury() {
   const [recordDelivery, setRecordDelivery] = useState<any>({});
   const [units, setUnits] = useState<UnitsResponse[]>([]); // Adicione este estado
   const [selectedCovenantId, setSelectedstateTreasuryId] = useState<any>({});
+
+  //Filtros
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
+  const searchInput = useRef<InputRef>(null);
 
   const expandedRowRender = (record: any) => {
     //adicionar uma chave única para cada objetos do recurso usando o índice
@@ -446,24 +460,127 @@ export default function StateTreasury() {
     }
   };
 
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: (param?: FilterConfirmProps) => void,
+    dataIndex: DataIndex,
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+  const handleResetFilters = () => {
+    setSearchText('');
+    setSearchedColumn('');
+    loadingstateTreasuryForm();
+  };
+
+  const getColumnSearchProps = (
+    dataIndex: DataIndex,
+  ): ColumnType<DataType> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => {
+              if (clearFilters) {
+                clearFilters();
+              }
+              handleResetFilters();
+              confirm();
+            }}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            Close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+    onFilter: (value, record) => {
+      return record[dataIndex]
+        ? record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes((value as string).toLowerCase())
+        : false;
+    },
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: text =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
+
   const columns: ColumnsType<DataType> = [
     {
       title: 'Fonte',
       dataIndex: 'source',
       key: 'source',
       width: '40%',
-      className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
+      className: 'custom-column',
     },
-
     {
       title: 'Ano',
       dataIndex: 'year',
       key: 'year',
       width: '40%',
-      className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
+      className: 'custom-column',
+      ...getColumnSearchProps('year'),
       render: (value: any) => value || '*******',
     },
-
     {
       title: 'Ação',
       key: 'operation',
@@ -520,6 +637,7 @@ export default function StateTreasury() {
       },
     },
   ];
+
   useEffect(() => {
     setShowModal(false);
   }, []);

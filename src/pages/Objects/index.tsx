@@ -1,24 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { DownOutlined, SearchOutlined } from '@ant-design/icons';
 import {
-  Input,
   Button,
-  Space,
   Dropdown,
-  Popconfirm,
-  MenuProps,
-  Row,
-  InputRef,
   Form,
+  Input,
+  InputRef,
+  MenuProps,
+  Popconfirm,
+  Row,
+  Space,
+  Table,
   message,
 } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import { DownOutlined } from '@ant-design/icons';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
-import { Table } from 'antd';
+import type { ColumnType, ColumnsType } from 'antd/es/table';
 import { FilterConfirmProps } from 'antd/lib/table/interface';
+import React, { useEffect, useRef, useState } from 'react';
 import Highlighter from 'react-highlight-words';
-import { deleteObject, getObject } from '../../hooks/object';
 import ModalObject from '../../components/ModalObject';
+import { deleteObject, getObject } from '../../hooks/object';
 
 interface DataType {
   key: React.Key;
@@ -26,6 +25,8 @@ interface DataType {
   name: string;
   objectszaId: string;
   modeloId: string;
+  nature: any;
+  model: any;
 }
 
 type DataIndex = keyof DataType;
@@ -45,14 +46,16 @@ export default function Objects() {
     confirm: (param?: FilterConfirmProps) => void,
     dataIndex: DataIndex,
   ) => {
+    console.log('dataIndex', dataIndex);
     confirm();
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
   };
 
-  const handleReset = (clearFilters: () => void) => {
-    clearFilters();
+  const handleResetFilters = () => {
     setSearchText('');
+    setSearchedColumn('');
+    loadingObjectsForm();
   };
 
   const getColumnSearchProps = (
@@ -91,7 +94,13 @@ export default function Objects() {
             Search
           </Button>
           <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
+            onClick={() => {
+              if (clearFilters) {
+                clearFilters();
+              }
+              handleResetFilters();
+              confirm();
+            }}
             size="small"
             style={{ width: 90 }}
           >
@@ -113,11 +122,23 @@ export default function Objects() {
     filterIcon: (filtered: boolean) => (
       <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
-    onFilter: (value, record) =>
-      record[dataIndex]
+    onFilter: (value, record) => {
+      if (dataIndex === 'nature') {
+        return record.nature?.name
+          .toString()
+          .toLowerCase()
+          .includes((value as string).toLowerCase());
+      } else if (dataIndex === 'model') {
+        return record.model?.name
+          .toString()
+          .toLowerCase()
+          .includes((value as string).toLowerCase());
+      }
+      return record[dataIndex]
         .toString()
         .toLowerCase()
-        .includes((value as string).toLowerCase()),
+        .includes((value as string).toLowerCase());
+    },
     onFilterDropdownOpenChange: visible => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
@@ -158,6 +179,7 @@ export default function Objects() {
       dataIndex: 'nature',
       key: 'nature',
       width: '30%',
+      ...getColumnSearchProps('nature'),
       render: nature => (nature ? nature?.name : ''),
     },
     {
@@ -165,6 +187,7 @@ export default function Objects() {
       dataIndex: 'model',
       key: 'model',
       width: '30%',
+      ...getColumnSearchProps('model'),
       render: model => (model ? model?.name : ''),
     },
     {
