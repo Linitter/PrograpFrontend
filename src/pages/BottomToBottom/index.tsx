@@ -76,6 +76,10 @@ interface ExpandedDataTypeObject {
   executedValue: string;
   deliveryDate: string;
   settlementDate: string;
+
+  //resouce objects
+  objects: any;
+  acquisitionMode: string;
 }
 // expação da tabela de entregas
 interface ExpandedDataTypeDelivery {
@@ -122,6 +126,98 @@ export default function BottomToBottom() {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef<InputRef>(null);
+
+  const getResourceObjectColumnSearchProps = (
+    dataIndex: keyof ExpandedDataTypeObject,
+  ): ColumnType<ExpandedDataTypeObject> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => {
+              if (clearFilters) {
+                clearFilters();
+              }
+              handleResetFilters();
+              confirm();
+            }}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+    onFilter: (value, record) => {
+      const recordValue =
+        dataIndex === 'objects' ? record.objects?.name : record[dataIndex];
+
+      return recordValue
+        ? recordValue
+            .toString()
+            .toLowerCase()
+            .includes((value as string).toLowerCase())
+        : false;
+    },
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: text =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
 
   // somando valores re valore previsto e valor executado para trazer o saldo na tela
 
@@ -254,6 +350,7 @@ export default function BottomToBottom() {
         dataIndex: 'objects',
         key: 'objects',
         width: '12%',
+        ...getResourceObjectColumnSearchProps('objects'),
         render: objects => (objects ? objects?.name : ''),
       },
 
@@ -262,6 +359,7 @@ export default function BottomToBottom() {
         dataIndex: 'status',
         key: 'status',
         width: '5%',
+        ...getResourceObjectColumnSearchProps('status'),
         render: (value: any) => value || '*********',
       },
       {
@@ -269,7 +367,7 @@ export default function BottomToBottom() {
         dataIndex: 'progress',
         key: 'progress',
         width: '6%',
-
+        ...getResourceObjectColumnSearchProps('progress'),
         render: (value: any) => value || '*********',
       },
       {
@@ -277,6 +375,7 @@ export default function BottomToBottom() {
         dataIndex: 'processNumber',
         key: 'processNumber',
         width: '8%',
+        ...getResourceObjectColumnSearchProps('processNumber'),
         render: (value: any) => value || '*********',
       },
       {
@@ -285,7 +384,7 @@ export default function BottomToBottom() {
         key: 'natureExpense',
         className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
         width: '7%',
-
+        ...getResourceObjectColumnSearchProps('natureExpense'),
         render: (value: any) => value || '*********',
       },
       {
@@ -293,6 +392,7 @@ export default function BottomToBottom() {
         dataIndex: 'acquisitionMode',
         key: 'acquisitionMode',
         width: '6%',
+        ...getResourceObjectColumnSearchProps('acquisitionMode'),
         render: (value: any) => value || '*********',
       },
       {
@@ -559,7 +659,7 @@ export default function BottomToBottom() {
   const handleSearch = (
     selectedKeys: string[],
     confirm: (param?: FilterConfirmProps) => void,
-    dataIndex: DataIndex,
+    dataIndex: any,
   ) => {
     confirm();
     setSearchText(selectedKeys[0]);

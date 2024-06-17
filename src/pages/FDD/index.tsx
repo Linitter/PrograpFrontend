@@ -72,6 +72,10 @@ interface ExpandedDataTypeObject {
   executedValue: string;
   deliveryDate: string;
   settlementDate: string;
+
+  //resouce objects
+  objects: any;
+  acquisitionMode: string;
 }
 // exapanção de entregas
 interface ExpandedDataTypeDelivery {
@@ -115,6 +119,98 @@ export default function FDD() {
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef<InputRef>(null);
 
+  const getResourceObjectColumnSearchProps = (
+    dataIndex: keyof ExpandedDataTypeObject,
+  ): ColumnType<ExpandedDataTypeObject> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => {
+              if (clearFilters) {
+                clearFilters();
+              }
+              handleResetFilters();
+              confirm();
+            }}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+    onFilter: (value, record) => {
+      const recordValue =
+        dataIndex === 'objects' ? record.objects?.name : record[dataIndex];
+
+      return recordValue
+        ? recordValue
+            .toString()
+            .toLowerCase()
+            .includes((value as string).toLowerCase())
+        : false;
+    },
+    onFilterDropdownOpenChange: visible => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: text =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
+
   const expandedRowRender = (record: any) => {
     //adicionar uma chave única para cada objetos do recurso usando o índice
     const objectWithKeys = objectResource.map((objectResource, index) => ({
@@ -137,6 +233,7 @@ export default function FDD() {
         dataIndex: 'objects',
         key: 'objects',
         width: '12%',
+        ...getResourceObjectColumnSearchProps('objects'),
         render: objects => (objects ? objects?.name : ''),
       },
       {
@@ -181,6 +278,7 @@ export default function FDD() {
         title: 'Status',
         dataIndex: 'status',
         key: 'status',
+        ...getResourceObjectColumnSearchProps('status'),
         width: '6%',
         render: (value: any) => value || '*********',
       },
@@ -188,8 +286,8 @@ export default function FDD() {
         title: 'Andamento',
         dataIndex: 'progress',
         key: 'progress',
-        width: '7%',
-
+        width: '5%',
+        ...getResourceObjectColumnSearchProps('progress'),
         render: (value: any) => value || '*********',
       },
       {
@@ -197,6 +295,7 @@ export default function FDD() {
         dataIndex: 'processNumber',
         key: 'processNumber',
         width: '8%',
+        ...getResourceObjectColumnSearchProps('processNumber'),
         render: (value: any) => value || '*********',
       },
       {
@@ -205,7 +304,7 @@ export default function FDD() {
         key: 'natureExpense',
         className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
         width: '7%',
-
+        ...getResourceObjectColumnSearchProps('natureExpense'),
         render: (value: any) => value || '*********',
       },
       {
@@ -213,6 +312,7 @@ export default function FDD() {
         dataIndex: 'acquisitionMode',
         key: 'acquisitionMode',
         width: '7%',
+        ...getResourceObjectColumnSearchProps('acquisitionMode'),
         render: (value: any) => value || '*********',
       },
       {
@@ -421,7 +521,7 @@ export default function FDD() {
   const handleSearch = (
     selectedKeys: string[],
     confirm: (param?: FilterConfirmProps) => void,
-    dataIndex: DataIndex,
+    dataIndex: any,
   ) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -539,7 +639,7 @@ export default function FDD() {
       title: 'Nº convênio',
       dataIndex: 'agreementNumber',
       key: 'agreementNumber',
-      width: '6%',
+      width: '8%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
       ...getColumnSearchProps('agreementNumber'),
       render: (value: any) => value || '*******',
@@ -583,7 +683,7 @@ export default function FDD() {
       title: 'Descrição',
       dataIndex: 'description',
       key: 'description',
-      width: '21%',
+      width: '13%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
       render: (value: any) => value || '*******',
     },
@@ -591,7 +691,7 @@ export default function FDD() {
       title: 'Valor total executado',
       dataIndex: 'totalValueExecuted',
       key: 'totalValueExecuted',
-      width: '8%',
+      width: '10%',
       className: 'custom-column', // Adicione a classe CSS personalizada à coluna "Nome"
       render: (value: any) => `R$ ${value}` || '****',
     },

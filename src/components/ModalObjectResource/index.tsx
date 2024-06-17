@@ -572,7 +572,7 @@ const ModalObjectResource = ({
                       .includes(input.toLowerCase())
                   }
                   options={objects.map(obj => ({
-                    label: `${obj.name} - ${obj?.model?.name}`,
+                    label: `${obj.name} - ${obj.model?.name || ''}`, // Usar 'N/A' se obj.model.name for undefined
                     value: obj.id, // Define o ID do treinamento como valor da opção
                   }))}
                 />

@@ -1,5 +1,5 @@
-import { getConfig } from '../configs/sistemaConfig';
 import { message } from 'antd';
+import { getConfig } from '../configs/sistemaConfig';
 import { APIFdd } from './baseService/baseService';
 
 interface FDD {
@@ -54,7 +54,6 @@ export async function postFdd(fdd: FDD) {
 export const updateFdd = async (fdd: FDD, id: any) => {
   try {
     await APIFdd.put(`/fdd/${id}`, fdd, getConfig('priv'));
-    message.success('FDD atualizado com sucesso!');
   } catch (error) {
     if (error === 500) {
       message.info('O tempo da sua sessão expirou, faça o login novamente');
